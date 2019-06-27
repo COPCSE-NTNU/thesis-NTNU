@@ -138,7 +138,6 @@
 \RequirePackage{graphicx}                   % including figures
 \RequirePackage{amsmath}                    % advanced math typesetting
 \RequirePackage{xcolor}                     % selecting text color
-\RequirePackage[titletoc]{appendix}         % appendix title to table of contents
 \RequirePackage{emptypage}                  % empty pages should be blank
 \RequirePackage{csquotes}                   % recommended for biblatex
 \RequirePackage[
