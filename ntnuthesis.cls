@@ -3,12 +3,12 @@
 %% CC-BY CoPCSE@NTNU, 2019
 %%
 %% Partly merged, partly based on, and partly a simplification of
-%% various previous thesis templates by Simon MacCallum, Ivar Farup,
+%% various previous thesis templates by Simon McCallum, Ivar Farup,
 %% Kjetil Ørbekk an others, by CoPCSE@NTNU.
 
 %% IDENTIFICATION
 
-\xdef\ntnuthesisdate{2019/06/24}
+\xdef\ntnuthesisdate{2019/06/28}
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{ntnuthesis}
  [\ntnuthesisdate\space
