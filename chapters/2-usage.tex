@@ -86,6 +86,27 @@ Figures are placed in the \texttt{figure} environment. An example is shown in \c
   \label{fig:mapNTNU}
 \end{figure}
 
+For figures compsed of several sub-figures, the \texttt{caption} and \texttt{subcaption} packages have been preloaded. See \cref{fig:subfig} with \cref{sfig:a,sfig:b} for an example. For more details on alignment etc., see the Overleaf documentation.\footnote{\url{https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_3):_Figures,_Subfigures_and_Tables}}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/kart_student.png}
+        \caption{First sub-figure}
+        \label{sfig:a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/kart_student.png}
+        \caption{Second sub-figure}
+        \label{sfig:b}
+    \end{subfigure}
+    \caption{A figure composed of two sub-figures}
+    \label{fig:subfig}
+\end{figure}
+
 You can make nice graphs directly from data files using \texttt{gnuplot}, for an example, see \cref{fig:examplegnuplot}.
 
 \begin{figure}[htbp]

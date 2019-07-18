@@ -137,6 +137,8 @@
 \RequirePackage{enumitem}                   % customising list appearance
 \RequirePackage{graphicx}                   % including figures
 \RequirePackage{amsmath}                    % advanced math typesetting
+\RequirePackage{caption}                    % subfigures with captions within figures              
+\RequirePackage{subcaption}                 % subfigures with captions within figures              
 \RequirePackage{xcolor}                     % selecting text color
 \RequirePackage{emptypage}                  % empty pages should be blank
 \RequirePackage{csquotes}                   % recommended for biblatex
