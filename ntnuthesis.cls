@@ -144,9 +144,12 @@
 \RequirePackage{csquotes}                   % recommended for biblatex
 \RequirePackage[
     backend=biber,
-    style=numeric,
+    style=ieee,
+    maxcitenames=2,
+    mincitenames=1,
     citestyle=numeric-comp,
-    sorting=none
+    sorting=none,
+    dashed=false
 ]{biblatex}                                 % for bibliography
 \RequirePackage{csvsimple}                  % tables from csv files
 \RequirePackage{booktabs}                   % better formatting of tables
