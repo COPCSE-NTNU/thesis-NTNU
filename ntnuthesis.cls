@@ -137,7 +137,11 @@
 \RequirePackage{enumitem}                   % customising list appearance
 \RequirePackage{graphicx}                   % including figures
 \RequirePackage{amsmath}                    % advanced math typesetting
-\RequirePackage{caption}                    % subfigures with captions within figures              
+\RequirePackage[                            % subfigures with captions within figures
+    font=small,                             % and customisation of captions
+    labelfont=bf,
+    margin=\parindent
+]{caption}                    
 \RequirePackage{subcaption}                 % subfigures with captions within figures              
 \RequirePackage{xcolor}                     % selecting text color
 \RequirePackage{emptypage}                  % empty pages should be blank
