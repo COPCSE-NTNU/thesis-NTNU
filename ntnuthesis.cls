@@ -187,11 +187,12 @@
     \std@chapter
 }
 
-% Add unnumbered chapters to table of contents (should we really do this?)
+% Add unnumbered chapters to table of contents and headings
 \let\std@schapter\@schapter
 \def\@schapter#1{
     \std@schapter{#1}
     \addcontentsline{toc}{chapter}{#1}
+    \def\ch@ptermark{#1}
 }
 
 % Dotted line and tighter vertical spacing for chapters in the table of contents
