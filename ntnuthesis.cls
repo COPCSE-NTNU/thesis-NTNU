@@ -202,13 +202,15 @@
 \newcounter{paper}
 \setcounter{paper}{0}
 \def\thepaper{\Roman{paper}}
-\def\paper#1#2#3{
+\newenvironment{paper}[2]
+{
     \refstepcounter{paper}
+    \def\include@papername{#1}
     \chapter*{\papername~\thepaper}
-    \label[paper]{#3}
-    \fullcite{#1}
+    \label[paper]{#2}
+}{
     \cleardoublepage
-    \includepdf[pages=-]{#2}
+    \includepdf[pages=-]{\include@papername}
 }
 
 % Allow for two versions of title and authors – full and short
@@ -219,11 +221,11 @@
 
 % Headers and footers
 \def\ps@ntnuheadings{%
-  \let\@evenfoot\@empty
-  \let\@oddfoot\@empty
-  \def\@evenhead{\small\thepage\hfil\textit{\@shortauthor: \@shorttitle}}
-  \def\@oddhead{\small\textit{\ch@ptermark}\hfil\thepage}
-  \def\chaptermark##1{\def\ch@ptermark{\chaptername\ \thechapter: ##1}}
+    \let\@evenfoot\@empty
+    \let\@oddfoot\@empty
+    \def\@evenhead{\small\thepage\hfil\textit{\@shortauthor: \@shorttitle}}
+    \def\@oddhead{\small\textit{\ch@ptermark}\hfil\thepage}
+    \def\chaptermark##1{\def\ch@ptermark{\chaptername\ \thechapter: ##1}}
 }
 \pagestyle{ntnuheadings}
 
