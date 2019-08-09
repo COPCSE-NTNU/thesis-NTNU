@@ -268,11 +268,11 @@
         {»}{{\guillemotright}}1 {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {¿}{{?`}}1
 }
 
-% Settings for hyperref
+% Settings for hyperref: setting all the links black for best printing. They will still be clickable in the PDF
 \hypersetup{
     colorlinks=true,     
-    linkcolor=thesisblue,   % internal links (change box color with linkbordercolor)
-    citecolor=thesisgreen,  % links to bibliography
-    filecolor=thesisred,    % file links
-    urlcolor=thesisblue     % external links
+    linkcolor=black,    % internal links (change box color with linkbordercolor)
+    citecolor=black,    % links to bibliography
+    filecolor=black,    % file links
+    urlcolor=black      % external links
 }
