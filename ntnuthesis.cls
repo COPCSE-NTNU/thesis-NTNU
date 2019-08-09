@@ -239,6 +239,9 @@
 \setlist[itemize,2]{label=$\circ$}
 \setlist[itemize,3]{label=$-$}
 
+% Make \fullcite show all authors irrespectively of maxcitenames
+\preto\fullcite{\AtNextCite{\defcounter{maxnames}{99}}}
+
 % Colour palette
 \definecolor{thesisblue}{rgb}{.15, .15, .6}
 \definecolor{thesisred}{rgb}{.4, .05, .15}
