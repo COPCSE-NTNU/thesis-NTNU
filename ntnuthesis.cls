@@ -149,6 +149,8 @@
 \RequirePackage[
     backend=biber,
     style=ieee,
+    maxbibnames=6,
+    minbibnames=3,
     maxcitenames=2,
     mincitenames=1,
     citestyle=numeric-comp,
