@@ -149,7 +149,7 @@
 \RequirePackage[
     backend=biber,
     style=ieee,
-    maxbibnames=6,
+    maxbibnames=99,
     minbibnames=3,
     maxcitenames=2,
     mincitenames=1,
