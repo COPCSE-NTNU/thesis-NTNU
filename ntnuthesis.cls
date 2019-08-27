@@ -142,7 +142,11 @@
     labelfont=bf,
     margin=\parindent
 ]{caption}                    
-\RequirePackage{subcaption}                 % subfigures with captions within figures              
+\RequirePackage[                           % and subfigures with captions within figures
+    font=small,
+    labelfont=bf,
+    margin=\parindent
+]{subcaption}
 \RequirePackage{xcolor}                     % selecting text color
 \RequirePackage{emptypage}                  % empty pages should be blank
 \RequirePackage{csquotes}                   % recommended for biblatex
