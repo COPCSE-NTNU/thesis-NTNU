@@ -50,6 +50,8 @@
             \renewcommand{\contentsname}{Contents}
             \renewcommand{\listfigurename}{Figures}
             \renewcommand{\listtablename}{Tables}
+            \renewcommand{\glossaryname}{Glossary}
+            \renewcommand{\acronymname}{Acronyms}
         }
     }
 }
@@ -71,6 +73,8 @@
             \renewcommand{\contentsname}{Contents}
             \renewcommand{\listfigurename}{Figures}
             \renewcommand{\listtablename}{Tables}
+            \renewcommand{\glossaryname}{Glossary}
+            \renewcommand{\acronymname}{Acronyms}
         }
     }
 }
@@ -92,6 +96,8 @@
         \crefname{paper}{artikkel}{artikler}
         \addto\captionsnorsk{
             \renewcommand{\appendixname}{Vedlegg}
+            \renewcommand{\glossaryname}{Ordliste}
+            \renewcommand{\acronymname}{Akronymer}
         }
     }
 }
@@ -118,6 +124,8 @@
         \renewcommand{\appendixname}{Vedlegg}
         \addto\captionsnynorsk{
             \renewcommand{\appendixname}{Vedlegg}
+            \renewcommand{\glossaryname}{Ordliste}
+            \renewcommand{\acronymname}{Akronym}
         }
     }
 }
@@ -141,7 +149,7 @@
     font=small,                             % and customisation of captions
     labelfont=bf,
     margin=\parindent
-]{caption}                    
+]{caption}
 \RequirePackage[                           % and subfigures with captions within figures
     font=small,
     labelfont=bf,
@@ -165,11 +173,12 @@
 \RequirePackage{booktabs}                   % better formatting of tables
 \RequirePackage{gnuplottex}                 % for generating gnuplots on the fly
 \RequirePackage{hyperref}                   % interactive cross references
-\ifcapitalize 
+\ifcapitalize
     \RequirePackage[capitalize,noabbrev]{cleveref}   % automatic cross references
 \else
     \RequirePackage[noabbrev]{cleveref}
 \fi
+\RequirePackage[acronym]{glossaries}        % create a glossary and acronym list
 
 %% CUSTOMISATION
 
@@ -281,7 +290,7 @@
 
 % Settings for hyperref: setting all the links black for best printing. They will still be clickable in the PDF
 \hypersetup{
-    colorlinks=true,     
+    colorlinks=true,
     linkcolor=black,    % internal links (change box color with linkbordercolor)
     citecolor=black,    % links to bibliography
     filecolor=black,    % file links
