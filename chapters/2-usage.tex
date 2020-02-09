@@ -30,7 +30,7 @@ Short subsection text here.
 
 \subsubsection{This is a \texttt{\textbackslash subsubsection\{\}}}
 
-Short subsubsection text here. 
+Short subsubsection text here.
 
 \paragraph{This is a \texttt{\textbackslash paragraph\{\}}}
 
@@ -38,7 +38,7 @@ Short paragraph text here.
 
 Chapters, sections, and subsections will be included in the table of contents, whereas the lower level structuring elements will not appear there. Don't use too many levels of headings; how many are appropriate, will depend on the size of the document. Also, don't use headings too frequently.
 
-Make sure that the chapter and section headings are correctly capitalised depending on the language of the thesis, e.g., `\emph{Correct Capitalisation of Titles in English}' vs. `\emph{Korrekt staving av titler på norsk}'. 
+Make sure that the chapter and section headings are correctly capitalised depending on the language of the thesis, e.g., `\emph{Correct Capitalisation of Titles in English}' vs. `\emph{Korrekt staving av titler på norsk}'.
 
 Simple paragraphs are the lowest structuring elements and should be used the most. They are made by leaving one (or more) blank line(s) in the \texttt{.tex} file. In the typeset document they will appear indented and with no vertical space between them.
 
@@ -112,13 +112,13 @@ You can make nice graphs directly from data files using \texttt{gnuplot}, for an
 \begin{figure}[htbp]
   \centering
     \begin{gnuplot}[terminal=epslatex,terminaloptions={size 8cm,6cm color}]
-        set xlabel "age" 
-        set ylabel "IQ" 
+        set xlabel "age"
+        set ylabel "IQ"
         set key autotitle columnhead
         set title "age vs IQ"
         set yrange [0:160]
         set datafile separator ","
-        plot "csvtables/ageiq.csv" using 1:2 with boxes 
+        plot "csvtables/ageiq.csv" using 1:2 with boxes
     \end{gnuplot}
   \caption[An example of Integrated Graph]{This is a gnuplot graph read from a file. Also this figure has a long caption in order to demonstrate how that is typeset.}
   \label{fig:examplegnuplot}
@@ -134,7 +134,7 @@ Tables are placed in the \texttt{table} environment. An example is given in \cre
   \label{tab:example1}
   \begin{tabular}{cc}
     \hline
-    age  & IQ \\ 
+    age  & IQ \\
     \hline
     10   & 110 \\
     20   & 120 \\
@@ -192,7 +192,7 @@ plt.show()
 #include <iostream>
 using namespace std;
 
-int main() 
+int main()
 {
   cout << "Hello, World!" << endl;
   return 0;
@@ -224,9 +224,29 @@ For cross references, i.e., references within the document, the \texttt{\textbac
 
 The cross references are made into active hyperlinks in the resulting PDF document by the use of the \texttt{hyperref} package. The colour of the links is set to black for best appearance on print. This can easily be changed by the author by the use of the \texttt{\textbackslash hypersetup\{\}} command.
 
+\section{Glossary and Acronyms}
+The template comes with the ability to create a glossary and acronym list. To add entries to one of these lists, add them to the \texttt{glossary.tex} file.
+All uses of the acronym and glossary functions will create a clickable link that references the corresponding entry in one of the lists. All entries in the lists will also contain page references to all places it has been used.
+\subsection{Using Acronyms}
+To render acronyms, you have three options:
+\begin{itemize}
+  \item \texttt{\textbackslash acrlong\{ \}} prints the phrase the acronym stands for, e.g. \texttt{\textbackslash acrlong\{gcd\}} displays \acrlong{gcd}.
+  \item \texttt{\textbackslash acrshort\{ \}} prints the acronym, e.g. \texttt{\textbackslash acrshort\{gcd\}} displays \acrshort{gcd}.
+  \item \texttt{\textbackslash acrfull\{ \}} prints both the acronym and its definition, e.g. \texttt{\textbackslash acrfull\{gcd\}} displays \acrfull{gcd}.
+\end{itemize}
+
+\subsection{Using Glossary}
+\begin{itemize}
+  \item \texttt{\textbackslash gls\{ \}} prints the term in lowercase, e.g. \texttt{\textbackslash gls\{maths\}} displays \gls{maths}.
+  \item \texttt{\textbackslash Gls\{ \}} prints the term in with first letter in uppercase, e.g. \texttt{\textbackslash Gls\{maths\}} displays \Gls{maths}.
+  \item \texttt{\textbackslash glspl\{ \}} prints the term in plural form, e.g. \texttt{\textbackslash glspl\{bibliography\}} displays \glspl{bibliography}.
+  \item \texttt{\textbackslash Glspl\{ \}} prints the term in plural form capitalized, e.g. \texttt{\textbackslash Glspl\{bibliography\}} displays \Glspl{bibliography}.
+\end{itemize}
+
+
 \section{Bibliography}
 
-The bibliography is typset using the \texttt{biblatex} package with the \texttt{biber} backend. The default citation style is \texttt{numeric-comp}, and the default bibliography style is \texttt{numeric}. This produces a bibliography similar to, but not completely according to, the so-called Vancouver style. With this setup, a single \texttt{\textbackslash cite\{\}} command will give a number only~\cite{landes1951scrutiny}, and \texttt{\textbackslash textcite\{\}} will give author and number like this: \textcite{landes1951scrutiny}. If you would like to give the full reference of a paper within the thesis, e.g., in a list of included papers, use \texttt{\textbackslash fullcite\{\}} like this: \fullcite{landes1951scrutiny}.
+The \gls{bibliography} is typset using the \texttt{biblatex} package with the \texttt{biber} backend. The default citation style is \texttt{numeric-comp}, and the default bibliography style is \texttt{numeric}. This produces a bibliography similar to, but not completely according to, the so-called Vancouver style. With this setup, a single \texttt{\textbackslash cite\{\}} command will give a number only~\cite{landes1951scrutiny}, and \texttt{\textbackslash textcite\{\}} will give author and number like this: \textcite{landes1951scrutiny}. If you would like to give the full reference of a paper within the thesis, e.g., in a list of included papers, use \texttt{\textbackslash fullcite\{\}} like this: \fullcite{landes1951scrutiny}.
 
 \section{Included Papers}
 
