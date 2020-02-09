@@ -8,6 +8,8 @@
 
 \addbibresource{thesis.bib}
 
+\input{glossary.tex} % add glossary and acronym lists before document
+
 \begin{document}
 
 \input{chapters/0a-abstract.tex}
@@ -17,6 +19,9 @@
 \listoffigures
 \listoftables
 \lstlistoflistings
+
+\printglossary[type=\acronymtype] % Print acronyms
+\printglossary                    % Print glossary
 
 \input{chapters/1-introduction}
 \input{chapters/2-usage.tex}
