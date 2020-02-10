@@ -23,7 +23,7 @@ thesis.pdf: $(SRCS)
 	pdflatex $(LATEX_FLAGS) thesis
 
 clean:
-	-rm \
-		thesis-gnuplottex* \
-		thesis.{gnuploterrors,aux,bbl,bcf,blg,lof,log,lol,lot,out,pdf,run.xml,toc}
+	-@$(RM) \
+			$(wildcard thesis-gnuplottex*) \
+			$(addprefix thesis,.gnuploterrors .aux .bbl .bcf .blg .lof .log .lol .lot .out .pdf .run.xml .toc)
 .PHONY: clean
