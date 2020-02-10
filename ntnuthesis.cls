@@ -14,14 +14,17 @@
  [\ntnuthesisdate\space
    CC-BY CoPCSE at NTNU 2019]
 
-%% CLASS FILE LOADING
-
-\LoadClass[a4paper,11pt,openright,twoside]{report}
 
 %% CLASS OPTIONS
 
 % Package for some reason needed before the options
 \RequirePackage{pdfpages}                   % including pdf files
+
+% One or twosided paging
+\newcommand{\paging}{twoside}
+\DeclareOption{oneside}{
+  \renewcommand{\paging}{oneside}
+}
 
 % Title Page
 \DeclareOption{titlepage}{
@@ -131,6 +134,10 @@
 }
 
 \ProcessOptions
+
+%% CLASS FILE LOADING
+
+\LoadClass[a4paper,11pt,openright,\paging]{report}
 
 %% PACKAGE LOADING
 
