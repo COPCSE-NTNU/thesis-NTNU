@@ -303,3 +303,12 @@
     filecolor=black,    % file links
     urlcolor=black      % external links
 }
+
+% Renew \lstlistoflistings command to avoid issues with incorrect headers for long lists
+% Uses unnumbered chapter instead of a float like in the original source code.
+% Based on source code for listings package https://ctan.uib.no/macros/latex/contrib/listings/listings.dtx line: 14635
+\renewcommand*{\lstlistoflistings}{%
+       \chapter*{\lstlistlistingname}%
+       \parskip\z@\parindent\z@\parfillskip \z@ \@plus 1fil%
+       \@starttoc{lol}%
+       }%
