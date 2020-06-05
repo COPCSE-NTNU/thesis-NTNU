@@ -143,7 +143,7 @@
 
 \RequirePackage[utf8]{inputenc}             % for special characters in input
 \RequirePackage[T1]{fontenc}                % modern font encoding
-\RequirePackage[charter]{mathdesign}        % main font with math support
+\RequirePackage[charter, cal=cmcal]{mathdesign} % main font with math support
 \RequirePackage[scaled=.88]{berasans}       % sans serif font
 \RequirePackage[scaled=.82]{DejaVuSansMono} % monospace font (for code)
 \RequirePackage{listings}                   % code listings
