@@ -16,7 +16,7 @@ BIBER_FLAGS=
 
 mkdir = @mkdir -p $(@D)
 
-thesis.pdf: $(SRCS)
+build: $(SRCS)
 	$(mkdir)
 	pdflatex $(LATEX_FLAGS) thesis
 	biber $(BIBER_FLAGS) thesis
@@ -24,8 +24,12 @@ thesis.pdf: $(SRCS)
 	pdflatex $(LATEX_FLAGS) thesis
 	pdflatex $(LATEX_FLAGS) thesis
 
+# generate pdf and delete extras
+thesis.pdf: build clean
+
 clean:
 	-@$(RM) \
 		$(wildcard thesis-gnuplottex*) \
-		$(addprefix thesis,.gnuploterrors .aux .bbl .bcf .blg .lof .log .lol .lot .out .pdf .run.xml .toc .acn .glo .ist .acr .alg .glg .gls)
+		$(addprefix thesis,.gnuploterrors .aux .bbl .bcf .blg .lof .log .lol .lot .out .run.xml .toc .acn .glo .ist .acr .alg .glg .gls)
+
 .PHONY: clean
