@@ -1,3 +1,4 @@
+*.DS_Store
 thesis-gnuplottex*
 thesis.gnuploterrors
 thesis.aux
