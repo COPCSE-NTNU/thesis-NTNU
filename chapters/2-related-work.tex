@@ -1,0 +1,22 @@
+\chapter{Related work}
+
+As mentioned mentioned in \cref{section:justifications_motivations_benefits}, historical AIS analysis has been an explored topic, especially within predicting vessels’ future destinations in short time intervals at very high geographical accuracy. The purpose of such research is mostly used for anomaly detection and collision avoidance where it is important to know a vessel’s coordinates for minutes up til an hour into the future. However, some of these methods seem to show some potential to be combined in order to predict vessel destinations further into the future, therefore, this research area has been included in relevant work as a separate category. The main category, on the other hand, includes methods that are directly applicable to longer range destinations or general availability, although there is much less research available within this area. The resulting two categories defined were the following:
+
+\begin{enumerate}
+    \item Vessel destination (or availability) prediction based on historical AIS data
+    \item Short term navigational prediction based on historical AIS data
+\end{enumerate}
+
+\textit{Category 1} includes papers that used prediction methods to forecast either vessel availability, or supply, or methods applied to predict a vessel’s future destination port or region. Category 2 includes papers that used prediction or analytical methods to predict a vessel’s future positions on a smaller geographical scale or time-interval for different purposes than port destination prediction.
+
+Finally, it was also considered that some prediction methods applied to availability could be non-AIS based such as considering patterns in cargo demand or other external economical factors. As there are many such factors that could have a varied amount of impact on availability, it was not feasible to thoroughly analyze these areas in this preliminary research of related work. For example, some factors might seemingly be completely unrelated to maritime shipping but have some manor of indirect impact on vessel traffic. Such cases would be hard to detect as the search area would be too large. Furthermore, existing literature in these areas does not mention external factors as having any impact on their prediction model. Therefore, this could be considered a limitation of existing work and could be interesting to be explored as future work of the Master’s thesis.
+
+\section{Literature review}
+
+To find papers relevant to \textit{category 1}, search queries were run on several well-established search engines. As an example, using the search engine provided by ScienceDirect (https://sciencedirect.com) had the following results:
+
+\begin{itemize}
+    \item `vessel destination' OR `ship destination' OR `vessel availability' resulted in 389 papers
+    \item ais AND (`vessel destination' OR `vessel availability') resulted in 25 papers.
+    \item ais AND (predicting OR forecasting) AND (`vessel destination' OR `vessel availability' OR `ship supply') resulted in 18 papers out of which only one paper proved relevant within this category.
+\end{itemize}

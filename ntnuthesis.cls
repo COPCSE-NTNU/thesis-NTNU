@@ -167,12 +167,12 @@
 \RequirePackage{csquotes}                   % recommended for biblatex
 \RequirePackage[
     backend=biber,
-    style=ieee,
+    style=authoryear-ibid,
     maxbibnames=99,
     minbibnames=3,
     maxcitenames=2,
     mincitenames=1,
-    citestyle=numeric-comp,
+    citestyle=authoryear-ibid,
     sorting=none,
     dashed=false
 ]{biblatex}                                 % for bibliography
