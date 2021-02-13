@@ -34,7 +34,7 @@ To find papers relevant to \textit{category 2}, similar queries were run, howeve
     \item `vessel trajectory' OR ´ship trajectory' resulted in \textbf{421} papers
     \item ais AND (`vessel trajectory' OR `ship trajectory') resulted in \textbf{150} papers
     \item (ais OR `tracking data') AND (prediction OR estimation) AND (`vessel trajectory' OR `shipping route') resulted in \textbf{150} papers
-    \item ais AND (predicting OR predict) AND ("vessel trajectory" OR "ship trajectory" OR `marine traffic') resulted in \textbf{132} papers
+    \item ais AND (predicting OR predict) AND (`vessel trajectory' OR `ship trajectory' OR `marine traffic') resulted in \textbf{132} papers
     \item ais AND (prediction OR predicting) AND (`vessel trajectory' OR `ship trajectory') resulted in \textbf{93} papers
 \end{itemize}
 
@@ -46,20 +46,20 @@ As there was an abundance of research available within \textit{category 2}, thre
 
 \begin{table}
     \centering
-    \begin{tabular}{|p{1.5in}|p{3in}|p{1.5in}|}
-        \hline
+    \begin{tabular}{p{1in} p{2.5in} p{1in}}
+        \toprule
         \textbf{Paper} & \textbf{Query} & \textbf{Search Engine} \\
-        \hline
-        \cite{lechtenberg2019} & ais AND (predicting OR forecasting) AND ("vessel destination" OR "vessel availability" OR "ship supply") & Google Scholar \\
-        \hline
-        \cite{ZHANG2020102729} & ais AND (predicting OR forecasting) AND ("vessel destination" OR "vessel availability" OR "ship supply") & Google Scholar, ScienceDirect \\
-        \hline
+        \midrule
+        \cite{lechtenberg2019} & ais AND (predicting OR forecasting) AND (`vessel destination' OR `vessel availability' OR `ship supply') & Google Scholar \\
+        \midrule
+        \cite{ZHANG2020102729} & ais AND (predicting OR forecasting) AND (`vessel destination' OR `vessel availability' OR `ship supply") & Google Scholar, ScienceDirect \\
+        \midrule
         \cite{Pelizzari2016GeneticAF} & (ais OR "tracking data") AND (prediction OR estimation) AND ("vessel trajectory" OR "shipping route") & Google Scholar \\
-        \hline
+        \midrule
         \cite{pallotta} & ais AND (prediction OR predicting) AND ("vessel trajectory" OR "ship trajectory" OR route) & Google Scholar \\
-        \hline
+        \midrule
         \cite{Daranda2016NeuralNA} & ais AND (predicting OR predict) AND ("vessel trajectory" OR "ship trajectory" OR "marine traffic") & Google Scholar, Oria \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Most relevant papers for further analysis}
     \label{tab:relevant_papers}
@@ -116,4 +116,3 @@ It seems that accuracy is the main measurement used to establish quality. Furthe
 \paragraphheader{RQ 4: How extensive is the impact of considering segmentation for prediction methods?}
 
 None of the papers found within the research areas considers any type of segmentation of vessels. It is, therefore, impossible to answer this research question based on the current state of the art of the problem area.
-

@@ -1,10 +1,10 @@
 \chapter{Feasibility study}
 
-As already mentioned, the main motivation behind the thesis is derived from the observation that the existing methods of vessel destination prediction neglect data depth in their models. Especially, not considering the type and dimensions of vessels is presumed to be a major limitation of the existing literature. In order to establish this in an empirical manner, a feasibility study was conducted on the aspect of \acrfull{mo}'s novel segmentation of vessels. As part of the course work for the prior \acrshort{ntnu} course called \textit{“IMT4894 - Advanced Project Work”}, such a feasibility study was  conducted to estimate the impact of vessel segmentation on the aspect of port frequencies. Port frequencies, or patterns of port arrivals and departures should reflect the fact that different vessels of different types travel in different patterns. Thus, if it is possible to show that segmentations have a significant impact on these patterns through port frequencies, it can be concluded that it will have an impact on vessel destination predictions.
+As already mentioned, the main motivation behind the thesis is derived from the observation that the existing methods of vessel destination prediction neglect data depth in their models. Especially, not considering the type and dimensions of vessels is presumed to be a major limitation of the existing literature. In order to establish this in an empirical manner, a feasibility study was conducted on the aspect of \acrfull{mo}'s novel segmentation of vessels. As part of the course work for the prior \acrshort{ntnu} course called \textit{“IMT4894 Advanced Project Work”}, such a feasibility study was  conducted to estimate the impact of vessel segmentation on the aspect of port frequencies. Port frequencies, or patterns of port arrivals and departures should reflect the fact that different vessels of different types travel in different patterns. Thus, if it is possible to show that segmentations have a significant impact on these patterns through port frequencies, it can be concluded that it will have an impact on vessel destination predictions.
 
 The dataset used in this feasibility study mainly consisted of vessel transitions (as described in \cref{sec:vessel_transitions}), and port data (as described in \cref{sec:port_data}). The dataset also includes the vessel's segment and sub-segment (as described in \cref{sec:vessel_segments}). For a given port, every visiting vessel was assigned the attribute \textit{NextPort} that indicated the next arrival port after departing the given port. \cref{fig:apw_dataset} shows an example of vessels arriving at the port of Oslo (\texttt{NOOSL}).
 
-\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=.8\textwidth]{figures/apw/apw_dataset.png}
     \caption{A sample of the dataset used in the feasibility study}
@@ -38,11 +38,10 @@ Furthermore, as \cref{fig:apw_noosl_dry_bulk} shows, when looking at the port fr
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=.9\textwidth]{figures/apw/noosl_dry_bulk.png}
-    \caption{Distribution of \textit{NextPort}s from \texttt{NOOSL} for the \textit{"dry bulk" segment}}
-    \label{fig:apw_noosl_dry_bulk}
+    \caption{Distribution of \textit{NextPort}s from \texttt{NOOSL} for the \textit{`dry bulk' segment}\label{fig:apw_noosl_dry_bulk}}
 \end{figure}
 
-Investigating sub-segments further confirms that a few numbers of vessels are responsible for most of all total transitions. \cref{fig:apw_noosl_subsegments} shows that the specific sub-segment \textit{other - passenger}, or passenger vessels, are responsible for 49.52\% of all transitions and nearly all voyages arrive at \texttt{NOLYS} after \texttt{NOOSL}. This means a prediction model could potentially be improved by 50\% if it would be aware of the sub-segment of each vessel for this particular port. \texttt{NOOSL} seems to be a port that shows the problem area quite well because it is a smaller port that receives a lower number of different vessels, and when there are multiple passenger vessels frequently arriving at it, they heavily skew the results in their favor.
+Investigating sub-segments further confirms that a few numbers of vessels are responsible for most of all total transitions. \cref{fig:apw_noosl_subsegments} shows that the specific sub-segment \textit{`other - passenger'}, or passenger vessels, are responsible for 49.52\% of all transitions and nearly all voyages arrive at \texttt{NOLYS} after \texttt{NOOSL}. This means a prediction model could potentially be improved by 50\% if it would be aware of the sub-segment of each vessel for this particular port. \texttt{NOOSL} seems to be a port that shows the problem area quite well because it is a smaller port that receives a lower number of different vessels, and when there are multiple passenger vessels frequently arriving at it, they heavily skew the results in their favor.% chktex 8
 
 \begin{figure}[htbp]
     \centering
@@ -58,18 +57,18 @@ Investigating sub-segments further confirms that a few numbers of vessels are re
 As already mentioned, for the trend analysis, a number of ports were selected based on their size and traffic. There were also a couple of known ports included in this dataset to easier interpret the results. The ports used in the analysis were:
 
 \begin{itemize}
-    \item \texttt{NLRTM} - Rotterdam, Netherlands
-    \item \texttt{NOOSL} - Oslo, Norway
-    \item \texttt{CNSHG} - Shanghai, China
-    \item \texttt{NLMSV} - Maasvlakte, Netherlands
-    \item \texttt{SGSIN} - Singapore, Singapore
-    \item \texttt{USHPY} - Baytown, USA
-    \item \texttt{BEANR} - Antwerpen, Belgium
-    \item \texttt{TWKHH} - Kaohsiung, Taiwan
-    \item \texttt{JPYOK} - Yokohama
+    \item \texttt{NLRTM} --- Rotterdam, Netherlands
+    \item \texttt{NOOSL} --- Oslo, Norway
+    \item \texttt{CNSHG} --- Shanghai, China
+    \item \texttt{NLMSV} --- Maasvlakte, Netherlands
+    \item \texttt{SGSIN} --- Singapore, Singapore
+    \item \texttt{USHPY} --- Baytown, USA
+    \item \texttt{BEANR} --- Antwerpen, Belgium
+    \item \texttt{TWKHH} --- Kaohsiung, Taiwan
+    \item \texttt{JPYOK} --- Yokohama
 \end{itemize}
 
-The same process as for the single-case analysis was conducted, but on a higher level as the main purpose of this study was to establish a trend in terms of a impact factor of vessel segmentation on port frequencies. \cref{fig:trend_freq} shows a similar version of the table used for the single port analysis (\cref{fig:apw_noosl_freq}) but also shows the number of transitions that differed from the most frequent next port when considering segments (i.e. the estimated improvement factor).
+The same process as for the single-case analysis was conducted, but on a higher level as the main purpose of this study was to establish a trend in terms of a impact factor of vessel segmentation on port frequencies. \cref{fig:trend_freq} shows a similar version of the table used for the single port analysis (\cref{fig:apw_noosl_freq}) but also shows the number of transitions that differed from the most frequent next port when considering segments (i.e.\ the estimated improvement factor).
 
 \begin{figure}[htbp]
     \centering
@@ -96,4 +95,4 @@ Furthermore, when looking at the impact of sub-segments, as \cref{fig:subsegment
     \label{fig:subsegment_improvment}
 \end{figure}
 
-A prediction method considering the frequencies of ports for vessel destination predictions would choose the most frequent next port for the predicted next destination. In this scenario, ignoring the vessel's type (segmentation) would give the wrong prediction for a lot of vessels from different segments in a lot of ports. The results from the feasibility study clearly indicates that applying the aspect of vessel segmentation to such models would definitively have an impact on prediction accuracy and, therefore, is worth investigating further. Moreover, assuming this impact would also, to some degree, apply to vessel trajectories as they relate to traveling patters, improving the accuracy of a model such as the one described in \cite{ZHANG2020102729} seems to be plausible depending on the data foundation.
+A prediction method considering the frequencies of ports for vessel destination predictions would choose the most frequent next port for the predicted next destination. In this scenario, ignoring the vessel's type (segmentation) would give the wrong prediction for a lot of vessels from different segments in a lot of ports. The results from the feasibility study clearly indicates that applying the aspect of vessel segmentation to such models would definitively have an impact on prediction accuracy and, therefore, is worth investigating further. Moreover, assuming this impact would also, to some degree, apply to vessel trajectories as they relate to traveling patters, improving the accuracy of a model such as the one described in~\cite{ZHANG2020102729} seems to be plausible depending on the data foundation.

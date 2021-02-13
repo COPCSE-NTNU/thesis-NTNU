@@ -30,6 +30,6 @@ thesis.pdf: build clean
 clean:
 	-@$(RM) \
 		$(wildcard thesis-gnuplottex*) \
-		$(addprefix thesis,.gnuploterrors .aux .bbl .bcf .blg .lof .log .lol .lot .out .run.xml .toc .acn .glo .ist .acr .alg .glg .gls)
+		$(addprefix thesis,.gnuploterrors .aux .bbl .bcf .blg .lof .log .lol .lot .out .run.xml .toc .acn .glo .ist .acr .alg .glg .gls .fls .fdb_latexmk)
 
 .PHONY: clean
