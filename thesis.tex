@@ -23,10 +23,18 @@
 \printglossary[type=\acronymtype] % Print acronyms
 \printglossary                    % Print glossary
 
+\newcommand{\paragraphheader}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\todo}[1]{{\color{olive}\textbf{TODO:}\color{olive}#1}} % items to do
+
+\setlength{\parindent}{4em}
+%\setlength{\parskip}{1em}
+
 \input{chapters/1-introduction}
 \input{chapters/2-related-work}
-\input{chapters/3-structure}
-\input{chapters/4-conclusion}
+\input{chapters/3-choice-of-method}
+\input{chapters/4-initial-dataset}
+\input{chapters/5-feasibility-study}
+\input{chapters/6-methodology}
 
 \chapter*{\bibname}
 \printbibliography[heading=none]

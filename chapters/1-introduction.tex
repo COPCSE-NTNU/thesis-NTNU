@@ -9,7 +9,7 @@ The shipping industry is an industry where it is still common to use non-digital
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
     \includegraphics[width=.89\textwidth]{figures/investment_cycle}
-    \caption[Map of NTNU Campuses]{Vessel supply’s impact on the market and investment cycles \parencite{stopford2008}}
+    \caption{Vessel supply’s impact on the market and investment cycles \parencite{stopford2008}}
     \label{fig:maritime_economics}
 \end{figure}
 
@@ -20,6 +20,7 @@ The thesis will focus on the research area of maritime vessel destination predic
 AIS data, vessel destination prediction, supply forecasting, machine learning, maritime logistics
 
 \section{Problem description}
+\label{sec:problem_desc}
 
 A problem with the current methods used in the shipping industry is that they require manual labor to gather and analyze data. On the other hand, AIS data is plentiful and sufficient for overviewing and forecasting the future state of vessel supply by considering the geographical positions and trajectories of vessels. However, even though the AIS protocol includes attributes for the next destination port and estimated time of arrival (ETA), this information is manually inputted by the crew members of the vessel, and is therefore not standardized and is often exposed to human error either in regards to format or misinformation such as wrong, missing, or outdated information. Therefore, in order to take advantage of AIS data, prediction methods, therefore, only consider geographical information that is automated and accurate. However, since geographical information is considered the best information for vessel predictions, other aspects such as the type and dimensions of the vessel have been overlooked in existing methods limiting them in terms of general accuracy. This thesis will explore the advantages of considering this additional information for vessel destination prediction methods.
 
@@ -31,7 +32,7 @@ The topic of vessel destination prediction using historical AIS data has already
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
     \includegraphics[width=.89\textwidth]{figures/segment_map}
-    \caption[Map of NTNU Campuses]{Maritime Optima’s segmentation of vessels where yellow vessels are smaller than reds}
+    \caption{Maritime Optima’s segmentation of vessels where yellow vessels are smaller than reds}
     \label{fig:segment_map}
 \end{figure}
 
