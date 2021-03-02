@@ -116,3 +116,59 @@
     year = {},
     note = {(Accessed on 02/07/2021)}
 }
+
+% Papers found from literature review
+
+@inproceedings{karata_2020,
+author = {Karata\c{s}, G\"{o}zde Boztepe and Karagoz, Pinar and Ayran, Orhan},
+title = {Trajectory Prediction for Maritime Vessels Using AIS Data},
+year = {2020},
+isbn = {9781450381154},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3415958.3433079},
+doi = {10.1145/3415958.3433079},
+abstract = {The need for a variety of auxiliary analytical tools to enhance marine safety and marine status awareness has been expressed by various platforms. The information that has been published while cruising is a rich resource for movement analysis of ships. Automatic Identification System (AIS), which is widely used in vessels, broadcasts information including the type of ship, identity number, state, destination, estimated time of arrival (ETA), location, speed, direction, and cargo. In this paper, to aid maritime operators, we work on arrival port, arrival time, and next position prediction on AIS messages, and propose three different approaches for the prediction of marine vessel movement. The experiments conducted against conventional supervised learning approaches reveal the improvement of the proposed solutions.},
+booktitle = {Proceedings of the 12th International Conference on Management of Digital EcoSystems},
+pages = {48–54},
+numpages = {7},
+keywords = {trajectory, next position prediction, arrival port prediction, arrival time prediction, supervised learning, AIS, LSTM, maritime},
+location = {Virtual Event, United Arab Emirates},
+series = {MEDES '20}
+}
+
+@inproceedings{rocsa_2018,
+author = {Ro\c{s}ca, Valentin and Onica, Emanuel and Diac, Paul and Amariei, Ciprian},
+title = {Predicting Destinations by Nearest Neighbor Search on Training Vessel Routes},
+year = {2018},
+isbn = {9781450357821},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3210284.3220509},
+doi = {10.1145/3210284.3220509},
+abstract = {The DEBS Grand Challenge 2018 is set in the context of maritime route prediction. Vessel routes are modeled as streams of Automatic Identification System (AIS) data points selected from real-world tracking data. The challenge requires to correctly estimate the destination ports and arrival times of vessel trips, as early as possible. Our proposed solution partitions the training vessel routes by reported destination port and uses a nearest neighbor search to find the training routes that are closer to the query AIS point. Particular improvements have been included as well, such as a way to avoid changing the predicted ports frequently within one query route and automating the parameters tuning by the use of a genetic algorithm. This leads to significant improvements on the final score.},
+booktitle = {Proceedings of the 12th ACM International Conference on Distributed and Event-Based Systems},
+pages = {224–225},
+numpages = {2},
+keywords = {nearest neighbor, machine learning, space partitioning, genetic algorithm, ball trees},
+location = {Hamilton, New Zealand},
+series = {DEBS '18}
+}
+
+@inproceedings{bachar_2018,
+author = {Bachar, Moti and Elimelech, Gal and Gat, Itai and Sobol, Gil and Rivetti, Nicolo and Gal, Avigdor},
+title = {Venilia, On-Line Learning and Prediction of Vessel Destination},
+year = {2018},
+isbn = {9781450357821},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3210284.3220505},
+doi = {10.1145/3210284.3220505},
+abstract = {The ACM DEBS 2018 Grand Challenge focuses on (soft) real-time prediction of both the destination port and the time of arrival of vessels, monitored through the Automated Identification System (AIS). Venilia prediction mechanism is based on a variety of machine learning techniques, including Markov predictive models. To improve the accuracy of a model, trained off-line on historical data, Venilia supports also on-line continuous training using an incoming event stream. The software architecture enables a low latency, highly parallelized, and load balanced prediction pipeline. Aiming at a portable and reusable solution, Venilia is implemented on top of the Akka Actor framework. Finally, Venilia is also equipped with a visualization tool for data exploration.},
+booktitle = {Proceedings of the 12th ACM International Conference on Distributed and Event-Based Systems},
+pages = {209–212},
+numpages = {4},
+keywords = {AIS, Complex Event Processing, Probabilistic Prediction},
+location = {Hamilton, New Zealand},
+series = {DEBS '18}
+}
