@@ -1,34 +1,112 @@
 \chapter{Related work}
 
-(Copied from RPP)
-As mentioned mentioned in \cref{section:justifications_motivations_benefits}, historical AIS analysis has been an explored topic, especially within predicting vessels’ future destinations in short time intervals at very high geographical accuracy. The purpose of such research is mostly used for anomaly detection and collision avoidance where it is important to know a vessel’s coordinates for minutes up til an hour into the future. However, some of these methods seem to show some potential to be combined in order to predict vessel destinations further into the future, therefore, this research area has been included in relevant work as a separate category. The main category, on the other hand, includes methods that are directly applicable to longer range destinations or general availability, although there is much less research available within this area. The resulting two categories defined were the following:
+The topic of \acrfull{ais} -based predictions has already been explored quite extensively, especially in recent years as \acrshort{ais} systems has become an enforced standard for commercial vessels in the industry. However, the \acrshort{ais} standard has mainly been standardized for the purpose of maritime safety and navigation, and the existing academic work on this topic reflects this. Therefore, most of the related work consists of vessel trajectory predictions for the purpose of foreseeing a future collision situation or for detecting anomalies from detected shipping lanes. These types of predictions are applicable for predicting a vessel's future position in a short time interval, in a smaller geographical scale, but with high positional accuracy.
 
-\begin{enumerate}
-    \item Vessel destination (or availability) prediction based on historical AIS data
-    \item Short term navigational prediction based on historical AIS data
-\end{enumerate}
-
-\textit{Category 1} includes papers that used prediction methods to forecast either vessel availability, or supply, or methods applied to predict a vessel’s future destination port or region. Category 2 includes papers that used prediction or analytical methods to predict a vessel’s future positions on a smaller geographical scale or time-interval for different purposes than port destination prediction.
-
-Finally, it was also considered that some prediction methods applied to availability could be non-AIS based such as considering patterns in cargo demand or other external economical factors. As there are many such factors that could have a varied amount of impact on availability, it was not feasible to thoroughly analyze these areas in this preliminary research of related work. For example, some factors might seemingly be completely unrelated to maritime shipping but have some manor of indirect impact on vessel traffic. Such cases would be hard to detect as the search area would be too large. Furthermore, existing literature in these areas does not mention external factors as having any impact on their prediction model. Therefore, this could be considered a limitation of existing work and could be interesting to be explored as future work of the Master’s thesis.
+In order to establish the current state of the art of the topic area and establish to what extent the literature answers the proposed research questions, a literature review was conducted which is explained in this section.
 
 \section{Literature review}
 \label{sec:lit_review}
 
-To find papers relevant to \textit{category 1}, search queries were run on several well-established search engines. As an example, using the search engine provided by ScienceDirect\footnotemark had the following results:
+As already mentioned, based on initial research into the thesis' topic area, there seemed to be an apparent trend in motivations of related work directed at short-term predictions for safety and navigational purposes. In contrast, this thesis aims at using \acrshort{ais}, and other attributes, for longer term predictions, or more accurately, port destination predictions. However, because of the exploratory nature of thesis, the literature review conducted was broad in order to include work that might have taken a different approach to solve the same problem. In order to organize the resulting papers, a categorical separation of papers based on motivation was defined as follows:
+
+\begin{enumerate}
+\setcounter{enumi}{-1}
+    \item The paper's motivation deems it completely irrelevant to the topic area.
+    \item The paper's motivation includes vessel predictions, but on a smaller time or geographical scale making it irrelevant for comparison.
+    \item The paper's motivation includes destination predictions making it relevant enough for further analysis.
+\end{enumerate}
+
+\textit{Category 0} is defined to filter out papers that were irrelevant but could not be excluded by narrowing the search query. \textit{Category 1} includes paper that relates to the established trend mentioned earlier where the proposed method seems relevant on a small scale, but is ultimately not applicable to the thesis' problem area. It also includes papers that considers relevant topics but not relevant solutions. Finally, the papers labeled with relevancy \texttt{2} falls within \textit{Category 2} and includes papers that falls within the same topic area and are relevant for further analysis in regards to the research questions.
+
+In order to determine what papers fitted \textit{category 1} and \textit{2}, papers with a relevance higher than zero were further analyzed in order to determine the following attributes:
+
+\begin{itemize}
+    \item Motivation and goals
+    \item Data source
+    \item Prediction method
+    \item Geographical extent
+    \item Time interval
+    \item Validation method
+    \item Validation, or performance metrics
+\end{itemize}
+
+In this literature review, the primary search engine used was \textit{Scopus}\footnote{\url{https://www.scopus.com/}} as it seemed to return the best search results without an excess of less relevant papers that was returned by other search engines such as \textit{ScienceDirect}\footnote{\url{https://sciencedirect.com}} and \textit{Google Scholar}\footnote{\url{https://scholar.google.com}}. Furthermore, the chosen search query was also ran on the \acrshort{NTNU} university library \textit{Oria}\footnote{\url{http://ntnu.oria.no/}} in order to find overlap and additional results not found by \textit{Scopus}.
+
+\subsubsection{Search query and filters}
+
+The objective of the literature review was to conduct a broad search detecting papers related to multiple relevant topics such as \textit{vessel destination prediction}, \textit{vessel trajectory prediction}, \textit{vessel availability forecasting}, and \textit{maritime logistics}. Therefore, the search query used in the literature review was designed to find papers within multiple topics and was derived at from testing multiple queries on multiple search engines.
+
+For instance, the following queries were tested using the search engine provided by \textit{ScienceDirect}:
+
+\begin{itemize}
+    \item `vessel trajectory' OR `ship trajectory' resulted in \textbf{421} papers
+    \item ais AND (`vessel trajectory' OR `ship trajectory') resulted in \textbf{150} papers
+    \item ais AND (prediction OR predicting) AND (`vessel trajectory' OR `ship trajectory') resulted in \textbf{108} papers
+\end{itemize}
+
+The above queries returned a large number of papers relevant to \textit{category 1}, so in order to find more relevant papers, more specific queries were also tested:
 
 \begin{itemize}
     \item `vessel destination' OR `ship destination' OR `vessel availability' resulted in \textbf{389} papers
     \item ais AND (`vessel destination' OR `vessel availability') resulted in \textbf{25} papers.
-    \item ais AND (predicting OR forecasting) AND (`vessel destination' OR `vessel availability' OR `ship supply') resulted in \textbf{18} papers out of which only one paper proved relevant within this category.
+    \item ais AND (predicting OR forecasting) AND (`vessel destination' OR `vessel availability' OR `ship supply') resulted in \textbf{18} papers.
 \end{itemize}
 
-From the resulting papers, only two papers were relevant to a degree that was satisfactory to answer the research questions.
+The search terms that seemed to return the most relevant papers was combined into the final query used in the literature review shown in \cref{lst:search_query}.
 
-To find papers relevant to \textit{category 2}, similar queries were run, however, instead of using the terms destination and availability, the term trajectory was used. As an example, using the search engine provided by ScienceDirect\footnotemark[\value{footnote}] had the following results:
+\begin{lstlisting}[
+    caption={Search query used in literature review},
+    label=lst:search_query
+]
+ais AND (
+    predict OR predicting OR forecast OR forecasting
+) AND (
+    vessel OR ship OR maritime
+) AND (
+    destination OR availability OR supply OR trajectory OR logistics
+)
+\end{lstlisting}
 
+Moreover, the following filters was used to limit the search result:
 
+\begin{itemize}
+    \item The paper must be published in the last 5 years.
+    \item The paper must be available in English.
+    \item The paper must be available using the access rights provided by \acrshort{ntnu}.
+\end{itemize}
 
+As already mentioned, the search query was ran on the search engine \textit{Scopus}, thus the search query and filters was modified to the search engine's format as shown in \cref{lst:search_query_scopus}.
+
+\begin{lstlisting}[
+    caption={Search query used in Scopus including filters},
+    label=lst:search_query_scopus
+]
+TITLE-ABS-KEY (
+    ais AND (
+        prediction OR predicting OR forecast OR forecasting
+    ) AND (
+        vessel OR ship OR maritime
+    ) AND (
+        destination OR availability OR supply OR trajectory OR logistics
+    )
+) AND PUBYEAR > 2014 AND (
+    LIMIT-TO ( DOCTYPE , "cp" ) OR
+    LIMIT-TO ( DOCTYPE , "ar" ) OR
+    LIMIT-TO ( DOCTYPE , "re" ) OR
+    LIMIT-TO ( DOCTYPE , "ch" ) OR
+    LIMIT-TO ( DOCTYPE , "Undefined" )
+) AND ( EXCLUDE ( SUBJAREA , "MEDI" ) )
+\end{lstlisting}
+
+\subsubsection{Results}
+
+The defined search query returned a total of \textbf{80} papers from the \textit{Scopus} search library and \textbf{22} from \textit{Oria} where out of which \textbf{7} papers did not overlap with results from \textit{Scopus}. These \textbf{87} papers formed the basis of the literature review.
+
+The papers were evaluated based on the level of relevance as defined in \cref{sec:lit_review}. Out of the \textbf{80} papers, \textbf{49} fell within \textit{category 0}, \textbf{32} within \textit{category 1}, and \textbf{6} within \textit{category 2}.
+
+The large number of irrelevant papers resulted from the broadness of the query that was designed to find results in multiple topic areas. Furthermore, there were some papers that was medical in nature but not labeled correctly in \textit{Scopus} and was returned as the term \acrshort{ais} is also an acronym of \textit{Arterial Ischemic Stroke}. Some papers were also not publicly available but was not excluded by the search, while other papers were deemed irrelevant as they concerned topics such as mapping fishing areas in a specific region, power and performance predictions using \acrshort{ais} data, or high level discussions of potential applications of \acrshort{ais} data analysis.
+
+The large number of papers within \textit{category 1} further confirms the general trend of \acrshort{ais} -based predictions as the primary goal of most of the resulting papers were to predict future positions of vessels within a shorter time intervals for the purpose of either safety and navigation or anomaly detection. None of the papers within \textit{category 1} seemed applicable to predict vessel destination ports at a global scale, however, for reproducibility, all papers with a relevancy of \textit{1} are listed in \todo{APPENDIX}.
 
 % most relevant papers collected from literature review
 \begin{table}[tbp]
@@ -41,6 +119,45 @@ To find papers relevant to \textit{category 2}, similar queries were run, howeve
     ]{
         csvtables/most_relevant.csv
     }{}{\csvlinetotablerow}
-    \label{tab:most_relevant_papers}
-    \caption{Papers collected from literature review with relevant geographical and time limitations}
+\caption{Papers collected from literature review with relevant geographical and time limitations}\label{tab:most_relevant_papers}
 \end{table}
+
+The remaining \textbf{}6 papers (listed in \cref{tab:most_relevant_papers}) were deemed relevant enough to further analyze in order to answer the research questions defined in \cref{sec:research_questions}. In addition, \cite{lechtenberg2019}, which was discovered during the process of testing queries, was also included in the analysis as it seemed highly relevant toward availability forecasting, but did not appear when using the two search engines in the final review.
+
+
+\todo{copied from RPP}
+\paragraphheader{RQ 1: What prediction methods can be used to predict vessel availability?}
+
+\cite{lechtenberg2019} used a combination of several prediction methods in order to predict vessels’ next destination region, estimated time of arrival (ETA), and anchor time (AT) within regions. For predicting the next destination region the \textit{Markov Decision Process} was used as there are a limited number of possible regions (44) that a vessel can travel to. For the ETA and AT predictions, an \textit{XGBoost} method was applied. However, the extent of the regions was not disclosed, and although it was explained that port frequencies were used to determine regional availability, the accuracy of port frequencies was also not disclosed.
+
+\paragraphheader{RQ 2: What prediction methods can be used to predict vessel destinations?}
+
+\cite{ZHANG2020102729} was the second paper found which fitted within \textit{category 1}, and used a random forest approach to compare a given vessel’s current trajectory with all historical trajectories from the same departure port. They also used port frequency to normalize the results. In this way, they managed to achieve good results by combining both methods for predicting port destinations as well as city destinations. This method was unique as it considers multiple aspects of vessel voyages compared to the other methods.\\
+
+\paragraphheader{RQ 2A: What type of data did they rely on?}
+
+All of the aforementioned methods relied on historical AIS data collected by a combination of satellite and land-based base stations. \cite{ZHANG2020102729} also relied on an extensive port data base consisting of over \textbf{10 000} ports.
+
+\paragraphheader{RQ 2B: How much depth of the data was relevant to the results?}
+
+\cite{ZHANG2020102729} exclusively relied on the navigational data supplied by the AIS protocol. The navigational part of the AIS protocol includes coordinates, speed over ground (SOG), rate of turn (ROT), course over ground (COG), and more. Furthermore, \cite{ZHANG2020102729} also considered port frequencies, however, this frequency is deducted from the navigational part of the AIS data. Similarly, \cite{lechtenberg2019} also used port frequencies to predict regional availability, ETA, and AT. As already mentioned in \cref{sec:problem_desc}, destination and ETA values are included in the AIS protocol, however, as they are manually inputted by crew members they are not accurate. This is reflected in the existing literature as none of the aforementioned methods takes these values into consideration. Thus, it seems that all the relevant research ultimately only considers the navigational part of the AIS protocol for future predictions.
+
+\paragraphheader{RQ 2C: How successful were they at predicting vessel destinations?}
+
+\cite{lechtenberg2019} claims a \textit{98\%} accuracy when it comes to predicting a vessel’s next region, however, this value is presumed to vary depending on the size of the regions which is not disclosed in the paper. \cite{ZHANG2020102729} claims to have achieved a \textit{66.57\%} accuracy level for port-based predictions and \textit{81.65\%} accuracy for city-based predictions. As there is very little research that directly concerns predicting port or region destinations it is hard to establish a general accuracy of the state of the art. The closest assumption would be around \textit{70\%} for port predictions and \textit{98\%} for region predictions.
+
+\paragraphheader{RQ 2D: How applicable were they toward predicting vessel availability?}
+
+\cite{lechtenberg2019} was directly applicable and applied toward predicting vessel availability with a global set of regions. \cite{ZHANG2020102729} was not directly applied to forecast availability although it shows a very promising and generic method of predicting vessel’s future destinations unrestricted from time intervals or geographical areas. It is therefore very applicable toward predicting availability if applied to a global set of vessels. The rest of the aforementioned papers does not seem applicable toward availability if not combined with other methods that enable them to give accurate predictions globally.
+
+\paragraphheader{RQ 3: How can the quality of the prediction methods be ensured?}
+
+\cite{lechtenberg2019} does not go very in-depth on this topic, however, the paper mentions dividing the data into \textit{90\%} training data and \textit{10\%} test data. The accuracy metric is taken from how much of the test data was accurate. \cite{ZHANG2020102729} did an extensive evaluation of their method including the five-folder cross-validation method to ensure the model is not over-fitted. This process includes dividing the data into five “folders” and using one folder at a time for evaluation and the others for training. If the general accuracy does not vary much across the evaluation folders, the model is not overfitted.
+
+\paragraphheader{RQ 3A: What metrics, or measurements, are used to establish quality?}
+
+It seems that accuracy is the main measurement used to establish quality. Furthermore, \cite{lechtenberg2019} mentions using both the “mean absolute error” (MAE) and the “root mean square error” (RMSE) as quality indicators. \cite{ZHANG2020102729} mainly uses “average prediction distance error” (APDE) as their quality indicator which is based on the distance between the predicted trajectory and the actual trajectory.
+
+\paragraphheader{RQ 4: How extensive is the impact of considering segmentation for prediction methods?}
+
+None of the papers found within the research areas considers any type of segmentation of vessels. It is, therefore, impossible to answer this research question based on the current state of the art of the problem area.
