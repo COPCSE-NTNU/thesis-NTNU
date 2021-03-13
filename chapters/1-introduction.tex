@@ -1,66 +1,68 @@
 \chapter{Introduction}
 
-This report functions as a project plan for an upcoming Master’s thesis to be written in the autumn semester of 2021. The author of the thesis is currently attending the Master’s degree named “Master in Applied Computer Science” and has a prior Bachelor’s degree in Programming (Applications), both attended at NTNU Gjøvik. The thesis will be written in collaboration with the maritime tech startup company called Maritime Optima AS where the author is also employed as a part-time developer.
+\todo{Preface}
+
+This report serves as a Master's thesis in Applied Computer Science at \acrfull{ntnu} written in the spring semester of 2021. It explores topics surrounding vessel destination prediction for the purpose of maritime logistics. The author of the thesis has a prior Bachelor’s degree in Programming (Applications) from \acrshort{ntnu}, and the thesis was conducted in collaboration with the maritime technology startup company called \acrfull{mo} where the author is currently employed  as a part-time developer.
+
 
 \section{Topics covered by project}
 
-The shipping industry is an industry where it is still common to use non-digital methods of gathering information and making decisions such as emails, phone calls, and personal expertise. Furthermore, interested parties within the industry rely on predicting the market in order to make favorable decisions and investments. The most important factors impacting the market are cargo demand, and vessel supply (\cref{fig:maritime_economics}). Moreover, since 2004, the International Maritime Organization (IMO) initiated the automated identification system (AIS) protocol and requires all commercial and passenger vessels over 299 gross tonnages (GT) to carry an AIS transponder. This AIS data includes information about the vessel’s position, dimensions, and intended destination making it a prime source for overviewing the current state of a large number of vessels as well as providing a data source for future vessel destination predictions.
-
-\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
-    \centering
-    \includegraphics[width=.89\textwidth]{figures/investment_cycle}
-    \caption{Vessel supply’s impact on the market and investment cycles \parencite{stopford2008}}
-    \label{fig:maritime_economics}
-\end{figure}
-
-The thesis will focus on the research area of maritime vessel destination prediction using established machine learning methods based on historical AIS data. The main purpose of this research is to investigate the possibility of applying prediction methods to a global scale in order to forecast the global vessel supply, or availability, within regions and shipping ports. Applications include supporting ship charterers and operators in their decision-making process and thus improving their ability to optimize their ROI of a portfolio of vessels.
+The topics covered by this project mainly include applying computer science techniques to the problem of predicting maritime vessel's future destinations and voyage patterns to aid different actors in the shipping industry in their daily decision making processes. More specifically, the thesis focuses on the aspect of using \acrfull{ml} techniques with different sources of vessel information such as \acrfull{ais}, voyage patterns, and detailed information about specific vessels. The goal of the thesis is to establish a high-quality, general prediction method not restricted by geographical extent or specific time intervals, and to discuss possible applications and value of the model in the current state of the art of the shipping industry.
 
 \section{Keywords}
 
-AIS data, vessel destination prediction, supply forecasting, machine learning, maritime logistics
+AIS data, vessel destination prediction, vessel supply, machine learning, maritime logistics
 
 \section{Problem description}
 \label{sec:problem_desc}
 
-A problem with the current methods used in the shipping industry is that they require manual labor to gather and analyze data. On the other hand, AIS data is plentiful and sufficient for overviewing and forecasting the future state of vessel supply by considering the geographical positions and trajectories of vessels. However, even though the AIS protocol includes attributes for the next destination port and estimated time of arrival (ETA), this information is manually inputted by the crew members of the vessel, and is therefore not standardized and is often exposed to human error either in regards to format or misinformation such as wrong, missing, or outdated information. Therefore, in order to take advantage of AIS data, prediction methods, therefore, only consider geographical information that is automated and accurate. However, since geographical information is considered the best information for vessel predictions, other aspects such as the type and dimensions of the vessel have been overlooked in existing methods limiting them in terms of general accuracy. This thesis will explore the advantages of considering this additional information for vessel destination prediction methods.
+The current methods used in the shipping industry normally require extensive manual labor to gather data for analysis. The industry is still prone to using non-digital methods and external services to provide relevant information about vessel supply and traveling patterns. Most actors in the industry heavily rely on predicting the market in order to make smart decisions resulting in beneficial investments. In order to predict the market the most important factors are cargo demand and vessel availability. % (\cref{fig:maritime_economics})
+
+% \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+%     \centering
+%     \includegraphics[width=.89\textwidth]{figures/investment_cycle}
+%     \caption{Vessel supply’s impact on the market and investment cycles \parencite{stopford2008}}
+%     \label{fig:maritime_economics}
+% \end{figure}
+
+
+Furthermore, the data used to make such predictions are generally considered proprietary in the industry which is hesitant to share information. However, in recent years, sources of vessel information has become more available through the \acrshort{ais} standard that provides information such as vessel positions, navigational statuses, and manually inputted voyage information. In 2004, the \acrfull{imo} initiated the \acrshort{ais} protocol which all commercial vessels over 299 \acrfull{gt} is required to use. This provides a plentiful source of information applicable toward analysis of vessel availability on a global scale.
+
+Although the \acrshort{ais} protocol contains voyage information such as intended destination port and estimated time of arrival (ETA), since this information is manually inputted by the crew members, it is not standardized and often prone to human error in regards to either format or misinformation. \cite{mestl2016} claims the accuracy of this information to be as low as 4\% in certain areas. In order to use \acrshort{ais} data, existing prediction methods, therefore only consider the geographical information that is automated thus mostly accurate similar to that of GPS\@. On the other hand, other aspects such as vessel type, dimensions, and draft, have extensively been overlooked in such methods limiting them in terms of accuracy when applied to a general range of vessels. Therefore, this thesis proposes an approach that takes advantage of a broader range of vessel information in order to make more reliable vessel destination predictions.
 
 \section{Justifications, motivation, and benefits}
 \label{section:justifications_motivations_benefits}
 
-The topic of vessel destination prediction using historical AIS data has already been researched as there has been a steady growth of availability of AIS data. There has been a considerable amount of research done into predicting future vessel positions in a short time interval, but little research into using historical AIS data to forecast vessel availability. A paper published at the Hamburg International Conference of Logistics (HICL) in 2019 claims: \textit{“Regarding the forecast of ship-supply so far --- to the best of our knowledge --- no research has investigated possibilities to predict the number of available ships in a certain region of interest.”} (\cite{lechtenberg2019}) which indicates that this a problem area which has not been explored much. Furthermore, as mentioned in the previous section, the existing methods seem to be lacking in terms of data depth only considering the vessels’ geographical positions and trajectories, while not considering the dimensions and type of the vessels.
+The shipping industry is a vast industry that affects the entire world in some manner. It is generally believed to be responsible for \textit{90\%} of all world trade \parencite{grote2016} but is also a massive contributor to global air pollution which negatively affects the environment \parencite{zheng2016:online}. These factors creates a large space of innovation in terms of optimization as even small improvements on voyage routes and traveling patterns can have huge implications on both revenue and environmental impact.
 
-\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
-    \centering
-    \includegraphics[width=.89\textwidth]{figures/segment_map}
-    \caption{Maritime Optima’s segmentation of vessels where yellow vessels are smaller than reds}
-    \label{fig:segment_map}
-\end{figure}
+Although there already has been some research into vessel destination and trajectory predictions, the current literature seems to focus on smaller scale predictions often considering topics such as collision avoidance and anomaly detection. Furthermore, as already mentioned, they extensively overlook specific vessel details in favor of analysing the geographical information provided by \acrshort{ais}. Although there exists some research into more general predictions such as forecasting availability of vessels, this area has been less explored. The paper~\cite{lechtenberg2019} which was published at the Hamburg International Conference of Logistics (HICL) in 2019 claims: \textit{“Regarding the forecast of ship-supply so far --- to the best of our knowledge --- no research has investigated possibilities to predict the number of available ships in a certain region of interest.”} which further indicates the lack of research in this area.
 
-The collaborative company Maritime Optima AS has implemented a method of dividing vessels into segments and subsegments (categories and sub-categories). \cref{fig:segment_map} shows the differences in route patterns between different sub-segments (colored from yellow to red relevant to the dimensions of the vessels) for dry cargo vessels. Considering this information in the prediction methods can be a novel approach to the problem area. Maritime Optima has also expressed the novelty of this problem area through thorough competitor analysis and claims that providing accurate predictions is of high value for their customers is a factor that can improve their decision making and investments. Furthermore, the author of the thesis has been employed at Maritime Optima since the founding of the company and has been contributing to the development of their digital platform ever since. These factors combined are the main motivating factors behind this thesis.
+Furthermore, the collaborative company \acrfull{mo} provides \acrshort{ais} data in a highly available format and has already employed systems that can detect vessel arrivals and departures from a global set of shipping ports. This enables the thesis to focus more on analysis and applications rather than data collection and validation. Lastly, the thesis author has been employed at \acrshort{mo} since the founding of the company and has been contributing to the development of their digital platform ever since. These factors combined are the main motivating factors behind this thesis.
+
+% \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+%     \centering
+%     \includegraphics[width=.89\textwidth]{figures/segment_map}
+%     \caption{Maritime Optima’s segmentation of vessels where yellow vessels are smaller than reds}
+%     \label{fig:segment_map}
+% \end{figure}
+%
+% The collaborative company Maritime Optima AS has implemented a method of dividing vessels into segments and subsegments (categories and sub-categories). \cref{fig:segment_map} shows the differences in route patterns between different sub-segments (colored from yellow to red relevant to the dimensions of the vessels) for dry cargo vessels. Considering this information in the prediction methods can be a novel approach to the problem area. Maritime Optima has also expressed the novelty of this problem area through thorough competitor analysis and claims that providing accurate predictions is of high value for their customers is a factor that can improve their decision making and investments.
 
 \section{Research questions}
 \label{sec:research_questions}
 
+The main research question the thesis aims to answer is \textit{"How can \acrshort{ais} data combined with specific vessel details be applied to predict future destinations of maritime vessels?"}. In order successfully answer the main research question more sub-questions are to be answered. The full list of research questions are defined as follows:
 
 \begin{enumerate}
-    \item What prediction methods can be used to predict vessel availability?
+    \item How can \acrshort{ais} data combined with specific vessel details be applied to predict future destinations of maritime vessels?
+    \begin{enumerate}
     \item What prediction methods can be used to predict vessel destinations?
-    \begin{enumerate}
-        \item What type of data did they rely on?
-        \item How much depth of the data was relevant to the results?
-        \item How successful were they at predicting vessel destinations?
-        \item How applicable were they toward predicting vessel availability?
+    \item What information can be used to predict vessel destinations?
+    \item How extensive are existing prediction methods?
+    \item How can the validity of the prediction methods be ensured?
     \end{enumerate}
-    \item How can the quality of the prediction methods be ensured?
-    \begin{enumerate}
-        \item What metrics, or measurements, are used to establish quality?
-    \end{enumerate}
-    \item How extensive is the impact of considering segmentation for prediction methods?
 \end{enumerate}
 
 \section{Planned contributions}
 
-The main contribution of the thesis will consist of extending and improving existing prediction models by increasing the depth of the data with Maritime Optima’s novel segmentation of vessels. Considering the time limitations of the thesis, this is the most important aspect to explore in the thesis. The second contribution of the thesis will include extending the scale of the prediction methods by applying it to Maritime Optima’s global set of vessels in order to forecast availability, and supply, for regions and ports. Both areas are little-explored topics and this will, therefore, contribute to the state of the art of the existing literature.
-
-
-Another important goal of the research is also to establish a foundation that can easily be further improved upon by continuing to add more data attributes from either the AIS protocol or external sources such as Maritime Optima’s extensive vessel database, or user-supplied information.
+The main contribution of the thesis consists of proposing a generally applicable, global vessel destination prediction method that exceeds existing works' limitations on geographical and time-related extent as well as taking advantage of a broader range of specific vessel details in order to achieve a higher general accuracy for any type of vessel. Implicitly, this method should provide a foundation that can easily be extended by adding more attributes about vessels or voyages to further explore their impact on predictions. Lastly, the thesis aims to explain the implications and value of such predictions in the shipping industry with insight from real actors in the industry.
