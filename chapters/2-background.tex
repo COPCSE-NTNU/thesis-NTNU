@@ -24,12 +24,24 @@ The collaborative company \acrfull{mo} has implemented a system for categorising
     \label{fig:segment_map}
 \end{figure}
 
+Moreover, \acrshort{mo} also has extensive vessel details for every vessel structured as a questionnaire in their product. This vast questionnaire contains information and fields from a combination of standards in the industry such as Q88\footnote{\url{https://corp.q88.com/}}. Data for the questionnaire is also collected from a number of external sources such as IHS Merkit\footnote{\url{https://ihsmarkit.com/index.html}} and DNV\footnote{\url{https://www.dnv.com/}}. Users of \acrshort{mo} also have the possibilty of suggesting changes to a public version of this questionnaire for any vessel. These changes are verified by \acrshort{mo} and published if the information proves accurate. This detailed description of vessels provides creates big potential for data analysis and a potential \acrshort{ml} model that is highly aware of specific vessels which ultimately may affect its traveling patterns.
+
 
 \section{Trajectory similarity}
 
-As will be further elaborated on in \cref{chap:related_work}, the current literature related to vessel destination predictions almost exclusively rely on some form of trajectory similarity. Therefore, trajectory similarity is also included in this thesis' proposed approach to vessel destination prediction. There are three main categories of trajectory similarity measurements: spatial, temporal and tempo-spatial. Regarding vessel trajectories derived from \acrshort{ais}, they are not likely to share similar time intervals values as vessels travel at different speeds and at different times, therefore, for the purpose of this thesis, only spatial trajectory similarity measures are considered. This assumption is further corroborated by \cite{ZHANG2020102729} which arrived at a similar conclusion in their work to develop a \acrfull{ml} -based approach to trajectory similarity measurements.
+As will be further elaborated on in \cref{chap:related_work}, the current literature related to vessel destination predictions almost exclusively rely on some form of trajectory similarity. Therefore, trajectory similarity is also included in this thesis' proposed approach to vessel destination prediction. There are three main categories of trajectory similarity measurements: spatial, temporal and tempo-spatial. Regarding vessel trajectories derived from \acrshort{ais}, they are not likely to share similar time intervals values as vessels travel at different speeds and at different times, therefore, for the purpose of this thesis, only spatial trajectory similarity measures are considered. This assumption is further corroborated by \cite{ZHANG2020102729} that arrived at a similar conclusion in their work developing a \acrfull{ml} -based approach to trajectory similarity measurements.
 
+There are a number of spatial trajectory comparison methods that have been widely used for different purposes. The most relevant are the Hausdorff distance \parencite{magdy2015}, Fréchet distance \parencite{magdy2015}, and \acrfull{sspd} \parencite{besse2015review}. Out of these, the \acrshort{sspd} method is the most appropriate as it handles trajectories of different shapes and lengths well which is beneficial when comparing a trajectory from an ongoing vessel voyage to a set of complete historical ones. \cref{fig:sspd} shows an example from \cite{besse2015review} where two trajectories are compared and their symmetric distances are calculated.
 
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/sspd}
+    \caption{SPD in the SSPD process of comparing two different trajectories \parencite{besse2015review}}
+    \label{fig:sspd}
+\end{figure}
 
+The methods mentioned thus far are all algorithmic approaches to measuring similarities between trajectories, however, there are also \acrshort{ml}-based methods as well such as the approach proposed in \cite{ZHANG2020102729} that also compares their results to the aforementioned methods. For similar purposes, some clustering methods have also been applied such as the \acrfull{dbscan} which is capable of sequentially finding patterns in points and trajectories.
 
 \section{Machine learning (ML)}
+
+\acrfull{ml} is an umbrella term describing...
