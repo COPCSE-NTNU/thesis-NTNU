@@ -4,7 +4,7 @@
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
-    \includegraphics[width=1.0\textwidth]{figures/ais_positions}
+    \includegraphics[width=1.0\textwidth]{figures/ais_history}
     \caption{Vessel positions derived from 200 million AIS positional reports}
     \label{fig:ais_positions}
 \end{figure}
@@ -31,8 +31,6 @@ Moreover, \acrshort{mo} also has extensive vessel details for every vessel struc
 
 As will be further elaborated on in \cref{chap:related_work}, the current literature related to vessel destination predictions almost exclusively rely on some form of trajectory similarity. Therefore, trajectory similarity is also included in this thesis' proposed approach to vessel destination prediction. There are three main categories of trajectory similarity measurements: spatial, temporal and tempo-spatial. Regarding vessel trajectories derived from \acrshort{ais}, they are not likely to share similar time intervals values as vessels travel at different speeds and at different times, therefore, for the purpose of this thesis, only spatial trajectory similarity measures are considered. This assumption is further corroborated by \cite{ZHANG2020102729} that arrived at a similar conclusion in their work developing a \acrfull{ml} -based approach to trajectory similarity measurements.
 
-There are a number of spatial trajectory comparison methods that have been widely used for different purposes. The most relevant are the Hausdorff distance \parencite{magdy2015}, Fréchet distance \parencite{magdy2015}, and \acrfull{sspd} \parencite{besse2015review}. Out of these, the \acrshort{sspd} method is the most appropriate as it handles trajectories of different shapes and lengths well which is beneficial when comparing a trajectory from an ongoing vessel voyage to a set of complete historical ones. \cref{fig:sspd} shows an example from \cite{besse2015review} where two trajectories are compared and their symmetric distances are calculated.
-
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
     \includegraphics[width=0.5\textwidth]{figures/sspd}
@@ -40,8 +38,10 @@ There are a number of spatial trajectory comparison methods that have been widel
     \label{fig:sspd}
 \end{figure}
 
+There are a number of spatial trajectory comparison methods that have been widely used for different purposes. The most relevant are the Hausdorff distance \parencite{magdy2015}, Fréchet distance \parencite{magdy2015}, and \acrfull{sspd} \parencite{besse2015review}. Out of these, the \acrshort{sspd} method is the most appropriate as it handles trajectories of different shapes and lengths well which is beneficial when comparing a trajectory from an ongoing vessel voyage to a set of complete historical ones. \cref{fig:sspd} shows an example from \cite{besse2015review} where two trajectories are compared and their symmetric distances are calculated.
+
 The methods mentioned thus far are all algorithmic approaches to measuring similarities between trajectories, however, there are also \acrshort{ml}-based methods as well such as the approach proposed in \cite{ZHANG2020102729} that also compares their results to the aforementioned methods. They used a \acrfull{rf} to measure similarities between a traveling trajectory and every historical trajectory traveling from the same departure port in order to predict the next destination port for a vessel. They achieved a higher general accuracy when compared to algorithmic methods such as \acrshort{sspd}. Moreover, for similar purposes, some unsupervised clustering methods have also been applied to similar problems such as the \acrfull{dbscan} which is capable of sequentially finding patterns in points and trajectories. This approach is more frequently used in trajectory predictions on a small geographical extent such as for collision detection and anomaly detection.
 
 \section{Machine learning (ML)}
 
-\acrfull{ml} is an umbrella term describing...
+\acrfull{ml} is an umbrella term describing computer algorithms that automatically adapt and improve based on experience. There is a vast number of different \acrshort{ml} algorithms applied to different problem areas. \acrshort{ml} is mainly divided into three broad categories: supervised learning, unsupervised learning, and reinforcement learning. In supervised learning, in the training process, both input and desired output is provided to the model. The model finds patterns and correlations between input and output data during the training process, and when the model is trained, or fitted, it is capable of guessing output given only input. In unsupervised learning, no output labels are provided to the model leaving the model to find patterns in the input set on its own. Clustering is an example of unsupervised learning as the model finds and labels patterns in input data without any external guidance. Reinforcement learning is a dynamic approach to \acrshort{ml} where the model continuously learns while trying to achieve a goal. In this method, the model navigates a problem space and the program rewards or punishes the model that tries to optimize for rewards. In regards to topics covered by this thesis, \acrshort{ml}-based trajectory comparisons involve unsupervised learning, while predicting destination ports is supervised as the historical destinations are known.
