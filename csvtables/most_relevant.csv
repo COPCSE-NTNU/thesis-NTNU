@@ -1,5 +1,5 @@
 Paper,Goal,Prediction method,Geographical scale,Time scale
 {\cite{karata_2020}},{Predicting arrival port, time and next position based on trajectory},{LSTM, RNN, DBSCAN, K-NN},large region,any
-{\cite{ZHANG2020102729}},Voyage predictions based on trajectories and frequencies of ports,DBSCAN clustering with Random forest predictions,global,any
+{\cite{Zhang2020AISApproach}},Voyage predictions based on trajectories and frequencies of ports,DBSCAN clustering with Random forest predictions,global,any
 {\cite{rocsa_2018}},Predicting arrival times and destinations of vessels as contribution to the ACM DEBS 2018 Grand Challenge,Nearest neighbour search from reported destination port,large region,any
 {\cite{bachar_2018}},Predicting arrival times and destinations of vessels as contribution to the ACM DEBS 2018 Grand Challenge,The Venilia model based on Markov predictive models,large region,any
