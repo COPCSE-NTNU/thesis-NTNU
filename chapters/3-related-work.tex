@@ -127,11 +127,11 @@ The large number of papers within \textit{category 1} further confirms the gener
     \begin{tabular}{p{0.6in} p{0.8in} p{0.75in} p{0.6in} p{0.5in} p{0.8in} p{0.8in}}
     \hline
     \bfseries{Paper} & \bfseries{Goal} & \bfseries{Pred.\ method} & \bfseries{Geo-extent} & \bfseries{Time frame} & \bfseries{Validation} & \bfseries{Metrics} \\ \hline
-        \cite{Karatas2020TrajectoryData} & arrival port, arrival time, and next position prediction based on trajectories & LSTM RNN, DBSCAN, K-NN & medium, tested on single region & medium & 10-fold cross validation & accuracy, f1-score, precision, recall \\ \hline
+        \cite{Karatas2020TrajectoryData} & arrival port, arrival time, and next position prediction based on trajectories & LSTM RNN, DBSCAN, K-NN & large, tested regionally & large & 10-fold cross validation & accuracy, f1-score, precision, recall \\ \hline
         \cite{Zhang2020AISApproach} & Destination prediction based on trajectories and port frequencies & Random forest, DBSCAN & global & any & 5-folder cross validation, comparison with other models & port accuracy, city accuracy, MAE, mean distance error \\ \hline
-        \cite{Rosca2018GrandRoutes} & predicting arrival times and destinations of vessels & nearest neighbor search on trajectories & global & any & hyperparam. selection by genetic algorithm, train / test data split & general accuracy \\ \hline
-        \cite{Bachar2018GrandDestination} & predicting arrival times and destinations of vessels & venilia based on markov predictive models & global & any & train / test data split (details lacking) & mean distance error for ETA, general accuracy for destination \\ \hline
-        \cite{Dobrkovic2018MaritimeData} & longer term predictions of vessel arrival times & genetic algorithm clustering & medium, tested on single region & medium & case study testing, parameter testing, and simulation & general accuracy, extraction quality, execution time \\ \hline
+        \cite{Rosca2018GrandRoutes} & predicting arrival times and destinations of vessels & nearest neighbor search on trajectories & large, tested regionally & large & hyperparam. selection by genetic algorithm, train / test data split & general accuracy \\ \hline
+        \cite{Bachar2018GrandDestination} & predicting arrival times and destinations of vessels & venilia based on markov predictive models & large, tested regionally & large & train / test data split (details lacking) & mean distance error for ETA, general accuracy for destination \\ \hline
+        \cite{Dobrkovic2018MaritimeData} & longer term predictions of vessel arrival times & genetic algorithm clustering & large, tested regionally & large & case study testing, parameter testing, and simulation & general accuracy, extraction quality, execution time \\ \hline
     \end{tabular}
 \caption{Papers collected from literature review with relevant geographical and time limitations}\label{tab:most_relevant_papers}
 \end{table}
