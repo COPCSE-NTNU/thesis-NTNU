@@ -1,1 +1,51 @@
 \chapter{Discussion}
+
+\section{Summary}
+
+\section{Data architecture}
+
+\begin{itemize}
+    \item Scalability, availability. PostGreSQL DB structure advantages/disadvantages
+    \item Trajectory definitions, full voyages vs port-to-port voyages
+\end{itemize}
+
+\subsection{Trajectory sampling}
+
+\begin{itemize}
+    \item Benefits of sampling.
+    \item Different approaches to sampling.
+\end{itemize}
+
+\section{ML training structure}
+
+\begin{itemize}
+    \item MSTD
+    \item Dataset imbalance
+\end{itemize}
+
+\section{ML-based destination prediction}
+
+\begin{itemize}
+    \item Performance
+    \item Weaknesses/limitations
+    \item Dataset vs real life
+\end{itemize}
+
+\section{Real-life applications}
+
+\begin{itemize}
+    \item What is the value of this solution
+    \item What can it be used for
+    \item Is this something that contributes to the industry as well as academia
+    \item Value for MO. future applications and integrations in MO's product (teasers)
+\end{itemize}
+
+\section{Limitations and future work}
+
+\begin{itemize}
+    \item Voyage definition - anchoring, bunkering
+    \item AIS navigational status is manual input, can we better claim that a vessel has arrived/departed a port?
+    \item MSTD - trajectory similarity measurement. Zhang et al. achieved better results using RF than SSPD.
+    \item Improving the model by adding more features such as weather, seasons, ballast/laden, \ldots more?
+    \item Implementing at large scale providing on-demand predictions and availability
+\end{itemize}

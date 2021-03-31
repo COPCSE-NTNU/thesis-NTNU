@@ -1,6 +1,10 @@
 \chapter{Methodology}
 
-\section{Processed dataset used for analysis}
+\todo{Brief overview over the approach}
+
+\section{Dataset used in analysis}
+
+\todo{Add flowchart over DB structure}
 
 \subsection{Vessel position history}
 
@@ -11,19 +15,91 @@
     \item Visualization ?
 \end{itemize}
 
+MO-AIS-DB => IMO, MMSI mapping => positional validation => ML-DB
+
 \subsection{Vessel transitions}
 
  - A direct copy of MO's
- 
- \subsection{Ports}
- 
+
+\subsection{Ports}
+
  - A direct copy of MO's "visible" ports
- 
- \subsection{Segments}
- 
+
+\subsection{Segments}
+
  - A direct copy of MO's
- 
- \subsection{Transition voyages}
- 
- \subsection{Clustered voyages}
- 
+
+
+\section{Vessel voyage definition}
+
+\begin{itemize}
+    \item Transitions
+    \item (Clustering)
+\end{itemize}
+
+
+\subsection{Transition voyages}
+
+\begin{itemize}
+    \item Extracting departure=>arrival times grouped by vessels, ordered by time
+    \item Finding position reports between each timestamp for given vessel
+    \item Constructing trajectory (3D trajectory with timestamps)
+    \item Validating trajectory, noise filtering
+\end{itemize}
+
+\section{Machine Learning (ML) data preparation}
+
+\subsection{Trajectory sampling}
+
+\begin{itemize}
+    \item Why? How?
+    \item Sampling based on distance
+    \item Sampling based on time
+\end{itemize}
+
+\subsection{ML training structure}
+
+\begin{itemize}
+    \item Batch calculating MSTD
+    \item Different trajectory similarity approaches
+    \item Adding more data attributes per voyage such as seasons, ballast/laden, etc\ldots
+    \item Final result/structure
+\end{itemize}
+
+\subsection{Dataset imbalance}
+
+\begin{itemize}
+    \item Minority oversampling
+    \item Majority undersampling
+\end{itemize}
+
+\subsection{Categorical label encoding}
+
+\begin{itemize}
+    \item Categorical values/labels must be encoded
+    \item Label encoding vs one-hot encoding
+\end{itemize}
+
+\section{ML-based training and destination prediction}
+
+\subsection{Model selection}
+
+\begin{itemize}
+    \item Tree-based classifiers
+    \item Multi-layered perceptrons classifiers
+    \item Support-vector machines
+    \item Multi-class classifiers vs OneVsRest binary classifiers
+\end{itemize}
+
+\subsection{Configuration and parameter optimization}
+
+\subsection{Training}
+
+\subsection{Evaluation process and metrics}
+
+\begin{itemize}
+    \item X-Folder-cross-validation
+    \item Metrics: F1, precission, recall, AUC, vs accuracy
+    \item Computing performance?
+    \item How fast is it to compute the next destination of every vessel in the world
+\end{itemize}
