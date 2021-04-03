@@ -87,7 +87,7 @@ Moreover, the following filters were used to limit the search result:
     \item The paper must be available with the publisher subscriptions provided by \acrshort{ntnu}.
 \end{itemize}
 
-As already mentioned, the search query was run on the search engine \textit{Scopus}, thus the search query and filters were modified to the search engine's format as shown in \cref{lst:search_query_scopus}.
+The search query was first run on the search engine \textit{Scopus}, thus the search query and filters were modified to the search engine's format as shown in \cref{lst:search_query_scopus}.
 
 \begin{lstlisting}[
     caption={Search query used in Scopus including filters},
@@ -112,7 +112,7 @@ TITLE-ABS-KEY (
 
 \subsection{Results}
 
-Using the aforementioned search libraries, the defined search query returned a total of \textbf{109} papers. After removing the overlapping results from the different search engines there were a total of \textbf{89} unique papers that formed the foundation of the literature review.
+Using the aforementioned (\cref{sec:lit_review}) search libraries, the defined search query returned a total of \textbf{109} papers. After removing the overlapping results from the different search engines there were a total of \textbf{89} unique papers that formed the foundation of the literature review.
 
 \todo{update numbers}
 First, the papers were evaluated based on the level of relevance as defined in \cref{sec:lit_review}. Out of the \textbf{89} papers, \textbf{49} fell within \textit{category 0}, \textbf{32} within \textit{category 1}, and \textbf{6} within \textit{category 2}.
@@ -124,7 +124,7 @@ The large number of papers within \textit{category 1} further confirms the gener
 % most relevant papers collected from literature review
 \begin{table}[htbp]
     \centering
-    \begin{tabular}{p{0.6in} p{0.8in} p{0.75in} p{0.6in} p{0.5in} p{0.8in} p{0.8in}}
+    \begin{tabular}{p{0.6in} p{0.8in} p{0.75in} p{0.6in} p{0.4in} p{0.8in} p{0.7in}}
     \hline
     \bfseries{Paper} & \bfseries{Goal} & \bfseries{Pred.\ method} & \bfseries{Geo-extent} & \bfseries{Time frame} & \bfseries{Validation} & \bfseries{Metrics} \\ \hline
         \cite{Karatas2020TrajectoryData} & arrival port, arrival time, and next position prediction based on trajectories & LSTM RNN, DBSCAN, K-NN & large, tested regionally & large & 10-fold cross validation & accuracy, f1-score, precision, recall \\ \hline

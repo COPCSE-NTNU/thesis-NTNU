@@ -57,7 +57,17 @@ MO-AIS-DB => IMO, MMSI mapping => positional validation => ML-DB
     \item Sampling based on time
 \end{itemize}
 
-\subsection{ML training structure}
+\subsection{\acrfull{mstd}}
+
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/mstd}
+    \caption{Example of \acrshort{mstd} for a given historical trajectory where the red line is the given trajectory and the green line is the most similar historical trajectory.}
+    \label{fig:mstd}
+\end{figure}
+
+
+\subsection{Building ML data training set}
 
 \begin{itemize}
     \item Batch calculating MSTD

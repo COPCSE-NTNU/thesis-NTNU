@@ -36,7 +36,7 @@ Although the \acrshort{ais} protocol contains voyage information such as intende
 
 The shipping industry is a vast industry that affects the entire world in some manner. It is generally believed to be responsible for \textit{90\%} of all world trade \parencite{grote2016} but is also a massive contributor to global air pollution which negatively affects the environment \parencite{zheng2016:online}. These factors leave room for innovation in terms of optimization as even small improvements on voyage routes and traveling patterns can have huge implications on both revenue and environmental impact.
 
-Although there already has been some research into vessel destination and trajectory predictions, the current literature seems to focus on smaller-scale predictions often considering topics such as collision avoidance and anomaly detection. Furthermore, as already mentioned, they extensively overlook specific vessel details in favor of analyzing the geographical information provided by \acrshort{ais}. Although there exists some research into more general predictions such as forecasting the availability of vessels, this area has been less explored. The paper~\cite{lechtenberg2019} which was presented at the Hamburg International Conference of Logistics (HICL) in 2019 claims: \textit{“Regarding the forecast of ship-supply so far --- to the best of our knowledge --- no research has investigated possibilities to predict the number of available ships in a certain region of interest.”} which further indicates the lack of research in this area.
+Although there already has been some research into vessel destination and trajectory predictions, the current literature seems to focus on smaller-scale predictions often considering topics such as collision avoidance and anomaly detection. Furthermore, as mentioned in \cref{sec:problem_desc}, they extensively overlook specific vessel details in favor of analyzing the geographical information provided by \acrshort{ais}. Although there exists some research into more general predictions such as forecasting the availability of vessels, this area has been less explored. The paper~\cite{lechtenberg2019} which was presented at the Hamburg International Conference of Logistics (HICL) in 2019 claims: \textit{“Regarding the forecast of ship-supply so far --- to the best of our knowledge --- no research has investigated possibilities to predict the number of available ships in a certain region of interest.”} which further indicates the lack of research in this area.
 
 Furthermore, the collaborative company \acrfull{mo} provides \acrshort{ais} data in a highly available format and has already employed systems that can detect vessel arrivals and departures from a global set of shipping ports. This enables the thesis to focus more on analysis and applications rather than data collection and validation. Lastly, the thesis author has been employed at \acrshort{mo} since the founding of the company and has been contributing to the development of their digital platform ever since. These factors combined are the main motivating factors behind this thesis.
 
@@ -60,4 +60,24 @@ The main research question the thesis aims to answer is \textit{"How can \acrsho
 The main contribution of the thesis consists of proposing a generally applicable, global vessel destination prediction method that exceeds existing works' limitations in both geographical and time-related extent as well as taking advantage of a broader range of specific vessel details in order to achieve higher general accuracy for any type of vessel. Implicitly, this method should provide a foundation that can be flexibly extended by adding more attributes about vessels or voyages to further explore their impact on predictions. Lastly, the thesis aims to explain the implications and value of such predictions in the shipping industry with insight from real actors in the industry.
 
 
-CF: There should be an overview of the thesis structure.
+\section{Thesis structure}
+
+\paragraphheader{2. Background (p. X - Y | X number of pages)}
+
+In this section, necessary background knowledge and terminology of the research area is explained in detail. The purpose of this section is to give the reader insight into the topic area in a technical sense as well as in the perspective of the shipping industry.
+
+\paragraphheader{3. Related work (p. X - Y | X number of pages)}
+
+In this section, related work and literature is presented and discussed in the form of a literature review with the purpose of establishing to what extent the current state of the art provides insight into the research questions listed in \cref{sec:research_questions}.
+
+\paragraphheader{4. Methodology (p. X - Y | X number of pages)}
+
+In this section, the proposed method of predicting future vessel destinations is described in detail as well as the development process and findings discovered when arriving at the proposed solution.
+
+\paragraphheader{5. Results (p. X - Y | X number of pages)}
+
+In this section, the results and effectiveness of the proposed method is described in detail. Furthermore, insights and interpretation into the results are gathered from real actors in the shipping industry and described in order to determine the value of the proposed solution.
+
+\paragraphheader{6. Discussion (p. X - Y | X number of pages)}
+
+In this section, a brief summary of the thesis is provided followed by discussions regarding the research area in general, the proposed solution, and possible applications, or impact, on both the topic area and the commercial industry. Finally, limitations and proposed ideas for future work is discussed.

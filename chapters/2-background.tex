@@ -2,6 +2,9 @@
 
 CF: Provide the reader with a bit of a lead up - yes, again. More importantly introduce this section and tell the reader what they are going to read about,e g. technological foundations relevant for the thesis (e.g., AIS), conceptual foundations (e.g., trajectory prediction), and techniques applied throughout the thesis (e.g., ML), etc..
 
+In this section, concepts and terminology relevant to the thesis is explained, mainly, technological foundations such as \acrfull{ais}, conceptual foundations such as \acrshort{ais}-based trajectories and trajectory similarity measurements, and techniques applied to predicting future destination ports of traveling vessels, namely, \acrfull{ml}.
+
+
 \section{Automatic Identification Systems (AIS)}
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
@@ -11,9 +14,9 @@ CF: Provide the reader with a bit of a lead up - yes, again. More importantly in
     \label{fig:ais_positions}
 \end{figure}
 
-As already mentioned in \cref{sec:topics_covered}, \acrfull{ais} was initiated by \acrfull{imo} and since 2004 every commercial and passenger vessel exceeding 299 \acrfull{gt} is required to carry an \acrshort{ais} transmitter. These transmitters broadcasts \acrshort{ais} messages following the \gls{aivdm} protocol. The \gls{aivdm} protocol contains two main types of reports: positional and static. The positional reports contains automatically collected information such as the transmitting vessel's \acrfull{mmsi} number, the current timestamp, and the vessel's current navigational data including the current geographical coordinates, \acrfull{sog}, \acrfull{cog}, true heading, \acrfull{rot}, and more. The static reports contain additional information about the vessel and its current voyage, some of which are manually inputted, such as the vessel's \acrshort{imo} number, name, dimensions, draft, intended destination and \acrfull{eta}. As an example, \cref{fig:ais_positions} shows a visualization of 100 million \acrshort{ais} randomly chosen positional reports from a collection of historical \acrshort{ais} positions for global collection of shipping vessels.
+As already mentioned in \cref{sec:topics_covered}, \acrfull{ais} was initiated by \acrfull{imo} and since 2004 every commercial and passenger vessel exceeding 299 \acrfull{gt} is required to carry an \acrshort{ais} transmitter. These transmitters broadcasts \acrshort{ais} messages following the \gls{aivdm} protocol. The \gls{aivdm} protocol contains two main types of reports: positional and static. The positional reports contains automatically collected information such as the transmitting vessel's \acrfull{mmsi} number, the current timestamp, and the vessel's current navigational data including the current geographical coordinates, \acrfull{sog}, \acrfull{cog}, true heading, \acrfull{rot}, and more. The static reports contain additional information about the vessel and its current voyage, some of which are manually inputted, such as the vessel's \acrshort{imo} number, name, dimensions, draft, intended destination and \acrfull{eta}. As an example, \cref{fig:ais_positions} shows a visualization of 100 million \acrshort{ais} randomly chosen positional reports from a collection of historical \acrshort{ais} positions for global collection of shipping vessels. In relation, the historical \acrshort{ais} dataset used in this thesis consists of more than one billion records ranging from December 2019 to February 2021.
 
-Regarding vessel identification, there are mainly two values that are unique to a given vessel: the \acrshort{mmsi} and \acrshort{imo} numbers. Either of these should be unique on their own for a given vessel, however, \acrshort{mmsi} numbers can be recycled under certain conditions such as when a vessel is put out of commission while the \acrshort{imo} number is specific to a vessel's hull. Therefore, \acrshort{imo} is the preferred identifier, however, since the \gls{aivdm} protocol divides these identifiers into positional and static reports, both need to be considered in order to use both static and positional \acrshort{ais} information.
+Regarding vessel identification in the \gls{aivdm} protocol, there are mainly two values that are unique to a given vessel: the \acrshort{mmsi} and \acrshort{imo} numbers. Either of these should be unique on their own for a given vessel, however, \acrshort{mmsi} numbers can be recycled under certain conditions such as when a vessel is put out of commission while the \acrshort{imo} number is specific to a vessel's hull. Therefore, \acrshort{imo} is the preferred identifier, however, since the \gls{aivdm} protocol divides these identifiers into positional and static reports, both need to be considered in order to use both static and positional \acrshort{ais} information.
 
 \section{Additional vessel information and segmentation}
 
@@ -42,7 +45,7 @@ There are a number of spatial trajectory comparison methods that have been widel
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
     \includegraphics[width=0.5\textwidth]{figures/sspd}
-    \caption{SPD in the SSPD process of comparing two different trajectories \parencite{besse2015review}}
+    \caption{Segment Path Distance (SPD) in the SSPD process of comparing two different trajectories \parencite{besse2015review}}
     \label{fig:sspd}
 \end{figure}
 
@@ -52,7 +55,21 @@ The methods mentioned thus far are all algorithmic approaches to measuring simil
 
 \acrfull{ml} is an umbrella term describing computer algorithms that automatically adapt and improve based on experience. There is a vast number of different \acrshort{ml} algorithms applied to different problem areas. \acrshort{ml} is mainly divided into three broad categories: supervised learning, unsupervised learning, and reinforcement learning. In supervised learning, in the training process, both input and the desired output are provided to the model. The model finds patterns and correlations between input and output data during the training process, and when the model is trained or fitted, it is capable of guessing output given only input. In unsupervised learning, no output labels are provided to the model leaving the model to find patterns in the input set on its own. Clustering is an example of unsupervised learning as the model finds and labels patterns in input data without any external guidance. Reinforcement learning is a dynamic approach to \acrshort{ml} where the model continuously learns while trying to achieve a goal. In this method, the model navigates a problem space, and the program rewards or punishes the model that tries to optimize for rewards. In regards to topics covered by this thesis, \acrshort{ml}-based trajectory comparisons involve unsupervised learning, while predicting destination ports is supervised as the historical destinations are known.
 
-Moreover, supervised learning can further be divided into regression and classification problems. The main difference between the two is that classification aims at predicting a label, or a class, while regression predicts a quantity that is not necessarily present in the training data. For instance, a regression model can be used to predict the price of an item for sale, while classification can be used to label emails as "spam" or "not spam". The example of classifying emails as ``spam'' or ``not spam'' would be considered a binary classification problem as there are only two possible labels, however, classification can also involve predicting more than two outcomes. This is commonly referred to as multi-class classification. In the context of this thesis, predicting a vessel's destination port can be formulated as a multi-class classification problem as every possible destination port are different possible labels for a given voyage in progress.
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/class_regg}
+    \caption{Example showing the difference between classification and regression tasks}
+    \label{fig:classification_regression}
+\end{figure}
+
+Moreover, supervised learning can further be divided into regression and classification problems. The main difference between the two is that classification aims at predicting a label, or a class, while regression predicts a quantity that is not necessarily present in the training data. For instance, a regression model can be used to predict the price of an item for sale, while classification can be used to label emails as "spam" or "not spam". \cref{fig:classification_regression} shows the difference between classification and regression. The example of classifying emails as ``spam'' or ``not spam'' would be considered a binary classification problem as there are only two possible labels, however, classification can also involve predicting more than two outcomes which is commonly referred to as multi-class classification. In the context of this thesis, predicting a vessel's destination port can be formulated as a multi-class classification problem as every possible destination port are different possible labels for a given voyage in progress. \cref{fig:ml_terms} shows the how \acrshort{ml} is hierarchically divided into more specific terms relevant for the scope of this thesis.
+
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/ml-terms}
+    \caption{Machine Learning (ML) hierarchical terminology}
+    \label{fig:ml_terms}
+\end{figure}
 
 \todo{TODO (these could perhaps be explained under method)}
 
