@@ -32,9 +32,9 @@ An overview of the processed described in this section is shown in \cref{fig:dat
     \label{fig:dataset_overview}
 \end{figure}
 
-\subsection{Historical AIS data record}
+\subsection{Positional historical AIS data}
 
-The first step in the dataset processing is to collect a historical set of \acrshort{ais} data. In this thesis, this data is provided by \acrfull{mo} and contains more than 1.5 billion records starting from December 2019 and is continuously collected. In this thesis, circa 1.2 billion records ranging from December 2019 to March 2021 was used for the proposed solution. The historical records were copied in batches from \acrshort{mo}'s database into a separate database used in this thesis in a table called \textit{vessel positions history}. This table contains the following information for each historical record:
+The first step in the dataset processing is to collect a historical set of \acrshort{ais} data. In this thesis, this data is provided by \acrfull{mo} and contains more than 1.5 billion positional records for over 65 000 unique vessels starting from December 2019 and is continuously collected. In this thesis, circa 1.2 billion records ranging from December 2019 to March 2021 was used for the proposed solution. The historical records were copied in batches from \acrshort{mo}'s database into a separate database used in this thesis in a table called \textit{vessel positions history}. This table contains the following relevant attributes for each historical record:
 
 \begin{itemize}
     \item id - a sequential identifier
@@ -48,19 +48,33 @@ In the process of copying data to the dedicated database, each position's coordi
 
 Furthermore, as also mentioned in \cref{sec:ais_data}, \acrshort{imo} numbers and \acrshort{mmsi} numbers are divided up in the positional and static \acrshort{ais} reports. Therefore, \acrhort{mmsi} numbers in positional data must be matched to \acrhort{imo} numbers in the static information (which contains both) to collect both identifiers in the historical \acrshort{ais} database. The \acrshort{imo} identifier is required to extract information such as vessel segments and sub-segments as these are initially constructed using information from static records. Positions transmitted by a \acrshort{mmsi} number that does not map to a known \acrhort{imo} number, or have invalid values for either, are disregarded. The validity of both values can be determined following the \gls{aivdm} protocol which defines how these numbers are constructed and used.
 
+\subsection{Segments}
+
+As described in \cref{sec:vessel_info_segments}, vessel segmentation values are additional attributes that indicate a vessel's type, dimensions, and capacity. These labels are thought to provide insight into traveling patterns of vessels. Thus, this information is important for this thesis' proposed solution. \acrshort{mo} has vessel segmentation information for every unique vessel collected by \acrshort{ais} data. This information is collected and stored in the dedicated database in a table called \textit{vessel segments}. This table contains information per vessel and has the following relevant attributes:
+
+\begin{itemize}
+    \item imo - the \acrshort{imo} number of the vessel.
+    \item segment - the vessel's segment value, e.g. \textit{dry bulk}, \textit{tanker}, \textit{chemical}, etc\ldots
+    \item sub-segment - the vessel's sub-segment value, e.g., \textit{mini bulker}, \textit{handysize}, \textit{panamax}, etc\ldots
+\end{itemize}
+
+Finally, it is worth noting that some vessels can function as two different types of vessels such as tanker vessels that also functions as chemical transport vessels. These ``combo'' vessels contains multiple entries in the segmentation database table for each of the function it serves. However, they also contain a dedicated entry where the segment value is ``combo'' which can have a specific range of sub-segments. For analysis, it is more practical to assume that every vessel only has one segment and one sub-segment, therefore, for combo vessels, only the combo segment and sub-segment is considered.
+
+\subsection{Ports}
+
+Next, the traveling vessel's departure and arrival port are required to predict vessels' future destinations, as destinations are defined ports. \acrhort{mo} has an extensive port database containing more than 5600 ports. From sources such as UNECE it is possible to find a vast number of ports, however, only a sub-set of the worlds known ports are used as they are considered relevant shipping ports. The process of determining what ports are relevant shipping ports is a continuous manual process in \acrshort{mo} but it ensures that the available selection of ports is highly relevant for the industry. Furthermore, all ports are identified by their \gls{locode}. This is a five-letter unique identifier provided and managed by the United Nations (UN). In the five-letter code, the first two indicate the port's country of origin, while the three last indicate a more specific location within the origin country. As an example, the \gls{locode} for the port of Oslo is \texttt{NOOSL} where ``NO'' stands for Norway, and ``OSL'' stands for Oslo. For comparison, a similar system is used for international airports.
+
+For this thesis, only the 5600 relevant ports are considered for the analysis, and these are also stored in the dedicated database, in a table called ``ports''. This table contains the following relevant attributes:
+
+\begin{itemize}
+    \item locode - the port's unique identifier following the \gls{locode} protocol.
+    \item position - the port's geographical coordinates specified in the Mercator projection.
+    \item name - a text value for the name of the port.
+\end{itemize}
 
 \subsection{Vessel transitions}
 
  - A direct copy of MO's
-
-\subsection{Ports}
-
- - A direct copy of MO's "visible" ports
-
-\subsection{Segments}
-
- - A direct copy of MO's
-
 
 \section{Vessel voyage definition}
 
