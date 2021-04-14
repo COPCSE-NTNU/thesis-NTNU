@@ -2,39 +2,13 @@
 
 In this section, the methodology of the proposed solution is explained in detail. This section is divided into sequential subsections that each descibe a step in the process used to arrive at the proposed dataset, the formulation of the analytical problem to be solved, and the \acrfull{ml} related data preparation, training, and evaluation.
 
-\todo{Perhaps move this to later sub section, or final part of method}
-Given the final trained model, the overall prediction process for a single traveling vessel can be conceptualized using the following steps:
+\section{The initial data foundation}
 
-\begin{itemize}
-    \item The current trajectory of the traveling vessel is collected using \acrshort{ais} records ranging from the last transmitted \textit{``MOORED''} status to its current position along with the id of the departure port where it was moored and the vessel's segmentation values.
-    \item The vessel's trajectory is then sampled based on a predefined time interval, and the sampled trajectory is then compared to every historical outgoing trajectory from the same departure port for vessels of the same segment and sub-segment to establish the \acrfull{mstd}.
-    \item The vessel's segment, sub-segment, departure port, trajectory length, \acrshort{mstd}, and the \acrshort{mstd} similarity value is then passed to a \acrshort{xgb} model that predicts the traveling vessel's arrival port.
-\end{itemize}
-
-
-\section{Dataset used in analysis}
-
-The final process of creating the dataset used in the analysis can be summarized as the following steps:
-
-\begin{itemize}
-    \item Voyages are defined using time intervals provided by the vessels' \acrshort{ais} navigational status. They are constructed and stored in a voyage database table containing the full geographical trajectory, arrival and departure ports, and additional information for the traveling vessel.
-    \item The voyage table's geographical trajectories are sampled, or simplified, based on a certain time interval to make trajecotory comparisons easier.
-    \item Every sampled historical trajectory is split into multiple parts to emulate incomplete voyage, not yet arrived at a port. Furthermore, the \acrshort{mstd} is calculated for every one of these voyages. Trajectory similarity is defined using the \acrshort{sspd} algorithm, however, this data is interchangable with other similarity measurements.
-    \item Finally, the \acrshort{mstd}, similarity value, trajectory length, departure and arrival ports, and vessel segmentation information is collected and stored as the \acrshort{ml} training data.
-\end{itemize}
-
-An overview of the processed described in this section is shown in \cref{fig:dataset_overview} from the data provided by \acrfull{mo} to the final \acrshort{ml} training data.
-
-\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/dataset_overview}
-    \caption{Overview of the process used to construct the dataset used in further analysis and \acrshort{ml}.}
-    \label{fig:dataset_overview}
-\end{figure}
+This section describes the initial dataset used in the proposed solution which is later processed and used to train a \acrshort{ml} model for predictions. This data foundation is provided to the author by \acrfull{mo}.
 
 \subsection{Positional historical AIS data}
 
-The first step in the dataset processing is to collect a historical set of \acrshort{ais} data. In this thesis, this data is provided by \acrfull{mo} and contains more than 1.5 billion positional records for over 65 000 unique vessels starting from December 2019 and is continuously collected. In this thesis, circa 1.2 billion records ranging from December 2019 to March 2021 was used for the proposed solution. The historical records were copied in batches from \acrshort{mo}'s database into a separate database used in this thesis in a table called \textit{vessel positions history}. This table contains the following relevant attributes for each historical record:
+The first step in the dataset processing is to collect a historical set of \acrshort{ais} data. In this thesis, this data provided by \acrshort{mo} contains more than 1.5 billion positional records for over 65 000 unique vessels starting from December 2019 and is continuously collected. In this thesis, circa 1.2 billion records ranging from December 2019 to March 2021 was used for the proposed solution. The historical records were copied in batches from \acrshort{mo}'s database into a separate database used in this thesis in a table called \textit{vessel positions history}. This table contains the following relevant attributes for each historical record:
 
 \begin{itemize}
     \item id - a sequential identifier
@@ -46,7 +20,7 @@ The first step in the dataset processing is to collect a historical set of \acrs
 
 In the process of copying data to the dedicated database, each position's coordinate is validated by ensuring that it follows the bounds its projection, i.e., that the longitude value is between -180, and 180 degrees, and the latitude is between -90, and 90 degrees. If a coordinate has invalid values, it is disregarded. Furthermore, positions that lie exactly on the north and south bounds, or exactly at coordinates \textit{(180, 90)} and \textit{(-180, -90)} are also disregarded as these positions are impossible places to navigate but is still frequently seen in the database. \cref{fig:ais_positions} in \cref{sec:ais_data} shows a visualization of an extract of 100 million records from the historical \acrshort{ais} database which shows the extent of the collected positions.
 
-Furthermore, as also mentioned in \cref{sec:ais_data}, \acrshort{imo} numbers and \acrshort{mmsi} numbers are divided up in the positional and static \acrshort{ais} reports. Therefore, \acrhort{mmsi} numbers in positional data must be matched to \acrhort{imo} numbers in the static information (which contains both) to collect both identifiers in the historical \acrshort{ais} database. The \acrshort{imo} identifier is required to extract information such as vessel segments and sub-segments as these are initially constructed using information from static records. Positions transmitted by a \acrshort{mmsi} number that does not map to a known \acrhort{imo} number, or have invalid values for either, are disregarded. The validity of both values can be determined following the \gls{aivdm} protocol which defines how these numbers are constructed and used.
+Furthermore, as also mentioned in \cref{sec:ais_data}, \acrshort{imo} numbers and \acrshort{mmsi} numbers are divided up in the positional and static \acrshort{ais} reports. Therefore, \acrshort{mmsi} numbers in positional data must be matched to \acrshort{imo} numbers in the static information (which contains both) to collect both identifiers in the historical \acrshort{ais} database. The \acrshort{imo} identifier is required to extract information such as vessel segments and sub-segments as these are initially constructed using information from static records. Positions transmitted by a \acrshort{mmsi} number that does not map to a known \acrshort{imo} number, or have invalid values for either, are disregarded. The validity of both values can be determined following the \gls{aivdm} protocol which defines how these numbers are constructed and used.
 
 \subsection{Segments}
 
@@ -62,7 +36,7 @@ Finally, it is worth noting that some vessels can function as two different type
 
 \subsection{Ports}
 
-Next, the traveling vessel's departure and arrival port are required to predict vessels' future destinations, as destinations are defined ports. \acrhort{mo} has an extensive port database containing more than 5600 ports. From sources such as UNECE it is possible to find a vast number of ports, however, only a sub-set of the worlds known ports are used as they are considered relevant shipping ports. The process of determining what ports are relevant shipping ports is a continuous manual process in \acrshort{mo} but it ensures that the available selection of ports is highly relevant for the industry. Furthermore, all ports are identified by their \gls{locode}. This is a five-letter unique identifier provided and managed by the United Nations (UN). In the five-letter code, the first two indicate the port's country of origin, while the three last indicate a more specific location within the origin country. As an example, the \gls{locode} for the port of Oslo is \texttt{NOOSL} where ``NO'' stands for Norway, and ``OSL'' stands for Oslo. For comparison, a similar system is used for international airports.
+Next, the traveling vessel's departure and arrival port are required to predict vessels' future destinations, as destinations are defined ports. \acrshort{mo} has an extensive port database containing more than 5600 ports. From sources such as UNECE it is possible to find a vast number of ports, however, only a sub-set of the worlds known ports are used as they are considered relevant shipping ports. The process of determining what ports are relevant shipping ports is a continuous manual process in \acrshort{mo} but it ensures that the available selection of ports is highly relevant for the industry. Furthermore, all ports are identified by their \gls{locode}. This is a five-letter unique identifier provided and managed by the United Nations (UN). In the five-letter code, the first two indicate the port's country of origin, while the three last indicate a more specific location within the origin country. As an example, the \gls{locode} for the port of Oslo is \texttt{NOOSL} where ``NO'' stands for Norway, and ``OSL'' stands for Oslo. For comparison, a similar system is used for international airports.
 
 For this thesis, only the 5600 relevant ports are considered for the analysis, and these are also stored in the dedicated database, in a table called ``ports''. This table contains the following relevant attributes:
 
@@ -136,6 +110,27 @@ For this thesis, only the 5600 relevant ports are considered for the analysis, a
     \item Label encoding vs one-hot encoding
 \end{itemize}
 
+\section{The final dataset summary}
+
+The final process of creating the dataset used in the analysis can be summarized in the following steps:
+
+\begin{itemize}
+    \item Voyages are defined using time intervals provided by the vessels' \acrshort{ais} navigational status. They are constructed and stored in a voyage database table containing the full geographical trajectory, arrival and departure ports, and additional information for the traveling vessel.
+    \item The voyage table's geographical trajectories are sampled, or simplified, based on a certain time interval to make trajecotory comparisons easier.
+    \item Every sampled historical trajectory is split into multiple parts to emulate incomplete voyage, not yet arrived at a port. Furthermore, the \acrshort{mstd} is calculated for every one of these voyages. Trajectory similarity is defined using the \acrshort{sspd} algorithm, however, this data is interchangable with other similarity measurements.
+    \item Finally, the \acrshort{mstd}, similarity value, trajectory length, departure and arrival ports, and vessel segmentation information is collected and stored as the \acrshort{ml} training data.
+\end{itemize}
+
+An overview of the processed described in this chapter thus far is shown in \cref{fig:dataset_overview} from the data provided by \acrfull{mo} to the final \acrshort{ml} training data.
+
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/dataset_overview}
+    \caption{Overview of the process used to construct the dataset used in further analysis and \acrshort{ml}.}
+    \label{fig:dataset_overview}
+\end{figure}
+
+
 \section{ML-based training and destination prediction}
 
 \subsection{Model selection}
@@ -158,4 +153,14 @@ For this thesis, only the 5600 relevant ports are considered for the analysis, a
     \item Metrics: F1, precission, recall, AUC, vs accuracy
     \item Computing performance?
     \item How fast is it to compute the next destination of every vessel in the world
+\end{itemize}
+
+\section{Prediction overview}
+
+Given the final trained model, the overall prediction process for a single traveling vessel can be conceptualized using the following steps:
+
+\begin{itemize}
+    \item The current trajectory of the traveling vessel is collected using \acrshort{ais} records ranging from the last transmitted \textit{``MOORED''} status to its current position along with the id of the departure port where it was moored and the vessel's segmentation values.
+    \item The vessel's trajectory is then sampled based on a predefined time interval, and the sampled trajectory is then compared to every historical outgoing trajectory from the same departure port for vessels of the same segment and sub-segment to establish the \acrfull{mstd}.
+    \item The vessel's segment, sub-segment, departure port, trajectory length, \acrshort{mstd}, and the \acrshort{mstd} similarity value is then passed to a \acrshort{xgb} model that predicts the traveling vessel's arrival port.
 \end{itemize}
