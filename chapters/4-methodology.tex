@@ -1,21 +1,53 @@
 \chapter{Methodology}
 
-\todo{Brief overview over the approach}
+In this section, the methodology of the proposed solution is explained in detail. This section is divided into sequential subsections that each descibe a step in the process used to arrive at the proposed dataset, the formulation of the analytical problem to be solved, and the \acrfull{ml} related data preparation, training, and evaluation.
+
+\todo{Perhaps move this to later sub section, or final part of method}
+Given the final trained model, the overall prediction process for a single traveling vessel can be conceptualized using the following steps:
+
+\begin{itemize}
+    \item The current trajectory of the traveling vessel is collected using \acrshort{ais} records ranging from the last transmitted \textit{``MOORED''} status to its current position along with the id of the departure port where it was moored and the vessel's segmentation values.
+    \item The vessel's trajectory is then sampled based on a predefined time interval, and the sampled trajectory is then compared to every historical outgoing trajectory from the same departure port for vessels of the same segment and sub-segment to establish the \acrfull{mstd}.
+    \item The vessel's segment, sub-segment, departure port, trajectory length, \acrshort{mstd}, and the \acrshort{mstd} similarity value is then passed to a \acrshort{xgb} model that predicts the traveling vessel's arrival port.
+\end{itemize}
+
 
 \section{Dataset used in analysis}
 
-\todo{Add flowchart over DB structure}
-
-\subsection{Vessel position history}
+The final process of creating the dataset used in the analysis can be summarized as the following steps:
 
 \begin{itemize}
-    \item Validated on geographical coordinates
-    \item Validated on MMSI -> IMO mapping and valid values
-    \item Filtered from 1 billion to 450 million etc...
-    \item Visualization ?
+    \item Voyages are defined using time intervals provided by the vessels' \acrshort{ais} navigational status. They are constructed and stored in a voyage database table containing the full geographical trajectory, arrival and departure ports, and additional information for the traveling vessel.
+    \item The voyage table's geographical trajectories are sampled, or simplified, based on a certain time interval to make trajecotory comparisons easier.
+    \item Every sampled historical trajectory is split into multiple parts to emulate incomplete voyage, not yet arrived at a port. Furthermore, the \acrshort{mstd} is calculated for every one of these voyages. Trajectory similarity is defined using the \acrshort{sspd} algorithm, however, this data is interchangable with other similarity measurements.
+    \item Finally, the \acrshort{mstd}, similarity value, trajectory length, departure and arrival ports, and vessel segmentation information is collected and stored as the \acrshort{ml} training data.
 \end{itemize}
 
-MO-AIS-DB => IMO, MMSI mapping => positional validation => ML-DB
+An overview of the processed described in this section is shown in \cref{fig:dataset_overview} from the data provided by \acrfull{mo} to the final \acrshort{ml} training data.
+
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/dataset_overview}
+    \caption{Overview of the process used to construct the dataset used in further analysis and \acrshort{ml}.}
+    \label{fig:dataset_overview}
+\end{figure}
+
+\subsection{Historical AIS data record}
+
+The first step in the dataset processing is to collect a historical set of \acrshort{ais} data. In this thesis, this data is provided by \acrfull{mo} and contains more than 1.5 billion records starting from December 2019 and is continuously collected. In this thesis, circa 1.2 billion records ranging from December 2019 to March 2021 was used for the proposed solution. The historical records were copied in batches from \acrshort{mo}'s database into a separate database used in this thesis in a table called \textit{vessel positions history}. This table contains the following information for each historical record:
+
+\begin{itemize}
+    \item id - a sequential identifier
+    \item imo - the \acrshort{imo} number of the vessel that transmitted the position.
+    \item mmsi - the \acrshort{mmsi} number of the vessel that transmitted the position.
+    \item position - a geographical coordinate of the vessel in the \textit{Mercator} projection.
+    \item timestamp - the unix timestamp (seconds since Unix Epoch) of when the position was transmitted by the vessel.
+\end{itemize}
+
+In the process of copying data to the dedicated database, each position's coordinate is validated by ensuring that it follows the bounds its projection, i.e., that the longitude value is between -180, and 180 degrees, and the latitude is between -90, and 90 degrees. If a coordinate has invalid values, it is disregarded. Furthermore, positions that lie exactly on the north and south bounds, or exactly at coordinates \textit{(180, 90)} and \textit{(-180, -90)} are also disregarded as these positions are impossible places to navigate but is still frequently seen in the database. \cref{fig:ais_positions} in \cref{sec:ais_data} shows a visualization of an extract of 100 million records from the historical \acrshort{ais} database which shows the extent of the collected positions.
+
+Furthermore, as also mentioned in \cref{sec:ais_data}, \acrshort{imo} numbers and \acrshort{mmsi} numbers are divided up in the positional and static \acrshort{ais} reports. Therefore, \acrhort{mmsi} numbers in positional data must be matched to \acrhort{imo} numbers in the static information (which contains both) to collect both identifiers in the historical \acrshort{ais} database. The \acrshort{imo} identifier is required to extract information such as vessel segments and sub-segments as these are initially constructed using information from static records. Positions transmitted by a \acrshort{mmsi} number that does not map to a known \acrhort{imo} number, or have invalid values for either, are disregarded. The validity of both values can be determined following the \gls{aivdm} protocol which defines how these numbers are constructed and used.
+
 
 \subsection{Vessel transitions}
 
