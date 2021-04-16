@@ -2,9 +2,21 @@
 
 In this section, the methodology of the proposed solution is explained in detail. This section is divided into sequential subsections that each descibe a step in the process used to arrive at the proposed dataset, the formulation of the analytical problem to be solved, and the \acrfull{ml} related data preparation, training, and evaluation.
 
-\section{The initial data foundation}
+\section{General approach overview}
 
-This section describes the initial dataset used in the proposed solution which is later processed and used to train a \acrshort{ml} model for predictions. This data foundation is provided to the author by \acrfull{mo}.
+Based on the findings from the literature review conducted in \cref{sec:lit_review}, it is clear that the existing work is limited in terms of a general and global prediction solution for vessel destination ports. Thus, this thesis proposes a method that is able to predict vessels' future destination ports using a combination of positional data from the \gls{aivdm} protocol and vessel segmentation values. This is an important objective of the thesis as no related studies seem to take additional vessel information into account. The proposed solution is not restricted by specific geographical regions nor time intervals and should form a foundation of which it is possible to extend with more features, or data attributes, regarding the traveling vessels and voyages. The method of developing the proposed solution can be divided into the following steps:
+
+\begin{enumerate}
+    \item Construct voyages and trajectories using a voyage definition derived from the departure and arrival detection described in \cref{sec:vessel_transitions}.
+    \item Sample, or simplify, the trajectories to make them more comparable using vessel similarity measurement methods.
+    \item Calculate the \acrfull{mstd} and the similarity value for every voyage's trajectory.
+    \item Collect the historical data attributes to be used for \acrfull{ml} including departure and arrival ports, vessel segmentation values, \acrshort{mstd} values, and trajectory lengths.
+    \item Train a \acrshort{ml} model to predict the arrival ports of voyages using the dataset constructed.
+\end{enumerate}
+
+\section{The initial data processing}
+
+This section describes the initial dataset used in the proposed solution which is later processed and used to train a \acrshort{ml} model for predictions. This data foundation is provided to the author by \acrfull{mo}. Moreover, for this thesis, data used in the analysis is stored in a separate, dedicated PostGreSQL database also hosted in \acrshort{mo}'s cloud computing environment.
 
 \subsection{Positional historical AIS data}
 
@@ -36,9 +48,7 @@ Finally, it is worth noting that some vessels can function as two different type
 
 \subsection{Ports}
 
-Next, the traveling vessel's departure and arrival port are required to predict vessels' future destinations, as destinations are defined ports. \acrshort{mo} has an extensive port database containing more than 5600 ports. From sources such as UNECE it is possible to find a vast number of ports, however, only a sub-set of the worlds known ports are used as they are considered relevant shipping ports. The process of determining what ports are relevant shipping ports is a continuous manual process in \acrshort{mo} but it ensures that the available selection of ports is highly relevant for the industry. Furthermore, all ports are identified by their \gls{locode}. This is a five-letter unique identifier provided and managed by the United Nations (UN). In the five-letter code, the first two indicate the port's country of origin, while the three last indicate a more specific location within the origin country. As an example, the \gls{locode} for the port of Oslo is \texttt{NOOSL} where ``NO'' stands for Norway, and ``OSL'' stands for Oslo. For comparison, a similar system is used for international airports.
-
-For this thesis, only the 5600 relevant ports are considered for the analysis, and these are also stored in the dedicated database, in a table called ``ports''. This table contains the following relevant attributes:
+Next, the traveling vessel's departure and arrival port are required to predict vessels' future destinations, as destinations are defined ports. As already described in \cref{sec:shipping_ports}, \acrshort{mo} has a large number of ports available in a port database out of which around 5600 are considered relevant for the shipping industry. For this thesis, only these 5600 relevant ports are considered for the analysis, thus, these are also stored in the dedicated database in a table called ``ports''. This table contains the following relevant attributes:
 
 \begin{itemize}
     \item locode - the port's unique identifier following the \gls{locode} protocol.
@@ -48,7 +58,23 @@ For this thesis, only the 5600 relevant ports are considered for the analysis, a
 
 \subsection{Vessel transitions}
 
- - A direct copy of MO's
+As described in \cref{sec:vessel_transitions}, vessel transitions are historical events where a vessel's \acrshort{ais} navigational status transitions from a status indicating that it is moving to the status ``MOORED'' and vice versa. These events are mapped geographically to the closest known port within a 25 kilometer radius, thus, vessel transitions provide a historical record of port arrivals and departures. \acrshort{mo} has more information available in their transition data, however, only vessel arrival and departure data is of relevance to the proposed solution. The relevant data is stored in the dedicated database as a table called \textit{vessel transitions}. This table contains vessel identifiers, the event's mapped port, the Unix timestamp of when the event occurred, and the transition type indicating whether the vessel arrived or departed. \cref{tab:vessel_transitions_example} shows an example extract from the transitions data for a single vessel. It shows that when sorted by time, the events follow a pattern of sequential arrival and departures from different ports.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{p{0.7in} p{0.9in} p{1in} p{1in} p{0.65in}}
+    \hline
+    \bfseries{IMO} & \bfseries{MMSI} & \bfseries{Transition} & \bfseries{Timestamp} & \bfseries{Port Code} \\ \hline
+        9824083 & 538008866 & ARRIVAL   & 1595383670 & KRONS \\ \hline
+        9824083 & 538008866 & DEPARTURE & 1596177702 & KRONS \\ \hline
+        9824083 & 538008866 & ARRIVAL   & 1599869735 & BRITQ \\ \hline
+        9824083 & 538008866 & DEPARTURE & 1600002777 & BRITQ \\ \hline
+        9824083 & 538008866 & ARRIVAL   & 1603942962 & CNZNG \\ \hline
+        9824083 & 538008866 & DEPARTURE & 1604191770 & CNZNG \\ \hline
+    \end{tabular}
+\caption{Example rows for a single vessel in the vessel transitions table}
+\label{tab:vessel_transitions_example}
+\end{table}
 
 \section{Vessel voyage definition}
 
@@ -56,7 +82,6 @@ For this thesis, only the 5600 relevant ports are considered for the analysis, a
     \item Transitions
     \item (Clustering)
 \end{itemize}
-
 
 \subsection{Transition voyages}
 
@@ -67,7 +92,7 @@ For this thesis, only the 5600 relevant ports are considered for the analysis, a
     \item Validating trajectory, noise filtering
 \end{itemize}
 
-\section{Machine Learning (ML) data preparation}
+\section{Data processing for \acrfull{ml}}
 
 \subsection{Trajectory sampling}
 
@@ -78,6 +103,8 @@ For this thesis, only the 5600 relevant ports are considered for the analysis, a
 \end{itemize}
 
 \subsection{\acrfull{mstd}}
+
+For the proposed solution to take both geographical trajectories and additional vessel information into account for predictions, in the final model, the trajectories have been abstracted into the categorical and numeric values \acrshort{mstd}, the similarity value for the \acrshort{mstd}, and then length of the trajectory.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
@@ -155,12 +182,12 @@ An overview of the processed described in this chapter thus far is shown in \cre
     \item How fast is it to compute the next destination of every vessel in the world
 \end{itemize}
 
-\section{Prediction overview}
+\section{Vessel destination prediction method summary}
 
 Given the final trained model, the overall prediction process for a single traveling vessel can be conceptualized using the following steps:
 
 \begin{itemize}
-    \item The current trajectory of the traveling vessel is collected using \acrshort{ais} records ranging from the last transmitted \textit{``MOORED''} status to its current position along with the id of the departure port where it was moored and the vessel's segmentation values.
-    \item The vessel's trajectory is then sampled based on a predefined time interval, and the sampled trajectory is then compared to every historical outgoing trajectory from the same departure port for vessels of the same segment and sub-segment to establish the \acrfull{mstd}.
+    \item The current trajectory of the traveling vessel is collected using \acrshort{ais} records ranging from the last transmitted \textit{``MOORED''} status to its current position along with the id (\gls{locode}) of the departure port where it was moored and the vessel's segmentation values.
+    \item The vessel's trajectory is then sampled based on a predefined time interval, then compared to every historical outgoing trajectory from the same departure port from vessels of the same segment and sub-segment to establish the \acrfull{mstd}.
     \item The vessel's segment, sub-segment, departure port, trajectory length, \acrshort{mstd}, and the \acrshort{mstd} similarity value is then passed to a \acrshort{xgb} model that predicts the traveling vessel's arrival port.
 \end{itemize}
