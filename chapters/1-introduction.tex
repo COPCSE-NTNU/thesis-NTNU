@@ -1,7 +1,311 @@
 \chapter{Introduction}
 
+On the background in traffic modelling
+Problemstilling: 
+The present paper aims at examining the connection between to modelling paradigms for traffic flows. It has been established that there exist a connection between microscopic follow-the-leader (FtL) model and the classic Lighthill and Whitham model, in the so-called many particle limit. FtL models vehicular traffic dynamics using a discrete set of vehicle-driver units that populate and propagate on a unidirectional road. As the number of particles increase and the length of each car decreases in such a way that preserves the total mass, the countable system of ODEs converge to a hyperbolic partial differetial equation, which can be viewed as a certain type of uncountable collection of ODEs. Partial differential equations are a generalisation of ODEs in several dimensions. To be precise, we concern ourselves with the problem of finding pairs (FtL, SCL) such that
+
+\begin{equation}\label{FtL}
+    \frac{dx_n}{dt} = k(x_n)v(1/s_n). -> \rho_t + f(\rho,x)_x = 0,
+\end{equation}
+in some appropriate sense. If such a relation can be established, the microscopic model can be seen as a numerical approximation to the macroscopic approach. The theory behind the two modelling paradigms are very different, and such a connection is of independent interest. The motivation behind this approach is to examine This has been done before -> link to papers.
+
+pairs of the (FtL,This has been shown in several papers, for example. This papers examines a particular (FtL) model on the form, 
+The complete dynamics of each unit $x_n$ is governed an ordinary differential equation, depending on the bumper-to-bumper distance $s_n$ of the closest leading vehicle. Where $k(x)$ can be any suitably chosen smooth function.  [HelgePaper] shows that 
+
+ach These can be the bumper-to-bumper distance of proceding cars, the speed of the driver unit in the presence of a speed and so on. limit and varying other factors depending on the situation and complexity of the model. One model of intereset is the simple (X) model,
+For finitely many 
+
+\textcite{argall2002rigorous}
+
+The Lighthill and Whitham model takes the form of a scalar conservation law,
+\begin{equation}
+    \rho_t + f(\rho)_x = 0
+\end{equation}
+- Intelligent driver etc. 
+
+For the special system, 
+
+\begin{equation} \label{special inhom SCL}
+    \rho_t + (k(x)f(\rho))_x = 0
+\end{equation}
+where $k \in C^1[\R]$, we derive the entropy condition. Introduce a viscosity solution that satisifies $\rho^{\epsilon}_t + (k(x)f(\rho^{\epsilon}))_x = \epsilon  \frac{\partial^2 \rho^\epsilon}{\partial^2x} $ and consider any convex function $\xi \in C^1$ differentiable a.e. (fact from analysens grunnlag any convex function is differentiable almost everywhere), and multiply by the equation by the $\xi^{'}(\rho^{\epsilon})$. This leads to the equation 
+
+\begin{equation}
+    \xi(\rho^{\epsilon})_t + k(x) \xi^{'}(\rho^{\epsilon}) f^{'}(\rho^{\epsilon})\rho^{\epsilon}_x + k^{'}(\rho^{\epsilon})(x)\xi^{'}f(\rho^{\epsilon}) = \epsilon \xi^{\rho}(\rho^{\epsilon}) \frac{\partial^2 \rho^\epsilon}{\partial^2x}. 
+\end{equation}
+Note that $\partial_x(\xi \partial_x \rho) = \xi^{''} \partial_x \rho^2 + \xi^{'}\partial^2_{xx}\rho$ implies that the right hand term is less than $\partial_x(\epsilon \xi(\rho^{\eps}) \partial_x \rho)$. Assume $\epsilon \to 0$, then 
+
+\begin{equation}
+    \xi(u)_t + (k(x)q(u))_x + k^{'}(x)\big( \xi^{'}(\rho^{\epsilon}) f(\rho^{\epsilon})  q(\rho^{\epsilon})\big).
+\end{equation}
+Let $\xi^\delta (u) = \sqrt{(u-k)^2 + \delta^2}$, then $\partial_u \xi^\delta = \frac{u - k}{\sqrt{(u - k}^2 + \delta ^2} \to \sgn(u - k)$ pointwise. By the dominated convergence theorem, 
+where There is done research on the case where 
+
+
+On hyperbolic conservation laws: 
+On conservation laws in their most general form. - Dafermos. 
+On the L1-contractitivty of scalar conservation law. 
+What came before. 
+
+Kruzkow entropy solution, weak solution. 
+
+History of microscopic and macroscopic models: 
+- Two different approaches to traffic modelling are microscopic and macroscopic modelling. Microscopic models are density based and can be derived as continuum equations. Kinetic gass formulation.  These have been studied extensively in recent years. 
+
+- How they differ, central recults. 
+
+The motivation for this notion of admissibility is
+provided by the observation that all the systems of balance laws from Continuum
+Physics encountered in Chapter II are indeed accompanied by some inequality
+in the form (4.3.3) which expresses, explicitly or implicitly, the Second Law of
+thermodynamics. - Dafermos 
+
+\section{Some mathematical definitions}
+Here are some definitions that will be used throughout the thesis. 
+\begin{definition}[Function]
+A function is a rule that assigns to each input value to a unique output value. For sets $X$ and $Y$, we write 
+\begin{equation}
+    f : X \rightarrow Y, 
+\end{equation}
+and say that $f$ denotes the function between $X$ and $Y$. A set is a collection of distinct object. Examples of sets include the set of real numbers, denoted by $\mathscr{R}$, and $\mathscr{R}^n$, the $n$-dimensional euclidean space. \\
+\end{definition}
+
+A class of function that is of interest are continuous functions. Continuity for functions between metric spaces, like $\R$, is most commonly first introduced in the $\epsilon - \delta$-fashion: 
+\begin{definition}[Continuity between metric spaces]
+A function  $f : X \rightarrow Y$ between metric spaces $X$, $Y$ is continuous at $x \in X$ if 
+given $\epsilon > 0 \,\, \exists \,\, \delta > 0 s.t. \forall y \in X$ where
+\begin{equation}
+    d(x,y) < \delta \implies d(f(x),f(y)) < \epsilon.
+\end{equation}
+\end{definition}
+}
+
+Geometrically, for each $\epsilon$ ball around an image point, there exists at least on $\delta-ball$ such that the image of the latter is contained in the former. A continuous function is continuous at every point $x \in X$. The set, or space of continuous functions betweeen $X$ and $Y$ is denoted by $\C(X,Y)$. Let $\Omega \subset \mathscr{R}^n$. One important class is
+
+\begin{equation} \label{C(Rn)}
+     \mathscr{C}(\Omega) := \{f : \Omega \rightarrow \mathscr{R} \,|\, \text{f is a continuous function\}.
+\end{equation}
+If $\Omega$ is compact, a result by SOMEONE, states that every element of $\C$ attains its supremal value, and can be endowed with the supremum norm. Often called the topology of uniform convergence. 
+
+\begin{equation}
+    \norm{f}_\infty = sup_{x \in \Omega} |f(x)|.
+\end{equation}
+By (...), is a banach space, or a complete normed space. 
+
+\begin{align*}
+    \mathscr{C}(\mathscr{R}^n) := \{f : \mathscr{R}^n \rightarrow \mathscr{R} \,|\, \text{f is continuous at every x $\in \mathscr{R}^n$}\}, \\
+    \mathscr{C}^{(k)}(\mathscr{R}^n) := \{f : \mathscr{R}^n \rightarrow \mathscr{R} \,|\, \textit{f is $k$-times continuously differentiable}\} \subset \mathscr{C}(\mathscr{R}^n) \, \forall k \in \mathscr{N}, \\
+    \mathscr{C}^{\infty}(\mathscr{R}^n) := \{f : \mathscr{R}^n \rightarrow \mathscr{R} \,|\, \frac{\partial^{\alpha} f}{\partial^{\alpha} x}\in \mathscr{C}(\mathscr{R}^n) \, \forall \, \alpha \in \mathscr{Z}^n\} = \bigcap_{i=0}^{\infty} \mathscr{C}^{(k)}(\mathscr{R}^n).
+\end{align*}
+There are several equivalent definitions and generalisations of continuity, the standard one being a local definition. 
+USE DEFINITIONS 
+
+Total variation is a measure of how much a function changes. For a function that takes pointwise values, we have the following definition
+
+\begin{definition}[Total variation]
+For a function $f : \R \rightarrow \R$. $\mathscr{P} = \{\{x_0, ..., x_N\} \subset \R$ for $N \in \mathscr{N}$ | $x_0 < x_1 < ... < x_N \}$ is the set of ordered partition of $\R$. For $p \in \mathscr{P}$, define
+\begin{equation}
+    p(f) = \sum_{i=0}^{\vert p\vert -1} |f(x_{i+1}) - f(x_i)|,
+\end{equation}
+where $\vert p \vert$ denotes the cardinality of $p$. 
+\begin{equation}
+    TV(f) := \sup_{p \in \mathscr{P}} p(f),
+\end{equation}
+\end{definition}
+is the total variation of $f$. If supremum does not exist, we say that $TV(f) = \infty$. The space of functions with bounded total variation is denoted $BV(\R)$. This notion of BV can has several extensions to several dimensions. 
+
+\begin{equation}
+TV(f)     
+\end{equation}
+
+\section{Mollifier}
+A smooth approximation to the identity, or mollifier, is a useful tool for creating smooth approximations. A mollifier can be defined as a function which satisfies
+
+\begin{align}
+\phi \ \in \mathscr{C}^{\infty}(\mathscr{R}^n) \\
+\phi \geq 0 
+\text{sup}(\phi) := 
+\end{align}
+
+forklar hvorfor antakelsene er rimelige. hva veivesenet gjør.
+
+\section{Differentiation Identities and Calculus}
+A useful result in the manipulation of differences is splitting of the sum. For any pair of indexed quantities, $x_0, x_1,y_0, y_1$, 
+\begin{equation} \label{disc_diff_part}
+    x_1y_1 - x_0 y_0 = x_1 \left(y_1 - y_0\right) + y_0 \left(x_1 - x_0\right).
+\end{equation}
+This can be generalised to hold over arbitrary sums. Let $x_i, y_i$ for $i \in \{1,...,N\}$, and let $\Delta_+(x_i) = x_{i+1} - x_i$. Then 
+
+\begin{equation} \label{discreteDiffPart}
+    x_{N}y_{N} - x_{1}y_{1} = \sum_{i = 1}^{N-1} x_i \Delta_+(y_i) + \sum_{i = 1}^{N-1} y_{i+1}\Delta_+(x_i).
+\end{equation}
+Expanding the terms on the right yields a telescoping sum. 
+
+For a function differentiable function $f:\mathscr{R} x \mathscr{R} \rightarrow \mathscr{R}$, differentiation is under the integral sign is permitted if $f$ is differentiable with respect to the differentitation variable and integrable with respect to the integration variable,
+
+Leibniz rule is a result for differentiation under the integral sign, for functions $a, b$ and $f$ we have
+
+\begin{equation} \label{LeibRule}
+    \frac{d}{dx}\int_{a(x)}^{b(x)} f(x,t) dt = - f(x,a(x)) \frac{da}{dx} + f(x,b(x)) \frac{db}{dx} + \int_{a(x)}^{b(x)}\frac{\partial f}{\partial x}(x,t) dt. 
+\end{equation}
+Sufficient conditions for \eqref{LeibRule} to hold is that $a, b \in \mathscr{C}^{(1)}(\mathscr{R})}$ and $f \in \mathscr{C}^{(1)}(\mathscr{R}^2)$. CITE RUDIN.  The integral can be understood in Lebesgue sense. 
+
+The Mean-Value formula is a fundamental result in Calculus, and goes as follows. For any $f \in \mathscr{C}([a,b]) \cap \mathscr{C}^{(1)}((a,b))$ we have that 
+
+\begin{equation} \label{MVT}
+    \frac{f(b) - f(a)}{b-a} = \frac{df}{dx}(c)
+\end{equation}
+for some $c \in (a,b)$. 
+
+\begin{}
+
+A generalisation of the mean-value formula for a closed interval $[a,b]$ reads:
+\begin{equation}\label{genMVT}
+    \int_a^bf(x)g(x)dx = f(c) \int_a^b g(x) dx, c \in (a,b), 
+\end{equation}
+where $f \in \mathscr{C}([a,b])$ and $g \in L_1([a,b])$, in the sense of lebesgue measure. 
+
+A Grönwall type estimate.
+\newtheorem{theorem}[T
+heorem]
+
+\begin{theorem}[Da theorem]
+This statement is true, I guess.
+\end{theorem}
+
+\begin{lemma}{A simple Grönwall type estimate}
+\begin{equation}
+\frac{df}{dt} \leq A + B f \Rightarrow f(t) \leq \left( f(0) + \frac{A}{B}\right)e^{B t} - \frac{A}{B}.
+\end{equation}
+\end{Lemma}
+This can be proved using integrating factors and integrating on both sides. 
+\begin{align}
+\frac{df}{dt} &\leq A + B f  \nonumber \\
+\Rightarrow \frac{d \left(f e^{-Bt}\right)}{dt} &\leq A e^{-Bt}\nonumber \\
+\Rightarrow e^{-Bt}f(t) - f(0) &\leq \frac{A}{B}\left(1 - e^{-Bt}\right)\nonumber \\
+\Rightarrow f(t) &\leq \left( f(0) + \frac{A}{B}\right)e^{B t} - \frac{A}{B}. \qed
+\end{align}
+The preceding theorem holds for any absolutely continuous function, in particular it will hold for a Lipshchitz continuous functions. 
+
+Definition of a metric
+
+inverse function theorem
+
+the fundamental theorem of calculus
+
+Proof: 
+
+FUBINIS THEOREM 
+
+In the following I will add a technical result that will prove useful in the discussion of the weak entropy solution
+
+FAST L1 convergers implies convergence almost everywhere and almost uniformly convergernce. 
+
+\begin{}
+
+We can always pick a subsequence to obtain fast L1 convergence, and hence L1 convergence almost everywhere. 
+Note that it does not hold that L1 converegnce implies almost everywhere convergence. But we can always find a subsequence which converges. 
+
+List of assumptions: 
+- k is C2, constant outside of of some ball of finite radius. The total variation of k and k' are bounded. k in L^\infty 
+- V is bi-lipschitz, with the same things holding as in the article. 
+- 
+
+
+the mean value formula 
+
+for example
+Differentiation under the integral sign is 
+
+The corresponding continuous variant is given a
+
+% \begin{cases}
+% \f^{(k)}(x)
+% \end{cases}
+
+
+
+
+$\mathscr{C}$
+smooth with compact support,and therefore their convolution with any element function $f \in \$L_loc(\Omega)$A useful tool for function smoothing and approximation are the mollifier class of functions. The standard mollifier, 
+
+
+Hysteresis?
+
+\section{On the microscopic and macroscopic models}
+The microscopic model is a collection of models that base around the fact that
+\begin{align}
+    \overset{z_{i-1/2}}{\cdot}_{i-1/2} = V\left(\frac{l}{z_{i+1/2} - z_{i-1/2}}\right)
+\end{align}
+was first introduced by pipes [1953], a modification of which will be considered in this assignment. Other variants can be introduced as well. The second order models 
+
+Operate on different kinds of aggregation levels. 
+
+Microscopic models 
+From traffic and pedestrian follow-the-leader models with reaction time to first order convection-diffusion flow models:  - "Follow the leader models have many variants. One could consider accelration functions which". 
+
+Macroscopid models differ from the microscopic model in that the dynamical quantities of interest are locally aggregated. [Martin Trieberg] Instead of focusing on eavh vehicle, one instead consideres traffic density $\rho(x,t)$, the flow density $Q(x,t)$, the mean speed $V(x,t)$. 
+
+In physics, many quantities can be described aptly within the framework of conservation laws. A differential conservation law is an constitutive equation for a system which essentially states that for field quantities, such as density and density flux.  hyperoblic conservation law, or a Transport phenomena.  
+\begin{equation} \label{conservation_law}
+    \frac{\partial \rho }{\partial t } + \text{div}(f) = 0
+\end{equation}
+The equation states that in some fixed region of space, the net change in mass in any fixed region of space must cancel the net flow of mass across the boundary. 
+The macroscopic traffic models are precisely those cast in the form of \eqref{conservation_law}. The model we will consider in are the celebrated LWR-model
+
+begin{equation} 
+
+\label{conservation_law}
+    \frac{\partial \rho }{\partial t } + \text{\rho v\left(\rho\right)}(f) = 0
+\end{equation}
+
+mass across the region, modeled respectively by the first and second term. 
+
+
+The variables are surpressed
+Thus, macroscopic models are able to describe.  
+
+My model: 
+- One of the simplest approach is a speed model solely based on the spacing,firstly proposed by Pipes
+
+Macroscopic models: 
+
+The fundamental diagram is concave
+
+Our case corresponds to congested traffic?
+
+LWR refers to a whole
+class of models.
+
+Why macroscopic models are useful. 
+    - Can describe collective phenomenon
+    - only interested in macroscopic quantities 
+    - Computation time of simulation is critical. 
+More can be found in Martin Treiber • Arne Kesting, Traffic Flow dynamics. 
+\section{Notation}
+
+\begin{tabular}{r c p{10cm} }
+\toprule
+$\rightrightarrows$ & $\triangleq$ & everywhere uniform convergence $i$\\
+$f_j$ & $\triangleq$ & $f(z_j)$ for any function that takes an indexed arg\\
+$TV_x(\cdot)$ & $\triangleq$ & The total variation in the $x-$ direction.\\
+$C^{k,1}$ & $\triangleq$ & The space of Lipschitz continuous functions\\ 
+$\Delta_+(x_i)$ & $\triangleq$ & $x_{i+1} - x_{i}$ The forward difference operator\\
+$D_+(x_i)$ & $\triangleq$ & $\frac{x_{i+1} - x_{i}}{l}$ A forward difference operator, that divide on the car length\\  
+$D_+^z(x_i)$ & $\triangleq$ & $\frac{x_{i+1} - x_{i}}{z_{i+1/2}-z_{i-1/2}}$ A forward difference operator.\  
+\multicolumn{3}{c}{}\\
+\multicolumn{3}{c}{\underline{Decision Variables}}\\
+\multicolumn{3}{c}{}\\
+$y_f$ & $=$ & \(\begin{cases}
+1,  & \text{if Supplier located at site $f$ is open} \\
+0,  & \text{otherwise} \end{cases}\)\\
+\bottomrule
+\end{tabular}
+
+
 Over the years, several thesis templates for \LaTeX{} have been developed by different groups at NTNU. Typically, there have been local templates for given study programmes, or different templates for the different study levels – bachelor, master, and \acrshort{phd}.\footnote{see, e.g., \url{https://github.com/COPCSE-NTNU/bachelor-thesis-NTNU} and \url{https://github.com/COPCSE-NTNU/master-theses-NTNU}}
 
 Based on this experience, the \acrfull{CoPCSE}\footnote{\url{https://www.ntnu.no/wiki/display/copcse/Community+of+Practice+in+Computer+Science+Education+Home}} is hereby offering a template that should in principle be applicable for theses at all study levels. It is closely based on the standard \LaTeX{} \texttt{report} document class as well as previous thesis templates. Since the central regulations for thesis design have been relaxed – at least for some of the historical university colleges now part of NTNU – the template has been simlified and put closer to the default \LaTeX{} look and feel.
 
 The purpose of the present document is threefold. It should serve (i) as a description of the document class, (ii) as an example of how to use it, and (iii) as a thesis template.
+

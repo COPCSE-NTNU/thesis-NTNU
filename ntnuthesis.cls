@@ -314,3 +314,56 @@
        \@starttoc{lol}%
        \endgroup%
        }%
+
+\RequirePackage{mathrsfs}
+\RequirePackage{aligned-overset}
+\RequirePackage{mathtools}
+\RequirePackage{amsthm}
+\RequirePackage{cases}
+
+%tweak the square root 
+%\sqrt[\leftroot{-2}\uproot{2}\beta]{k}
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\d}{\mathbb{d}}
+
+%Custom commands 
+%spaces
+\newcommand{\C}{\mathscr{C}}
+\newcommand{\R}{\mathscr{R}}
+\newcommand{\N}[]{\mathscr{N}}
+%indexed quantities 
+
+\newcommand{\kip}{k_{i+1/2}}
+\newcommand{\kim}{k_{i-1/2}}
+\newcommand{\Vip}{V_{i+1}}
+\newcommand{\sgn}{\text{sign}}
+
+\newcommand{\dkdx}[]{k'}
+\newcommand{\ddkdxdx}[]{k''}
+
+%Custom operators
+%math symbols 
+\DeclareMathOperator\supp{supp}
+\DeclareMathOperator{\sgn}{sign}
+
+\newcommand{\interior}[1]{%
+  {\kern0pt#1}^{\mathrm{o}}%
+}
+
+
+
+%integral shorthands
+\newcommand{\inttime}{\int_0^\infty \sum_{i = 1}^{N-1} \int_{z_{i-1/2}]^{z_{i+1/2}}
+\newcommand{\intz}{\int_{z_{i-1/2}}^{z_{i+1/2}}}
+
+
+
+
+
+%theorem
+%\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+
+%Declare math operator
+\DeclareMathOperator\supp{supp}
