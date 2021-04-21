@@ -1,7 +1,7 @@
 \chapter{Methodology}
 \label{chap:method}
 
-In this section, the methodology of the proposed solution is explained in detail. This section is divided into sequential subsections that each descibe a step in the process used to arrive at the proposed dataset, the formulation of the analytical problem to be solved, and the \acrfull{ml} related data preparation, training, and evaluation.
+In this section, the methodology of the proposed solution is explained in detail. This section is divided into sequential subsections that each describe a step in the process used to arrive at the proposed dataset, the formulation of the analytical problem to be solved, and the \acrfull{ml} related data preparation, training, and evaluation.
 
 \section{General approach overview}
 
@@ -17,7 +17,7 @@ Based on the findings from the literature review conducted in \cref{sec:lit_revi
 
 \section{The initial data processing}
 
-This section describes the initial dataset used in the proposed solution which is later processed and used to train a \acrshort{ml} model for predictions. This data foundation is provided to the author by \acrfull{mo}. Moreover, for this thesis, data used in the analysis is stored in a separate, dedicated PostGreSQL database also hosted in \acrshort{mo}'s cloud computing environment.
+This section describes the initial dataset used in the proposed solution which is later processed and used to train a \acrshort{ml} model for predictions. This data foundation is provided to the author by \acrfull{mo}. Moreover, for this thesis, data used in the analysis is stored in a separate, dedicated PostgreSQL database also hosted in \acrshort{mo}'s cloud computing environment.
 
 \subsection{Positional historical AIS data}
 
@@ -28,16 +28,16 @@ The first step in the dataset processing is to collect a historical set of \acrs
     \item imo - the \acrshort{imo} number of the vessel that transmitted the position.
     \item mmsi - the \acrshort{mmsi} number of the vessel that transmitted the position.
     \item position - a geographical coordinate of the vessel in the \textit{Mercator} projection.
-    \item timestamp - the unix timestamp (seconds since Unix Epoch) of when the position was transmitted by the vessel.
+    \item timestamp - the UNIX timestamp (seconds since Unix Epoch) of when the position was transmitted by the vessel.
 \end{itemize}
 
-In the process of copying data to the dedicated database, each position's coordinate is validated by ensuring that it follows the bounds its projection, i.e., that the longitude value is between -180, and 180 degrees, and the latitude is between -90, and 90 degrees. If a coordinate has invalid values, it is disregarded. Furthermore, positions that lie exactly on the north and south bounds, or exactly at coordinates \textit{(180, 90)} and \textit{(-180, -90)} are also disregarded as these positions are impossible places to navigate but is still frequently seen in the database. \cref{fig:ais_positions} in \cref{sec:ais_data} shows a visualization of an extract of 100 million records from the historical \acrshort{ais} database which shows the extent of the collected positions.
+In the process of copying data to the dedicated database, each position's coordinate is validated by ensuring that it follows the bounds its projection, i.e., that the longitude value is between -180, and 180 degrees and the latitude is between -90, and 90 degrees. If a coordinate has invalid values, it is disregarded. Furthermore, positions that lie exactly on the north and south bounds, or exactly at coordinates \textit{(180, 90)} and \textit{(-180, -90)} are also disregarded as these positions are impossible places to navigate but are still frequently seen in the database. \cref{fig:ais_positions} in \cref{sec:ais_data} shows a visualization of an extract of 100 million records from the historical \acrshort{ais} database which shows the extent of the collected positions.
 
 Furthermore, as also mentioned in \cref{sec:ais_data}, \acrshort{imo} numbers and \acrshort{mmsi} numbers are divided up in the positional and static \acrshort{ais} reports. Therefore, \acrshort{mmsi} numbers in positional data must be matched to \acrshort{imo} numbers in the static information (which contains both) to collect both identifiers in the historical \acrshort{ais} database. The \acrshort{imo} identifier is required to extract information such as vessel segments and sub-segments as these are initially constructed using information from static records. Positions transmitted by a \acrshort{mmsi} number that does not map to a known \acrshort{imo} number, or have invalid values for either, are disregarded. The validity of both values can be determined following the \gls{aivdm} protocol which defines how these numbers are constructed and used.
 
 \subsection{Segments}
 
-As described in \cref{sec:vessel_info_segments}, vessel segmentation values are additional attributes that indicate a vessel's type, dimensions, and capacity. These labels are thought to provide insight into traveling patterns of vessels. Thus, this information is important for this thesis' proposed solution. \acrshort{mo} has vessel segmentation information for every unique vessel collected by \acrshort{ais} data. This information is collected and stored in the dedicated database in a table called \textit{vessel segments}. This table contains information per vessel and has the following relevant attributes:
+As described in \cref{sec:vessel_info_segments}, vessel segmentation values are additional attributes that indicate a vessel's type, dimensions, and capacity. These labels are thought to provide insight into the traveling patterns of vessels. Thus, this information is important for this thesis's proposed solution. \acrshort{mo} has vessel segmentation information for every unique vessel collected by \acrshort{ais} data. This information is collected and stored in the dedicated database in a table called \textit{vessel segments}. This table contains information per vessel and has the following relevant attributes:
 
 \begin{itemize}
     \item imo - the \acrshort{imo} number of the vessel.
@@ -45,7 +45,7 @@ As described in \cref{sec:vessel_info_segments}, vessel segmentation values are 
     \item sub-segment - the vessel's sub-segment value, e.g., \textit{mini bulker}, \textit{handysize}, \textit{panamax}, etc\ldots
 \end{itemize}
 
-Finally, it is worth noting that some vessels can function as two different types of vessels such as tanker vessels that also functions as chemical transport vessels. These ``combo'' vessels contains multiple entries in the segmentation database table for each of the function it serves. However, they also contain a dedicated entry where the segment value is ``combo'' which can have a specific range of sub-segments. For analysis, it is more practical to assume that every vessel only has one segment and one sub-segment, therefore, for combo vessels, only the combo segment and sub-segment is considered.
+Finally, it is worth noting that some vessels can function as two different types of vessels such as tanker vessels that also function as chemical transport vessels. These ``combo'' vessels contain multiple entries in the segmentation database table for each of the functions it serves. However, they also contain a dedicated entry where the segment value is ``combo'' which can have a specific range of sub-segments. For analysis, it is more practical to assume that every vessel only has one segment and one sub-segment, therefore, for combo vessels, only the combo segment and sub-segment are considered.
 
 \subsection{Ports}
 
@@ -59,7 +59,7 @@ Next, the traveling vessel's departure and arrival port are required to predict 
 
 \subsection{Vessel transitions}
 
-As described in \cref{sec:vessel_transitions}, vessel transitions are historical events where a vessel's \acrshort{ais} navigational status transitions from a status indicating that it is moving to the status ``MOORED'' and vice versa. These events are mapped geographically to the closest known port within a 25 kilometer radius, thus, vessel transitions provide a historical record of port arrivals and departures. \acrshort{mo} has more information available in their transition data, however, only vessel arrival and departure data is of relevance to the proposed solution. The relevant data is stored in the dedicated database as a table called \textit{vessel transitions}. This table contains vessel identifiers, the event's mapped port, the Unix timestamp of when the event occurred, and the transition type indicating whether the vessel arrived or departed. \cref{tab:vessel_transitions_example} shows an example extract from the transitions data for a single vessel. It shows that when sorted by time, the events follow a pattern of sequential arrival and departures from different ports.
+As described in \cref{sec:vessel_transitions}, vessel transitions are historical events where a vessel's \acrshort{ais} navigational status transitions from a status indicating that it is moving to the status ``MOORED'' and vice versa. These events are mapped geographically to the closest known port within a 25-kilometer radius, thus, vessel transitions provide a historical record of port arrivals and departures. \acrshort{mo} has more information available in their transition data, however, only vessel arrival and departure data are of relevance to the proposed solution. The relevant data is stored in the dedicated database as a table called \textit{vessel transitions}. This table contains vessel identifiers, the event's mapped port, the Unix timestamp of when the event occurred, and the transition type indicating whether the vessel arrived or departed. \cref{tab:vessel_transitions_example} shows an example extract from the transitions data for a single vessel. It shows that when sorted by time, the events follow a pattern of sequential arrival and departures from different ports.
 
 \begin{table}[htbp]
     \centering
@@ -87,10 +87,10 @@ After the initial data foundation is constructed as described in the previous se
 
 \subsection{Transition voyages}
 
-As vessel transitions provide a historical record per vessel of arrivals and departures based on \acrshort{ais} statuses it can be used to derive vessel voyages. Given two entries in the vessel transitions table for a single vessel sorted by time where the first is a departure from a port, and the second is an arrival at another port, a voyage can be defined as starting at the timestamp of the first departure transition and ending at the subsequent arrival transition. For example, in \cref{tab:vessel_transitions_example}, there are six transition events for a single vessel ordered by time. Based on these events, two different voyages can be defined:
+As vessel transitions provide a historical record per vessel of arrivals and departures based on \acrshort{ais} statuses it can be used to derive vessel voyages. Given two entries in the vessel transitions table for a single vessel, sorted by time, where the first is a departure from a port, and the second is arrival at another port, a voyage can be defined as starting at the timestamp of the first departure transition and ending at the subsequent arrival transition. For example, in \cref{tab:vessel_transitions_example}, there are six transition events for a single vessel ordered by time. Based on these events, two different voyages can be defined:
 
 \begin{enumerate}
-    \item  Vessel departed port \textit{KRONS} on the 31th of July 2020 and arrived at port \textit{BRITQ} on the 12th of September 2020.
+    \item  Vessel departed port \textit{KRONS} on the 31st of July 2020 and arrived at port \textit{BRITQ} on the 12th of September 2020.
     \item  Vessel departed port \textit{BRITQ} on the 13th of September 2020 and arrived at port \textit{CNZNG} on the 29th of October 2020.
 \end{enumerate}
 
@@ -108,10 +108,10 @@ Constructing voyages based on vessel transitions and positional records can be s
     \item Store voyages with validated trajectories in transition voyages table.
 \end{enumerate}
 
-The first step including defining trajectories based on vessel transitions is a relatively straight forward process of looking for transitions following the pattern of departures immediately followed by an arrival at a different port. The algorithm used to compute voyages based on a vessel's transition events is shown in \cref{lst:voyage_times}.
+The first step including defining trajectories based on vessel transitions is a relatively straightforward process of looking for transitions following the pattern of departures immediately followed by arrival at a different port. The algorithm used to compute voyages based on a vessel's transition events is shown in \cref{lst:voyage_times}.
 
 \begin{lstlisting}[
-    caption={Golang code used to compute voyage times from vessel transitions. The code has been reduced slightly for readabilty.},
+    caption={Golang code used to compute voyage times from vessel transitions. The code has been reduced slightly for readability.},
     label=lst:voyage_times,
     language=Go
 ]
@@ -150,7 +150,7 @@ func getVoyageTimes(transitions []VesselTransition) []Voyage {
 }
 \end{lstlisting}
 
-Next, the voyage times computed are used to construct geographical trajectories. This process is initially a simple matter of extracting positional records from the vessel positions history table for the given vessels between the departure and arrival timestamp ordered by time. However, the trajectories was also validated based on coherence and distance between two points in a trajectory. For instance, if distance between two points are sufficiently large, there is most likely missing coverage in the \acrshort{ais} data. Furthermore, another issue was detected where some vessels showed a seemingly coherent trajectory except for a section of it where the longitude or latitude value fluctuated with extreme distances when the vessel was stationary or moving slowly. An example of this issue is shown in \cref{fig:noisy_trajectory} which shows a voyage starting in Monaco and ending in Naples, Italy. During a stopping point in northern Italy, the vessel transmitted two longitude values placing the vessel in the middle-east, but then continued the journey to Naples. This issue is presumably caused by issues with the GPS signals sent by the \acrshort{ais} transmitter on board the vessel or by some other equipment error. Excluding the fluctuated segment of the trajectory, the remaining trajectory is completely valid, thus, if it is possible to remove the invalid part of the trajectory, the remainder could be further used in the analysis. Therefore, ``noise filter'' was employed to detect and cut away fluctuations in otherwise valid trajectories.
+Next, the voyage times computed are used to construct geographical trajectories. This process is initially a simple matter of extracting positional records from the vessel positions history table for the given vessels between the departure and arrival timestamp ordered by time. However, the trajectories were also validated based on coherence and distance between two points in a trajectory. For instance, if the distance between two points is sufficiently large, there is most likely missing coverage in the \acrshort{ais} data. Furthermore, another issue was detected were some vessels showed a seemingly coherent trajectory except for a section of it where the longitude or latitude value fluctuated with extreme distances when the vessel was stationary or moving slowly. An example of this issue is shown in \cref{fig:noisy_trajectory} which shows a voyage starting in Monaco and ending in Naples, Italy. During a stopping point in northern Italy, the vessel transmitted two longitude values placing the vessel in the middle-east, but then continued the journey to Naples. This issue is presumably caused by issues with the GPS signals sent by the \acrshort{ais} transmitter onboard the vessel or by some other equipment error. Excluding the fluctuated segment of the trajectory, the remaining trajectory is completely valid, thus, if it is possible to remove the invalid part of the trajectory, the remainder could be further used in the analysis. Therefore, ``noise filter'' was employed to detect and cut away fluctuations in otherwise valid trajectories.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
@@ -205,7 +205,7 @@ func nextValidPoint(start, tolerance int, positions []VesselPosition) (int, erro
 
 \begin{itemize}
     \item Extracting departure=>arrival times grouped by vessels, ordered by time
-    \item Finding position reports between each timestamp for given vessel
+    \item Finding position reports between each timestamp for a given vessel
     \item Constructing trajectory (3D trajectory with timestamps)
     \item Validating trajectory, noise filtering
 \end{itemize}
@@ -222,7 +222,7 @@ func nextValidPoint(start, tolerance int, positions []VesselPosition) (int, erro
 
 \subsection{\acrfull{mstd}}
 
-For the proposed solution to take both geographical trajectories and additional vessel information into account for predictions, in the final model, the trajectories have been abstracted into the categorical and numeric values \acrshort{mstd}, the similarity value for the \acrshort{mstd}, and then length of the trajectory.
+For the proposed solution to take both geographical trajectories and additional vessel information into account for predictions, in the final model, the trajectories have been abstracted into the categorical and numeric values \acrshort{mstd}, the similarity value for the \acrshort{mstd}, and then the length of the trajectory.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
@@ -261,12 +261,12 @@ The final process of creating the dataset used in the analysis can be summarized
 
 \begin{itemize}
     \item Voyages are defined using time intervals provided by the vessels' \acrshort{ais} navigational status. They are constructed and stored in a voyage database table containing the full geographical trajectory, arrival and departure ports, and additional information for the traveling vessel.
-    \item The voyage table's geographical trajectories are sampled, or simplified, based on a certain time interval to make trajecotory comparisons easier.
-    \item Every sampled historical trajectory is split into multiple parts to emulate incomplete voyage, not yet arrived at a port. Furthermore, the \acrshort{mstd} is calculated for every one of these voyages. Trajectory similarity is defined using the \acrshort{sspd} algorithm, however, this data is interchangable with other similarity measurements.
+    \item The voyage table's geographical trajectories are sampled, or simplified, based on a certain time interval to make trajectory comparisons easier.
+    \item Every sampled historical trajectory is split into multiple parts to emulate incomplete voyages not yet arrived at a port. Furthermore, the \acrshort{mstd} is calculated for every one of these voyages. Trajectory similarity is defined using the \acrshort{sspd} algorithm, however, this data is interchangeable with other similarity measurements.
     \item Finally, the \acrshort{mstd}, similarity value, trajectory length, departure and arrival ports, and vessel segmentation information is collected and stored as the \acrshort{ml} training data.
 \end{itemize}
 
-An overview of the processed described in this chapter thus far is shown in \cref{fig:dataset_overview} from the data provided by \acrfull{mo} to the final \acrshort{ml} training data.
+An overview of the process described in this chapter thus far is shown in \cref{fig:dataset_overview} from the data provided by \acrfull{mo} to the final \acrshort{ml} training data.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
@@ -295,7 +295,7 @@ An overview of the processed described in this chapter thus far is shown in \cre
 
 \begin{itemize}
     \item X-Folder-cross-validation
-    \item Metrics: F1, precission, recall, AUC, vs accuracy
+    \item Metrics: F1, precision, recall, AUC, vs accuracy
     \item Computing performance?
     \item How fast is it to compute the next destination of every vessel in the world
 \end{itemize}
