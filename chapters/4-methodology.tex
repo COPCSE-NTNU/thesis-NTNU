@@ -150,23 +150,29 @@ func getVoyageTimes(transitions []VesselTransition) []Voyage {
 }
 \end{lstlisting}
 
-Next, the voyage times computed are used to construct geographical trajectories. This process is initially a simple matter of extracting positional records from the vessel positions history table for the given vessels between the departure and arrival timestamp ordered by time. However, the trajectories were also validated based on coherence and distance between two points in a trajectory. For instance, if the distance between two points is sufficiently large, there is most likely missing coverage in the \acrshort{ais} data. Furthermore, another issue was detected were some vessels showed a seemingly coherent trajectory except for a section of it where the longitude or latitude value fluctuated with extreme distances when the vessel was stationary or moving slowly. An example of this issue is shown in \cref{fig:noisy_trajectory} which shows a voyage starting in Monaco and ending in Naples, Italy. During a stopping point in northern Italy, the vessel transmitted two longitude values placing the vessel in the middle-east, but then continued the journey to Naples. This issue is presumably caused by issues with the GPS signals sent by the \acrshort{ais} transmitter onboard the vessel or by some other equipment error. Excluding the fluctuated segment of the trajectory, the remaining trajectory is completely valid, thus, if it is possible to remove the invalid part of the trajectory, the remainder could be further used in the analysis. Therefore, ``noise filter'' was employed to detect and cut away fluctuations in otherwise valid trajectories.
+Next, the voyage times computed are used to construct geographical trajectories. This process is, in essence, a simple matter of extracting positional records from the vessel positions history table for the given vessels between the departure and arrival timestamp ordered by time. However, the trajectories were also validated based on coherence and distance between two points in a trajectory.
+
+\subsubsection{Trajectory validation}
+
+During the process of building trajectories, several trajectories where discovered that showed peculiar shapes. For instance, there could be large gaps in certain parts of the trajectory or fluctuations when the vessel was stationary. Therefore, a validation step was added to the voyage construction process, for instance, if the distance between two points is sufficiently large, there is most likely missing coverage in the \acrshort{ais} data and the trajectory should probably be skipped. Furthermore, another issue was detected where some vessels showed a seemingly coherent trajectory except for a section of it where the longitude or latitude value fluctuated with extreme distances. This often happened when a vessel was stationary or moving slowly and it transmitted many positions closely together.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
-    \includegraphics[width=1.0\textwidth]{figures/noisy_trajectory}
+    \includegraphics[width=0.7\textwidth]{figures/noisy_trajectory}
     \caption{Example showing a ``noisy'' trajectory presumably caused by GPS inaccuracy or equipment error}
     \label{fig:noisy_trajectory}
 \end{figure}
 
-The noise filtering employed in the trajectory builder is shown in \cref{fig:noise_filter} where the red segment fluctuates in an otherwise valid trajectory and is therefore excluded. For every point in the trajectory, the algorithm checks the distance between the current and the next point as well as the time difference between the two points. Using the distances in space and time, it calculates the speed the vessel would require to travel from the first to the second point. If the speed required was more than 50 knots, the segment was invalid. The next point is then compared to the first to see if there is a possible valid segment to the third point. If there is the second point is disregarded. The algorithm has a tolerance of four invalid points before it disregards the entire trajectory. \cref{lst:noise_filter} shows the function used to find the next valid point in a trajectory, if it returns an error, the trajectory is disregarded.
+An example of this issue is visualized in \cref{fig:noisy_trajectory} which shows a voyage starting in Monaco and ending in Naples, Italy. During a stopping point in northern Italy, the vessel transmitted two longitude values placing the vessel in the middle-east while then continuing the journey arriving in Naples, Italy. This issue is presumably caused by issues with the GPS signals sent by the \acrshort{ais} transmitter on board the vessel or by some other equipment error. Excluding the fluctuated segment of the trajectory, the remaining trajectory is completely valid, thus, if it is possible to remove the invalid part of the trajectory, the remainder could be further used in the analysis. Therefore, ``noise filter'' was employed to detect and cut away fluctuations in otherwise valid trajectories.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
-    \includegraphics[width=0.5\textwidth]{figures/noise_filter}
+    \includegraphics[width=0.6\textwidth]{figures/noise_filter}
     \caption{Noise filter algorithm cutting out points in a trajectory detected as noise. The red segment is cut out and the black segments are tied together as shown with the green dotted line.}
     \label{fig:noise_filter}
 \end{figure}
+
+The noise filtering employed in the trajectory builder is shown in \cref{fig:noise_filter} where the red segment fluctuates in an otherwise valid trajectory and is therefore excluded from the remaining trajectory. For every point in the trajectory, the algorithm checks the distance between the current and the next point as well as the time difference between the two points. Using the distances in space and time, it calculates the speed the vessel would require to travel from the first to the second point. If the speed required was more than 50 knots, the segment was invalid. The next point is then compared to the first to see if there is a possible valid path to the third point. If there is, the second point is disregarded from the trajectory. The algorithm is given a tolerance of four invalid points before it disregards the entire trajectory. \cref{lst:noise_filter} shows the function used to find the next valid point in a trajectory, if it returns an error, the trajectory is disregarded.
 
 \begin{lstlisting}[
     caption={Golang code used find the next valid point for any given point in a trajectory.},
@@ -174,13 +180,12 @@ The noise filtering employed in the trajectory builder is shown in \cref{fig:noi
     language=Go
 ]
 // nextValidPoint returns the index of the next valid point checking distances to
-// every point within tolerance. If no valid distances were found wihin tolerance
+// every point within tolerance. If no valid distances were found wihin tolerance,
 // it returns an error. If the last point in trajectory was reached, -1 is returned
 func nextValidPoint(start, tolerance int, positions []VesselPosition) (int, error) {
 	a := positions[start]
 	for j := start + 1; j <= start+tolerance; j++ {
 		if j >= len(positions) {
-			// if we have checked all points in trajectory
 			return -1, nil
 		}
 
@@ -197,20 +202,28 @@ func nextValidPoint(start, tolerance int, positions []VesselPosition) (int, erro
 			return j, nil
 		}
 	}
-
 	// no reasonable distances were found within tolerance
 	return -1, errors.New("trajectory segment too noisy")
 }
 \end{lstlisting}
 
+Finally, when the voyage trajectories have been constructed and validated, they are collected in a database table called transition voyages which contains the following relevant attributes:
+
 \begin{itemize}
-    \item Extracting departure=>arrival times grouped by vessels, ordered by time
-    \item Finding position reports between each timestamp for a given vessel
-    \item Constructing trajectory (3D trajectory with timestamps)
-    \item Validating trajectory, noise filtering
+    \item imo - identifier for the vessel.
+    \item mmsi - identifier for the vessel.
+    \item departure port - voyage departure port's locode.
+    \item departure timestamp - the time of departure.
+    \item arrival port - voyage arrival port's locode.
+    \item arrival timestamp - the time of arrival.
+    \item trajectory - 3D linestring with longitude, latitude, and timestamp for each point.
 \end{itemize}
 
+It is worth noting that the trajectories are stored as 3D PostGIS linestring geometries where each point contains a \textit{x}, \textit{y}, and \textit{z} value where the \textit{z} value holds the UNIX timestamp of the positional record. Keeping the timestamp value is necessary for sampling trajectories based on time, and keeping the time values stored directly in the trajectory geometry saves an extra table for trajectory points.
+
 \section{Data processing for \acrfull{ml}}
+
+After the initial data set has been collected and vessel voyages have been defined and constructed, the next step is to build the final training dataset to be used for analysis and \acrfull{ml}. This section describes every step in the process used to construct this dataset based on data described up to this point in this chapter.
 
 \subsection{Trajectory sampling}
 

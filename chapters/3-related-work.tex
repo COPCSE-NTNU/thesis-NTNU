@@ -189,46 +189,63 @@ Finally,~\cite{Dobrkovic2018MaritimeData} is harder to compare to as destination
 As discussed throughout this section, the existing literature within the thesis' topic area seems to exhibit a few trends. First, the majority of the research discovered mostly focused on short-term navigational predictions of vessels, usually for the purpose of collision avoidance, anomaly detection, or safety and management within ports or smaller regions. Second, there is a very limited amount of research that focuses on longer time intervals or geographical extent, and these studies are also quite limited in the sense that they rarely consider global port destination predictions, but rather port destinations within a given region. Lastly, there was no research found that considered much more than purely geographical attributes of historical \acrshort{ais} data. When only considering geographical travel patterns of vessels, it is implicitly assumed that all vessels behave in a similar fashion which, as shown in \cref{fig:segment_map}, is not the case. Since the existing literature is lacking general global destination predictions as well methods that consider specific details for individual vessels, it can be concluded that the existing literature does not provide enough insight into \texttt{RQ1} as a whole.
 
 
-\begin{sidewaystable}
-    \centering
-    {\small
-    \begin{tabular}{|l|l|l|l|l|l|l|}
-    \hline
-        Paper & Motivation & Prediction method & Geographical scale & Time scale & Validation method & Validation metrics \\ \hline
-        \cite{Alizadeh2020PredictionTrajectory} & trajectory similarity measurement for prediction of positions at time intervals & "spatial distance, bi-directional distance, speed distance" & "region (strait of georgia, USA)" & "10, 20, 30 minutes" & "sorenson similarity index (SSI), case study in region" & accuracy \\ \hline
-        \cite{Alizadeh2021VesselData} & Vessel trajectory prediction for collision avoidance & "LSTM (RNN) with trajectory distance similarity measurements (TSSP, PSSP, TSSPL)" & "Strait of Georgia, USA" & Short term (10 - 40 mins) & 1 to 8 division of training and validation set & haversine distance accuracy (0.8 km to 3.5 km from 10-40 mins) \\ \hline
-        \cite{Borkowski2017TheFusion} & data fusion prediction for collision avoidance integrated in navigation system & "ANN, data fusion, GRNN" & small (collision avoidance) & small & integrated and tested in real naviagtional system & RMSE \\ \hline
-        \cite{Brandt2017MovingPrediction} & short time predictions of moving objects & "moving object data stream mangement systems, kNN " & "small, region in US" & small (10 minutes) & test cases & not explained \\ \hline
-        \cite{Burger2020DiscretePrediction} & trajectory predictions for filling in gaps in AIS data & "DKF (discrete kalman filters), LRM" & small & small & single cases analysis on a vessel comparing two models & MED (mean euclidea distance) \\ \hline
-        \cite{Chen2020ThePrediction} & cluster reconstruction not requiring training phase for short time frames & NPC clustering finding best possible next points & small & small & extensive comparisons with other methods & "accuracy, distance error" \\ \hline
-        \cite{Dalsnes2018ThePrediction} & collision detection for autonomous vessels & NCDM & small (collision detection) & small (collision detection) & 90/10 training validation sets & RMSE \\ \hline
-        \cite{Dijt2020TrajectoryShips} & collision avoidance for autonomous ships & sequence to sequence neural network & small (collision avoidance) & small (collision avoidance) & "90/10 data split of six hours trajectories, cross folder validation" & "absolute trajectory error, RMSE, MAE" \\ \hline
-        \cite{DIng2020ALSTM} & longer time and multidimensional trajectory predictions & LSTM & small & 5-20 minutes & "training, validation, test set (8:1:1)" & MSE \\ \hline
-        \cite{Forti2020PredictionNetworks} & sequence-to-sequence RNN approach & RNN with LSTM encoder-decoder architecture & region & small & 5-fold cross validation & RMSE \\ \hline
-        \cite{Guo2018TrajectoryChain} & trajectory predictions MDTN (mobile delay tolerant network) & k-order multivariate markov chain & region (grid based) & small & "simulation, experiments" & accuracy \\ \hline
-        \cite{Hexeberg2017AIS-basedPrediction} & collision detection & single neighbor search (SPNS) & region (trondheim) & small (10 minutes) & "training, validation sets, manually selected scenarios, validate with real trajectory" & RMSE \\ \hline
-        \cite{Jin2020MaritimeNetwork} & longer range predictions for security motivations & "RNN, LSTM" & regional/small & small & model simulation & "distance accuracy over time, MAE, SSE" \\ \hline
-        \cite{Kim2018PreprocessingArea} & predictions for Vessel Traffic Service (VTS) & NN & small & small & case study on region & speed and distance error \\ \hline
-        \cite{Li2018ShipMining} & ceaner data extraction and mining for predictions & RBF neural network model & small (tested on river in china) & small-medium (hours) & simulation/case study on river in china & trajectory difference from real to simulated \\ \hline
-        \cite{Li2019Long-termData} & longer term predictions for collision avoidance & "LSTM, longest comomon subsequence(LCS) algorithm, DBSCAN clustering" & small / collision avoidance & small / collision avoidance (15 min) & "applied to 4 regions, case studies" & distance error \\ \hline
-        \cite{Lian2019ResearchAlgorithm} & "investigating particle filtering, near prediction, least squares estimation approach to predictions for smaller scale predictions" & "linear prediction, least squares, particle filtering" & small / collision avoidance & small / collision avoidance & "simulation, 9 hours of data" & "distance error, speed error" \\ \hline
-        \cite{Liu2019VesselACDE-SVR} & trajectory prediction that also handles real time at sea & "SVR, ACDE, RNN" & small / collision avoidance & small / collision avoidance & training/validation sets & distance error \\ \hline
-        \cite{Liu2020PredictingLearning} & "predicting trajectories for ship management, interpolating method for filling in missing AIS in trajectory" & "LSS-VM (least-squares support-vector machines) for predictions, cubic spline function to regulate trajectories via interpolation" & "independent of regions, but on a small scale (predicting distance not arrival ports)" & small (predicting next positions in trajectory) & four random trajectories selected for predictions & accuracy in distance/meters from actual trajectory \\ \hline
-        \cite{Mao2018AnMining} & database for trajectory prediciton and mining & "interpolating trajectory reconstruction, are of interest bsed grid search, ELM and SLFN for predictions" & region based & medium (20 - 40 minutes) & original vs predicted trajectory & distance error \\ \hline
-        \cite{Murray2018AOperations} & collision detection for autonomous vessels & Single point neighboir search method & small (collision detection) & 5-30 minutes & 90/10 training validation sets & RMSE \\ \hline
-        \cite{Murray2019AnVessels} & collision avoidance & "gaussian mixture modelling, principle component analysis" & small / collision avoidance & small / collision avoidance & running 100 times randomly selecting points & distance error \\ \hline
-        \cite{Murray2020AData} & trajectory predictions for early warnings and safety & "GMM clustering (gaussian mixture model), novel dual autoencoder" & region (tromsø) & 30 minutes (1 year or historical AIS) & distributed accuracy over time in the future (predicted positions vs actual positions) & accuracy at time intervals \\ \hline
-        \cite{Rong2019ShipModel} & modelling uncertainty of trajectory predictions & "Bayesion model, Gaussian Process" & small / collision avoidance & "small / collision avoidance (10, 20, 30)" & "case study in region, training / validation data" & "accuracy, distance error" \\ \hline
-        \cite{Suo2020ANetwork} & trajectory predictions for early warnings and safety & "GRU (gate recurrent unit), DBSCAN, comp. with LSTM" & tested on single port in china & "small, minutes to hour" & "training, validation, test set (not defined how much)" & accuracy \\ \hline
-        \cite{Tafa2019AutomaticPrediction} & synthetic route representation and predictions & "DBSCAN, route similarity probability model" & east china sea region & 10-80 minutes & simulation & accuracy \\ \hline
-        \cite{Tang2019ANetwork} & collision avoidance for automonous ships & LSTM & region in china & uses 10 min of data to predict 20 next minutes & training/validation sets & "MAE, MSE" \\ \hline
-        \cite{Uney2019DataModels} & forecasting trajectories from historical and streaming trajectories & directed grid based bayesion model / gaussian mixture forecast density & tested on region (15x15 grid) & any (tested with 2 months of data) & real life case study in region & not explained \\ \hline
-        \cite{Virjonen2018ShipMethod} & predictions in area in finnland that has to be several hours ahead in time & k-nearest neighbours & medium (region of finnland test case) & "medium, several hours" & nested leave-one-out-cross-validation (LOOCV) & distance accuracy \\ \hline
-        \cite{Wang2020VesselGRU} & predicting vessel berthing trajectory for safety and collision avoidance & "Bi-GRU (tensorflow, keras)" & single port in china & small (minutes) & "training, validation set (not defined ratio), compared to other models" & MSE \\ \hline
-        \cite{Xiao2020BigTechniques} & "for collision avoidance, better quering, more effective predictions" & "knowledge based particle filtering (PF), MLNN" & "smaller, limited to collision avoidance" & 3-10 minutes & testing different scnarios i.e. case studies & "sog, coc, and distance error" \\ \hline
-        \cite{You2020ST-Seq2Seq:Prediction} & sequence-to-sequence RNN approach & "seq2se1 GRU, RNN, encoder/decoder" & "small, limited to 10m trajectories" & 10 minutes & "analysis in region (few rivers in china), training/validation set" & "AdaGrad, RMSProp" \\ \hline
-        \cite{Zheng2020HeterogenousModeling} & combining multiple datasources like GPS and ARPA with AIS to improve predictions for safety & LSTM (on different data and a fusion component to merge the predictions) & small & small & "training, validation (1:10), and compare to other model" & MSE \\ \hline
-        \cite{Zhou2019ShipNetwork} & collision avoidance in busy areas & back propagation nerual network & region (area in china) & small & training/validation 70/30 & RMSE \\ \hline
-    \end{tabular}
-    }
-\end{sidewaystable}
+\noindent
+{\small
+\begin{tabularx}{1.2\textwidth}{p{0.6in} X X p{0.5in} p{0.4in} X p{0.5in}}
+    % \setlength{\tabcolsep}{4pt} %% default is 6pt
+    \toprule
+    \textbf{Paper} & \textbf{Motivation} & \textbf{Pred. method} & \textbf{Geo-extent} & \textbf{Time scale} & \textbf{Validation} & \textbf{Metrics} \\ \midrule
+    \cite{Alizadeh2020PredictionTrajectory} & trajectory similarity to predict positions at time intervals & spatial distance, bi-directional distance, speed distance & region & 10, 20, 30 min. & case study & accuracy, SSI \\ \midrule
+    \cite{Alizadeh2021VesselData} & Vessel trajectory prediction for collision avoidance & LSTM (RNN) and trajectory similarity & region & 10-40 min. & cross validation & distance accuracy \\ \midrule
+    \cite{Borkowski2017TheFusion} & collision avoidance integrated in navigation systems & ANN, data fusion, GRNN & meters & minutes & integrated and tested in real naviagtional system & RMSE \\ \midrule
+    \cite{Brandt2017MovingPrediction} & moving objects prediction & moving object data stream mangement systems, kNN  & region & 10 min. & test cases & not explained \\ \midrule
+    \cite{Burger2020DiscretePrediction} & filling in gaps in AIS data & discrete kalman filters, LRM & small & small & single cases analysis & distance error \\ \midrule
+    \cite{Chen2020ThePrediction} & cluster reconstruction for short time frames & NPC clustering finding best possible next points & small & small & extensive comparisons with other methods & accuracy, distance error \\ \midrule
+    \cite{Dalsnes2018ThePrediction} & collision avoidance for autonomous ships & NCDM & meters & minutes & cross validation & RMSE \\ \midrule
+    \cite{Dijt2020TrajectoryShips} & collision avoidance for autonomous ships & sequence to sequence neural network & meters & minutes & cross validation & RMSE, MAE \\ \midrule
+    \cite{DIng2020ALSTM} & longer time trajectory predictions & LSTM & meters & 5-20 min. & training / validation sets (8:1) & MSE \\ \midrule
+    \cite{Forti2020PredictionNetworks} & sequence-to-sequence RNN approach & RNN, LSTM encoder-decoder & region & small & 5-fold cross validation & RMSE \\ \midrule
+    \cite{Guo2018TrajectoryChain} & regional trajectory predictions & K-order multivariate markov chain & region & small & simulation, experiments & accuracy \\ \midrule
+    \cite{Hexeberg2017AIS-basedPrediction} & collision detection & single neighbor search & region & 10 min. & cross validation, selected scenarios & RMSE \\
+    \midrule
+    \cite{Jin2020MaritimeNetwork} & predictions for collision & RNN, LSTM & region & small & model simulation & distance error, MAE, SSE \\ \midrule
+    \cite{Kim2018PreprocessingArea} & predictions for Vessel Traffic Service (VTS) & NN & small & small & case study on region & speed and distance error \\ \midrule
+\end{tabularx}
+}
+\noindent
+{\small
+\begin{tabularx}{1.2\textwidth}{p{0.6in} X X X p{0.4in} X p{0.5in}}
+    \midrule
+    \cite{Li2018ShipMining} & data mining for predictions & RBF RNN & small & hours & case study on river in China & trajectory accuracy \\ \midrule
+    \cite{Li2019Long-termData} & collision avoidance & LSTM, LCS, DBSCAN & meters & 15 min. & case studies & distance error \\ \midrule
+    \cite{Lian2019ResearchAlgorithm} & particle filtering, least squares estimation & linear prediction, least squares, particle filtering & meters & minutes & simulations & distance error, speed error \\ \midrule
+    \cite{Liu2019VesselACDE-SVR} & real-time predictions at sea & SVR, ACDE, RNN & small & small & cross validation & distance error \\ \midrule
+    \cite{Liu2020PredictingLearning} & predictions for ship management, fill in missing AIS data & LSS-VM, cubic spline interpolation & small & small & case studies & trajectory accuracy \\ \midrule
+    \cite{Mao2018AnMining} & database for trajectory prediciton and mining & trajectory interpolation, grid search, SLFN & region & 20-40 min. & case studies & distance error \\ \midrule
+    \cite{Murray2018AOperations} & collision detection for autonomous vessels & nearest neighbor search & meters & 5-30 min. & cross validation & RMSE \\ \midrule
+    \cite{Murray2019AnVessels} & collision avoidance & gaussian mixture modelling, PCA & small & small & case studies & distance error \\ \midrule
+    \cite{Murray2020AData} & trajectory predictions for early warnings and safety & GMM clustering, dual autoencoder & region (tromsø) & 30 minutes & case studies & accuracy at time intervals \\ \midrule
+    \cite{Rong2019ShipModel} & modelling uncertainty of trajectory predictions & Bayesion model, Gaussian Process & small & 10-30 min. & case study in region, training / validation data & accuracy, distance error \\ \midrule
+    \cite{Suo2020ANetwork} & trajectory predictions for early warnings and safety & GRU (gate recurrent unit), DBSCAN, comp. with LSTM & tested on single port in china & small, minutes to hour & training, validation, test set (not defined how much) & accuracy \\ \midrule
+    \cite{Tafa2019AutomaticPrediction} & synthetic route representation and predictions & DBSCAN, route similarity probability model & east china sea region & 10-80 minutes & simulation & accuracy \\ \midrule
+\end{tabularx}
+}
+
+\noindent
+\begin{table}
+\begin{tabularx}{1.2\textwidth}{p{0.6in} X X X p{0.4in} X p{0.5in}}
+{\small
+    \cite{Tang2019ANetwork} & collision avoidance for automonous ships & LSTM & region in china & 20 min. & training/validation sets & MAE, MSE \\ \midrule
+    \cite{Uney2019DataModels} & forecasting trajectories from historical and streaming trajectories & directed grid based bayesion model / gaussian mixture forecast density & tested on region (15x15 grid) & any (tested with 2 months of data) & real life case study in region & not explained \\ \midrule
+    \cite{Virjonen2018ShipMethod} & predictions in area in finnland that has to be several hours ahead in time & k-nearest neighbours & medium (region of finnland test case) & medium, several hours & nested leave-one-out-cross-validation (LOOCV) & distance accuracy \\ \midrule
+    \cite{Wang2020VesselGRU} & predicting vessel berthing trajectory for safety and collision avoidance & Bi-GRU (tensorflow, keras) & single port in china & small (minutes) & training, validation set (not defined ratio), compared to other models & MSE \\ \midrule
+    \cite{Xiao2020BigTechniques} & for collision avoidance, better quering, more effective predictions & knowledge based particle filtering (PF), MLNN & smaller, limited to collision avoidance & 3-10 minutes & testing different scnarios i.e. case studies & sog, coc, and distance error \\ \midrule
+    \cite{You2020ST-Seq2Seq:Prediction} & sequence-to-sequence RNN approach & seq2se1 GRU, RNN, encoder/decoder & small, limited to 10m trajectories & 10 minutes & analysis in region (few rivers in china), training/validation set & AdaGrad, RMSProp \\ \midrule
+    \cite{Zheng2020HeterogenousModeling} & combining multiple datasources like GPS and ARPA with AIS to improve predictions for safety & LSTM (on different data and a fusion component to merge the predictions) & small & small & training, validation (1:10), and compare to other model & MSE \\ \midrule
+    \cite{Zhou2019ShipNetwork} & collision avoidance in busy areas & back propagation nerual network & region (area in china) & small & training/validation 70/30 & RMSE \\
+    \bottomrule
+}
+\end{tabularx}
+\caption{Papers gathered from literature study labeled with relevancy level 1.}
+\label{tab:less_relevant_papers}
+\end{table}
