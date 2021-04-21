@@ -252,33 +252,75 @@ If the direct proof was found, it would also yield a bound on $BV(V_l)$ for free
 \section{A bound on the total variation using \eqref{FtL_transformed1}}
 
 An advantage with coordinate transformation \label{section:Phi} is that bounds on the variation are easier to establish. 
-
-\begin{equation}
-    \Tilde{y_i} := \frac{\Phi_{i+1/2} - \Phi_{i-1/2}}{l} \text{ for } i \in \{1,...,N-1\}
-\end{equation}
-is the inverse density for the stretched road. 
-Consider
+If 
 \begin{align}
-    \frac{d}{dt} \left| \hat{y}_{i+1} - \hat{y_{i}} \right| = \sgn\left(\hat{y}_{i+1} - \hat{y_{i}}\right) \left(D_+(V_{i+1}) - D_+(V_i)\right),
+	\hat{y}_i := \frac{d_{\frac{1}{k}}(z_{i-1/2}, z_{i+1/2})}{l} = \frac{\Phi_{i+1/2} - \Phi_{i-1/2}}{l} =  \text{ for } i \in \{1,...,N-1\}, 
+	\hat{\rho}_i = \frac{1}{y_i}
 \end{align}
-and the situtation where 
+is the inverse density for the stretched road, then 
+ 
+\begin{equation}
+	\sum_{i=1}^{N-1} \left| \hat{\rho}_{i+1}-\hat{\rho}_{i} \right| \leq C t \text{ on } [0,T].
+\end{equation} \label{TV_yhat}
+where $C$ is independent on $N$. 
+
+Proof: 
+Consider the size of the jump 
+\begin{align} \label{distance_deriv_trans}
+	\frac{d}{dt} \left| \hat{\rho}_{i+1} - \hat{\rho}_{i} \right| = \sgn\left(\hat{y}_{i+1} - \hat{y_{i}}\right) \left(\hat{\rho}_{i+1}^2D_+(V_{i+1}) - \hat{\rho}_{i}^2 D_+(V_i)\right) \text{ for } i \in \{1,..,N-1\}
+\end{align}
+The intuition of the proof is to use the fact that the righthand side in \eqref{distance_deriv_trans} is similar to 
+\begin{equation} \label{sign_eq1}
+	\sgn\left(y_{i+1} - y_{i}\right) \left(\hat{\rho}_{i+1}^2 D_+(V_{i+1}) - \hat{\rho}_{i}^2 D_+(V_i)\right),
+\end{equation}
+%Think about whether we can replace rho with hatrho above!
+%Consider the periodic case
+%Consider the case where we dont have the first vehicle travelling at max speed!
+and that \eqref{assump_k3} implies 
+\begin{equation}\label{sign_eq2}
+	\sgn(D_+(V_i)) = \sgn(y_{i+1} - y_i). 
+\end{equation}
+
+\eqref{sign_eq2} implies that \eqref{sign_eq1} equals
+\begin{equation} \label{sign_eq3}
+	\sgn\left(y_{i+1} - y_{i}\right)\hat{\rho}_{i+1}^2 D_+(V_{i+1}) - \left|\hat{\rho}_{i}^2 D_+(V_i)\right|.
+\end{equation}
+The second term shows how the behavior of the car behind reduces change in the local total variation. All drivers want to obtain the same speed as the driver in-front. In fact, if the car in-front maintains a constant velocity stricly less than one, then the proceding car will converge asymptotically to the same velocity for $k = 1$. This is the mechanism which keeps the total variation from blowing up, and it is therefore necessary to consider the cases
+
+\begin{numcases}{}
+	\sgn(\hat{y}_{i+1} - \hat{y}_i) = \sgn(y_{i+1} - y_i), \label{sign_case1}\\
+	\sgn(\hat{y}_{i+1} - \hat{y}_i) \neq \sgn(y_{i+1} - y_i).\label{sign_case2} 
+\end{numcases}
+\eqref{sign_case2} corresponds to the case where the metric $d_k$ significantly stretches the road. In traffic, it describes the case where a car in-front takes off while the car behind enters a slow-down region. This will be most prevalent when few vehicles are considered; when the cars populate the road more densely, both cars will be subject to the same road condition. Using the language of differential geometry, we say that vehicles in arbitrarily small neighbourhoods of $\Phi(\R)$ move on the tangent space of $\R$ under $\Phi$, so that locally the distances are proportional to euclidean distances. In other words, for \eqref{sign_case2} to hold, both $\left|y_{i+1} - y_{i}\right|$ and $\left|\hat{y}_{i+1} - \hat{y}_{i}\right|$ must be very small for the non-linarities in the small neighbourhoods to become prevalent. 
+\begin{align}
+	y_{i+1} - y_i &= \frac{\inf_{\Phi_{i+1/2}^{\Phi_{i+3/2}} k(\tilde{z}) d \tilde{z} - \inf_{\Phi_{i-1/2}^{\Phi_{i+1/2}} k(\tilde{z}) d \tilde{z}}{l}
+\end{align}
+
+
+the jumps  must be very small In other words, 
+
+Define the set where the stretching is significant
 
 \begin{equation}
-    \hat{y}_{i+1} - \hat{y}_i \neq \sgn(y_{i+1} - y_i).  
+	A(t) = \{i \in \{1,...,N-1\} \,\, |\,\, \eqref{sign_case2} \text{ holds}\}
 \end{equation}
-This is of importance, since 
+and partition the sum 
 
-
-
-
+\begin{align}
+	\frac{d}{dt}\sum_{i=1}^{N-1} \left| \hat{y}_{i+1}-\hat{y}_{i} \right| &= \sum_{i\in A}  \left2|D_+(V_i)\right| \\
+	&+ \sum_{i = 2}^{N-1} \left(\sgn(\hat{y}_{i+1} - \hat{y}_{i})\sgn(\hat{y}_{i} - \hat{y}_{i-1}) - 1 \right)\left|D_+\left(V_i\right)\right| \\
+	&- \left|D_+\left(V_1\right)\right|
+	+ \sgn(y_{N-1} - y_{N-2})D_+\left(V_{N-1}\right)\right|
+\end{align}
+Then the sum over 
 
 
 Two cases are considered. 
 
 \begin{numcases}{Cases}
-sgn(D_+(V_i^l)) = sgn(D_+(k_{i-1/2}^l V_i^l)), \label{CaseA} 
-\\
-sgn(D_+(V_i^l)) \neq sgn(D_+(k_{i-1/2}^l V_i^l)) \label{CaseB}
+	sgn(D_+(V_i^l)) = sgn(D_+(k_{i-1/2}^l V_i^l)), \label{CaseA} 
+	\\
+	sgn(D_+(V_i^l)) \neq sgn(D_+(k_{i-1/2}^l V_i^l)) \label{CaseB}
 \end{numcases}
 
 \section{Establishing the weak solution} \label{section:weak_sol}
