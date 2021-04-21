@@ -1,4 +1,5 @@
 \chapter{Methodology}
+\label{chap:method}
 
 In this section, the methodology of the proposed solution is explained in detail. This section is divided into sequential subsections that each descibe a step in the process used to arrive at the proposed dataset, the formulation of the analytical problem to be solved, and the \acrfull{ml} related data preparation, training, and evaluation.
 
@@ -78,12 +79,129 @@ As described in \cref{sec:vessel_transitions}, vessel transitions are historical
 
 \section{Vessel voyage definition}
 
-\begin{itemize}
-    \item Transitions
-    \item (Clustering)
-\end{itemize}
+After the initial data foundation is constructed as described in the previous section, the next step is to construct voyages and voyage trajectories based on the historical \acrshort{ais} data. As described in \cref{sec:vessel_voyage_definition}, throughout this thesis, a vessel voyage has been defined based on vessel transitions derived from \acrshort{ais} navigational statuses. This is mainly because it is thought to provide more valuable predictions for the actors in the industry. This hypothesis was confirmed by the collaborative company \acrfull{mo}, but has also been corroborated by interviewing real actors in the industry as will be later discussed in \cref{chap:results}. This section describes the methods tested and used to construct voyages from the initial data foundation described up to this point in \cref{chap:method}.
+
+\subsection{Cluster-based voyages}
+
+\todo{Should I bother explaining work I did with clustering if I didn't use it in the final approach?}
 
 \subsection{Transition voyages}
+
+As vessel transitions provide a historical record per vessel of arrivals and departures based on \acrshort{ais} statuses it can be used to derive vessel voyages. Given two entries in the vessel transitions table for a single vessel sorted by time where the first is a departure from a port, and the second is an arrival at another port, a voyage can be defined as starting at the timestamp of the first departure transition and ending at the subsequent arrival transition. For example, in \cref{tab:vessel_transitions_example}, there are six transition events for a single vessel ordered by time. Based on these events, two different voyages can be defined:
+
+\begin{enumerate}
+    \item  Vessel departed port \textit{KRONS} on the 31th of July 2020 and arrived at port \textit{BRITQ} on the 12th of September 2020.
+    \item  Vessel departed port \textit{BRITQ} on the 13th of September 2020 and arrived at port \textit{CNZNG} on the 29th of October 2020.
+\end{enumerate}
+
+Using the vessel transition information, the first step is to deduce voyages based on sequential arrival and departures for vessels. After a voyage has been defined, the second step is to find the trajectory of the traveling vessel. This can be deduced from the vessel positions history table as every \acrshort{ais} positional report transmitted between the derived departure and arrival timestamps from the traveling vessel forms a geographical trajectory from the departure and arrival port.
+
+\subsubsection{Constructing voyages}
+
+Constructing voyages based on vessel transitions and positional records can be summarized in the following steps:
+
+\begin{enumerate}
+    \item Extract vessel transitions per vessel ordered by time.
+    \item Define voyages based on subsequent departures and arrivals from the vessel transition data (\cref{lst:voyage_times}).
+    \item For each voyage, extract every positional record between vessels' departure and arrival timestamps sorted by time.
+    \item Validate the geographical trajectory including applying a ``noise filter'' (\cref{fig:noise_filter}).
+    \item Store voyages with validated trajectories in transition voyages table.
+\end{enumerate}
+
+The first step including defining trajectories based on vessel transitions is a relatively straight forward process of looking for transitions following the pattern of departures immediately followed by an arrival at a different port. The algorithm used to compute voyages based on a vessel's transition events is shown in \cref{lst:voyage_times}.
+
+\begin{lstlisting}[
+    caption={Golang code used to compute voyage times from vessel transitions. The code has been reduced slightly for readabilty.},
+    label=lst:voyage_times,
+    language=Go
+]
+func getVoyageTimes(transitions []VesselTransition) []Voyage {
+	var voyages []Voyage
+	j := 0
+	for i, current := range transitions {
+                // start at the first departure event
+		if current.Transition != "DEPARTURE" {
+			continue
+                // get the subsequent transition
+		j = i + 1
+		if j >= len(transitions) {
+			break
+		}
+		next := transitions[j]
+
+                // ensure the next event is an arrival at a different port
+		if next.Transition != "ARRIVAL" {
+			continue
+		}
+		if current.PortCode == next.PortCode {
+			continue
+		}
+
+		voyages = append(voyages, Voyage{
+			IMO:                current.IMO,
+			MMSI:               current.MMSI,
+			DeparturePort:      current.PortCode,
+			DepartureTimestamp: current.Timestamp,
+			ArrivalPort:        next.PortCode,
+			ArrivalTimestamp:   next.Timestamp,
+		})
+	}
+	return voyages
+}
+\end{lstlisting}
+
+Next, the voyage times computed are used to construct geographical trajectories. This process is initially a simple matter of extracting positional records from the vessel positions history table for the given vessels between the departure and arrival timestamp ordered by time. However, the trajectories was also validated based on coherence and distance between two points in a trajectory. For instance, if distance between two points are sufficiently large, there is most likely missing coverage in the \acrshort{ais} data. Furthermore, another issue was detected where some vessels showed a seemingly coherent trajectory except for a section of it where the longitude or latitude value fluctuated with extreme distances when the vessel was stationary or moving slowly. An example of this issue is shown in \cref{fig:noisy_trajectory} which shows a voyage starting in Monaco and ending in Naples, Italy. During a stopping point in northern Italy, the vessel transmitted two longitude values placing the vessel in the middle-east, but then continued the journey to Naples. This issue is presumably caused by issues with the GPS signals sent by the \acrshort{ais} transmitter on board the vessel or by some other equipment error. Excluding the fluctuated segment of the trajectory, the remaining trajectory is completely valid, thus, if it is possible to remove the invalid part of the trajectory, the remainder could be further used in the analysis. Therefore, ``noise filter'' was employed to detect and cut away fluctuations in otherwise valid trajectories.
+
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/noisy_trajectory}
+    \caption{Example showing a ``noisy'' trajectory presumably caused by GPS inaccuracy or equipment error}
+    \label{fig:noisy_trajectory}
+\end{figure}
+
+The noise filtering employed in the trajectory builder is shown in \cref{fig:noise_filter} where the red segment fluctuates in an otherwise valid trajectory and is therefore excluded. For every point in the trajectory, the algorithm checks the distance between the current and the next point as well as the time difference between the two points. Using the distances in space and time, it calculates the speed the vessel would require to travel from the first to the second point. If the speed required was more than 50 knots, the segment was invalid. The next point is then compared to the first to see if there is a possible valid segment to the third point. If there is the second point is disregarded. The algorithm has a tolerance of four invalid points before it disregards the entire trajectory. \cref{lst:noise_filter} shows the function used to find the next valid point in a trajectory, if it returns an error, the trajectory is disregarded.
+
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/noise_filter}
+    \caption{Noise filter algorithm cutting out points in a trajectory detected as noise. The red segment is cut out and the black segments are tied together as shown with the green dotted line.}
+    \label{fig:noise_filter}
+\end{figure}
+
+\begin{lstlisting}[
+    caption={Golang code used find the next valid point for any given point in a trajectory.},
+    label=lst:noise_filter,
+    language=Go
+]
+// nextValidPoint returns the index of the next valid point checking distances to
+// every point within tolerance. If no valid distances were found wihin tolerance
+// it returns an error. If the last point in trajectory was reached, -1 is returned
+func nextValidPoint(start, tolerance int, positions []VesselPosition) (int, error) {
+	a := positions[start]
+	for j := start + 1; j <= start+tolerance; j++ {
+		if j >= len(positions) {
+			// if we have checked all points in trajectory
+			return -1, nil
+		}
+
+		n := positions[j]
+		dist := DistanceHaversine(Point{a.Lon, a.Lat}, Point{n.Lon, n.Lat})
+		// use the absolute value in case the trajecotory is not sorted
+		timeDiff := math.Abs(float64(n.Timestamp - a.Timestamp))
+
+		// calculate the required speed to reach the given point with the
+		// given time difference * 1.94385 to konvert m/s to knots
+		requiredSpeed := (dist / timeDiff) * 1.94385
+		// if required speed was >= 50kt, move on to next point
+		if requiredSpeed < 50.0 {
+			return j, nil
+		}
+	}
+
+	// no reasonable distances were found within tolerance
+	return -1, errors.New("trajectory segment too noisy")
+}
+\end{lstlisting}
 
 \begin{itemize}
     \item Extracting departure=>arrival times grouped by vessels, ordered by time

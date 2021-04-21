@@ -7,6 +7,7 @@ In this chapter, concepts and terminology relevant to the thesis is explained, m
 This section describes the broader concepts that are important to the thesis's solution and later discussions,
 
 \subsection{Vessel voyage definition}
+\label{sec:vessel_voyage_definition}
 
 In order to effectively predict a vessel's future destination, or analyze voyage patterns in general, a vessel voyage must first be defined. This is a crucial concept to define as it would change the outcome of any prediction method that considers historical voyages. The main factor to decide on is when does a vessel arrive at a port, or what conditions must be true for a vessel to have arrived at a port.
 
@@ -14,6 +15,16 @@ There might be several different reasons for a vessel to visit a port, not all o
 
 For the purpose of this thesis, a voyage is defined only when the vessel herself claims to be moored by reflecting this as a navigational status in the \acrfull{ais} data. As vessels usually do not use the moored signal when bunkering, or for short stops along a voyage, this entails that the proposed solution will be more prone to predicting the final destination of a vessel even though it might stop for other reasons along the voyage. This voyage is beneficial for actors in the industry who are interested in knowing what vessels are available in different regions for chartering, however, a disadvantage is that fewer voyages can be constructed from the available data as longer voyages could have been divided into multiple smaller voyages if considering, for instance, bunkering as port arrivals.
 
+A literature study, later described in \cref{sec:lit_review}, shows that there are few studies that consider voyage prediction, however, the most common alternative method of defining trajectories of vessels is to use some manner of clustering. The most promising of these detected port arrivals by detecting clusters of vessel positions transmitted close to ports. In contrast to using navigational statuses, this method defined voyages as trajectories between stopping ports, thus voyages stopping mid-voyage at smaller ports was considered their own voyages.
+
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/mo_voyage}
+    \caption{Example voyage, created using \acrshort{mo}'s route planner tool, for a traveling vessel (Pacific Harvest), traveling from Brazil to China while stopping at Singapore to refuel.}
+    \label{fig:example_voyage}
+\end{figure}
+
+To summarize, consider a voyage starting at Brazil and ending in Shanghai, China. Depending on the speed and fuel consumption of the traveling vessel, this voyage is around 12 000 nautical miles long and would take between 30 and 40 days. Thus, it is probable that a traveling vessel would stop to refuel at the bunkering port in Singapore. In this example (shown in \cref{fig:example_voyage}), one could either consider one complete voyage from Brazil to China, or one could consider two voyages; one going from Brazil to Singapore, and another going from Singapore to China. Assuming the vessel use the navigational status ``moored'' in Brazil and China only, the approach used in this thesis would consider one complete voyage from Brazil to Singapore, while a clustering-based method would consider the two shorter voyages.
 
 \subsection{Trajectory similarity}
 
@@ -32,6 +43,13 @@ The methods mentioned thus far are all algorithmic approaches to measuring simil
 
 \subsection{Machine learning (ML)}
 
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=0.75\textwidth]{figures/ml-terms}
+    \caption{Machine Learning (ML) hierarchical terminology}
+    \label{fig:ml_terms}
+\end{figure}
+
 \acrfull{ml} is an umbrella term describing computer algorithms that automatically adapt and improve based on experience. There is a vast number of different \acrshort{ml} algorithms applied to different problem areas. \acrshort{ml} is mainly divided into three broad categories: supervised learning, unsupervised learning, and reinforcement learning. In supervised learning, in the training process, both input and the desired output are provided to the model. The model finds patterns and correlations between input and output data during the training process, and when the model is trained or fitted, it is capable of guessing output given only input. In unsupervised learning, no output labels are provided to the model leaving the model to find patterns in the input set on its own. Clustering is an example of unsupervised learning as the model finds and labels patterns in input data without any external guidance. Reinforcement learning is a dynamic approach to \acrshort{ml} where the model continuously learns while trying to achieve a goal. In this method, the model navigates a problem space, and the program rewards or punishes the model that tries to optimize for rewards. In regards to topics covered by this thesis, \acrshort{ml}-based trajectory comparisons involve unsupervised learning, while predicting destination ports is supervised as the historical destinations are known.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
@@ -43,13 +61,6 @@ The methods mentioned thus far are all algorithmic approaches to measuring simil
 
 Moreover, supervised learning can further be divided into regression and classification problems. The main difference between the two is that classification aims at predicting a label, or a class, while regression predicts a quantity that is not necessarily present in the training data. For instance, a regression model can be used to predict the price of an item for sale, while classification can be used to label emails as "spam" or "not spam". \cref{fig:classification_regression} shows the difference between classification and regression. The example of classifying emails as ``spam'' or ``not spam'' would be considered a binary classification problem as there are only two possible labels, however, classification can also involve predicting more than two outcomes which is commonly referred to as multi-class classification. In the context of this thesis, predicting a vessel's destination port can be formulated as a multi-class classification problem as every possible destination port are different possible labels for a given voyage in progress. \cref{fig:ml_terms} shows the how \acrshort{ml} is hierarchically divided into more specific terms relevant for the scope of this thesis.
 
-\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
-    \centering
-    \includegraphics[width=0.75\textwidth]{figures/ml-terms}
-    \caption{Machine Learning (ML) hierarchical terminology}
-    \label{fig:ml_terms}
-\end{figure}
-
 \begin{itemize}
     \item Cross-validation
     \item Hyperparameter optimization
@@ -60,6 +71,10 @@ Moreover, supervised learning can further be divided into regression and classif
 \subsection{Database system}
 
 All the data that is used throughout this thesis for analysis is collected and stored in a \textit{PostGreSQL} database. \textit{PostGreSQL}, or \textit{Postgres}, is an open-source object-relational database management system that supports the extended subset of SQL standards. One major advantage of using \textit{Postgres} is the support for plugins such as \textit{PostGIS} that provides tools for dealing with \acrshort{gis} and geometric data. In this thesis, \textit{PostGIS} is frequently used to store and process geographical trajectory data for vessel voyages. Throughout this thesis, when referring to the proposed methodology and results, terms such as database, table, row, and column refers to the \textit{PostGreSQL} database used and its tables with rows, and columns.
+
+\subsection{Programming languages and tools}
+
+The main programming languages used throughout this thesis are Golang and Python. Golang is primarily used in constructing the initial data foundation which requires dealing with databases, trajectory building and validation. Golang is chosen for this because of its performance benefits and ease of use. For data analysis and machine learning, Python is the main programming language of choice. Most code provided to the reader in this document is written with the focus of readabilty over efficiency.
 
 \subsection{Automatic Identification Systems (AIS) data}
 \label{sec:ais_data}
