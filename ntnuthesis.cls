@@ -147,6 +147,7 @@
 \RequirePackage[scaled=.88]{berasans}       % sans serif font
 \RequirePackage[scaled=.82]{DejaVuSansMono} % monospace font (for code)
 \RequirePackage{listings}                   % code listings
+\RequirePackage{etoolbox}                   % fixing list of listings spacing
 \RequirePackage{babel}                      % language specifics
 \RequirePackage{geometry}                   % page layout
 \RequirePackage{enumitem}                   % customising list appearance
@@ -294,6 +295,9 @@
         {€}{{\euro}}1 {£}{{\pounds}}1 {«}{{\guillemotleft}}1
         {»}{{\guillemotright}}1 {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {¿}{{?`}}1
 }
+
+% Ensure list of listings have additional spacing between chapters to match figures and tables
+\pretocmd{\chapter}{\addtocontents{lol}{\protect\addvspace{10\p@}}}{}{}
 
 % Settings for hyperref: setting all the links black for best printing. They will still be clickable in the PDF
 \hypersetup{
