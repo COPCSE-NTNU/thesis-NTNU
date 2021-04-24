@@ -158,7 +158,7 @@ During the process of building trajectories, several trajectories where discover
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
-    \includegraphics[width=0.7\textwidth]{figures/noisy_trajectory}
+    \includegraphics[width=0.7\textwidth]{figures/trajectory_noise/noisy_trajectory}
     \caption{Example showing a ``noisy'' trajectory presumably caused by GPS inaccuracy or equipment error}
     \label{fig:noisy_trajectory}
 \end{figure}
@@ -167,12 +167,19 @@ An example of this issue is visualized in \cref{fig:noisy_trajectory} which show
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
-    \includegraphics[width=0.6\textwidth]{figures/noise_filter}
+    \includegraphics[width=0.6\textwidth]{figures/trajectory_noise/noise_filter}
     \caption{Noise filter algorithm cutting out points in a trajectory detected as noise. The red segment is cut out and the black segments are tied together as shown with the green dotted line.}
     \label{fig:noise_filter}
 \end{figure}
 
-The noise filtering employed in the trajectory builder is shown in \cref{fig:noise_filter} where the red segment fluctuates in an otherwise valid trajectory and is therefore excluded from the remaining trajectory. For every point in the trajectory, the algorithm checks the distance between the current and the next point as well as the time difference between the two points. Using the distances in space and time, it calculates the speed the vessel would require to travel from the first to the second point. If the speed required was more than 50 knots, the segment was invalid. The next point is then compared to the first to see if there is a possible valid path to the third point. If there is, the second point is disregarded from the trajectory. The algorithm is given a tolerance of four invalid points before it disregards the entire trajectory. \cref{lst:noise_filter} shows the function used to find the next valid point in a trajectory, if it returns an error, the trajectory is disregarded.
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/trajectory_noise/filtered}
+    \caption{The example trajectory shown \cref{fig:noise_filter} from Monaco to Naples after noise filtering.}
+    \label{fig:noise_filtered}
+\end{figure}
+
+The noise filtering employed in the trajectory builder is shown in \cref{fig:noise_filter} where the red segment fluctuates in an otherwise valid trajectory and is therefore excluded from the remaining trajectory. For every point in the trajectory, the algorithm checks the distance between the current and the next point as well as the time difference between the two points. Using the distances in space and time, it calculates the speed the vessel would require to travel from the first to the second point. If the speed required was more than 50 knots, the segment was invalid. The next point is then compared to the first to see if there is a possible valid path to the third point. If there is, the second point is disregarded from the trajectory. The algorithm is given a tolerance of four invalid points before it disregards the entire trajectory. \cref{lst:noise_filter} shows the function used to find the next valid point in a trajectory, if it returns an error, the trajectory is disregarded. \cref{fig:noise_filtered} shows the same trajectory from \cref{fig:noisy_trajectory} after the following algorithm has filtered out fluctuating segments.
 
 \begin{lstlisting}[
     caption={Golang code used find the next valid point for any given point in a trajectory.},
@@ -227,15 +234,77 @@ After the initial data set has been collected and vessel voyages have been defin
 
 \subsection{Trajectory sampling}
 
-\begin{itemize}
-    \item Why? How?
-    \item Sampling based on distance
-    \item Sampling based on time
-\end{itemize}
+Vessels transmit \acrshort{ais} records at different frequencies and messages collected via satellite are collected at different frequencies as the satellites have different orbits. Therefore the frequency, or density, or records in trajectories can not be expected to be standardized. Furthermore, as vessels travel at different speeds, two trajectories with similar start and end positions might have different shapes and contain a different number of points. In addition, as discussed in \cref{sec:vessel_voyage_definition}, one disadvantage of relying on \acrshort{ais} navigational statuses is that vessels can stop during a voyage for different reasons before arriving at their final destinations. Whenever a vessels stops moving or moves slowly, many \acrshort{ais} records are transmitted in clusters which cause noise and redundant data in the constructed trajectories.
+
+\begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/trajectory_sampling}
+    \caption{Example of a trajectory sampled by both distance (2 km) and time (6 hours). The red trajectory is not sampled, the blue is sampled based on 2 km in distance, and the green is sampled based on six hour time intervals.}
+    \label{fig:trajectory_sampling}
+\end{figure}
+
+The proposed solution includes using similarity between trajectories to predict traveling vessels' destination ports, therefore, in order to make the trajectories more comparable a sampling step was added in the process of constructing the training data. There were two main approaches considered for trajectory re-sampling, namely sampling based on distance and time. When sampling based on a predefined distance, each subsequent point in a trajectory must be the same distance apart from each other. When sampling based on time, one position is extracted from a trajectory for every given unit of time. For instance, if sampling based on time with a six hour sample rate, starting from the first point, every position within six hour intervals are grouped and all positions within each group are dropped except for the first one. Both methods achieve the goal of making trajectories more comparable, however, sampling based on time simplifies, or reduces, the amount of data in each trajectory the most. It also provides an indication of trajectory duration implicitly through the trajectory length, or the number of points in a trajectory.
+
+For these reasons, throughout the rest of the implementation, sampling is done based on time using a time interval of six hours. It is worth noting that for trajectories shorter than six hours, only the first and last point in the trajectory is returned reducing the trajectory to a straight line. In order to sample any trajectory based on either time or distance, a Golang package was written called ``sampler'' which can parse and handle both 3D trajectories including timestamps for time sampling, and 2D trajectories for distance sampling. The complete code for this package can be found in \cref{app:sampler}. \cref{lst:trajectory_sampler} shows an extract from this package of the function used to resample trajectories based on time.
+
+\begin{lstlisting}[
+    caption={Golang code from a sampler package written to sample a trajectory based on time.},
+    label=lst:trajectory_sampler,
+    language=Go
+]
+// resampleTime resamples trajectory based on s.SampleRate given in hours.
+// Extracts the first position within intervals based on sample rate
+func (s *Instance) resampleTime() (string, error) {
+	var err error
+	trajectory, err := s.parse3DTrajectory()
+	if err != nil {
+		return "", err
+	}
+
+	intervals := s.getTimeIntervals(trajectory)
+	reducedCoords := []geom.Coord{}
+	coords := trajectory.Coords()
+
+	// within each interval add the first coord to reducedCoords
+	for _, interval := range intervals {
+		var first *geom.Coord
+
+                // get first coord in interval
+		for i := range coords {
+		        // roundTime uses s.SampleRate when rounding
+			coordInterval := s.roundTime(int64(coords[i][2]))
+			if coordInterval == interval {
+				first = &coords[i]
+				break
+			}
+		}
+		if first != nil {
+			reducedCoords = append(reducedCoords, *first)
+		}
+	}
+
+	// if the last coord wasn't the last in reduced, add it
+        lastReduced := reducedCoords[len(reducedCoords)-1]
+	if !lastReduced.Equal(geom.XYZ, coords[len(coords)-1]) {
+		reducedCoords = append(reducedCoords, coords[len(coords)-1])
+	}
+	if len(reducedCoords) <= 1 {
+		return "", errors.New("too few points in sampled trajectory")
+	}
+	reduced, err := geom.NewLineString(geom.XYZ).SetCoords(reducedCoords)
+	if err != nil {
+		return "", err
+	}
+
+	return geomwkt.Marshal(reduced)
+}
+\end{lstlisting}
+
+The function listed in \cref{lst:trajectory_sampler} is used in a batch process that samples every voyage's trajectory and keeps the sampled voyages in a separate table called ``sampled transition voyages''. The batch process extracts 5000 voyages at a time, samples their trajectories, and batch-inserts them into the separate table. By not mutating the original voyage data, different sampling methods can be applied and tested to find differences in trajectory comparisons.
 
 \subsection{\acrfull{mstd}}
 
-For the proposed solution to take both geographical trajectories and additional vessel information into account for predictions, in the final model, the trajectories have been abstracted into the categorical and numeric values \acrshort{mstd}, the similarity value for the \acrshort{mstd}, and then the length of the trajectory.
+In order for the proposed solution to take into account both geographical trajetories as well as additional vessel information for predictions, in the training set, the trajectories have been abstracted into the categorical and numeric values \acrfull{mstd}, the similarity value for the \acrshort{mstd}, and then the length of the trajectory. The \acrshort{mstd} for a given voyage is found by measuring the similarity between the given voyage's trajectory and every historical trajectory in the sampled transition voyages table. The most similar trajectory is found using a given trajectory similarity measurement, and its destination and similarity value is added to the final dataset. As described in \cref{sec:trajectory_similarity}, there are several different trajectory similarity measurements available, however, for this thesis the \acrfull{sspd} is used to calculate the \acrshort{mstd} values. However, the process and the dataset is structured in such a way that it is possible to use different similarity measurement methods in this process. For instance, the \acrshort{ml}-based method proposed in \cite{Zhang2020AISApproach} achieved good performance for similarity based predictions, thus it could be replicated and used to calculate the \acrshort{mstd} values for this approach.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
@@ -244,11 +313,21 @@ For the proposed solution to take both geographical trajectories and additional 
     \label{fig:mstd}
 \end{figure}
 
+The \acrshort{mstd} value for a given voyage is calculated in the following steps:
+
+\begin{enumerate}
+    \item Given a sampled voyage, fetch every historical voyage with the same departure port from vessels of the same segment and sub-segment.
+    \item Use a given similarity measurement method, \acrshort{sspd} in this case, to calculate the similarity between the given voyage's trajectory and every historical voyage's trajectory. The given similarity measurement method must return a similarity value. For \acrshort{sspd}, this value is a Haversine distance value.
+    \item Find the most similar historical trajectory, or the trajectory with the smallest similarity value.
+    \item Extract the most similar historical trajectory's destination port as the \acrshort{mstd} value and extract the similarity value for future use.
+\end{enumerate}
+
+\cref{fig:mstd} shows an example of finding the most similar historical trajectory (green line) for a given voyage (red line). The given voyage departed the port of Rotterdam, and arrived in Mo i Rana, Norway. Every other historical voyage that departured Rotterdam from vessels of the same segment and sub-segment was then extracted and \acrshort{sspd} was used to find the most similar historical trajectory.
 
 \subsection{Building ML data training set}
 
 \begin{itemize}
-    \item Batch calculating MSTD
+    \item Batch calculating MSTD with incomplete voyages
     \item Different trajectory similarity approaches
     \item Adding more data attributes per voyage such as seasons, ballast/laden, etc\ldots
     \item Final result/structure
@@ -287,6 +366,30 @@ An overview of the process described in this chapter thus far is shown in \cref{
     \caption{Overview of the process used to construct the dataset used in further analysis and \acrshort{ml}.}
     \label{fig:dataset_overview}
 \end{figure}
+
+The final dataset is collected in a database table called \acrshort{ml} training data, and it contains the following attributes:
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabularx}{1.0\textwidth}{p{1.0in} p{0.75in} X}
+    \hline
+        \bfseries{Column} & \bfseries{Type} & \bfseries{Description} \\ \toprule
+        id & serial int & unique identifier \\ \midrule
+        voyage\_id & int & the original voyage id from sampled transition voyages \\ \midrule
+        imo & int & identifier for the traveling vessel\\ \midrule
+        mmsi & int & identifier for the traveling vessel\\ \midrule
+        segment & string & the vessel's segment \\ \midrule
+        sub\_segment & string & the vessel's sub-segment \\ \midrule
+        departure\_port & string & \gls{locode} of the vessel's departure port \\ \midrule
+        trajectory\_length & int & number of points in the sampled trajectory \\ \midrule
+        sspd\_mstd & string & \gls{locode} of the \acrshort{mstd} value for the voyage trajectory \\ \midrule
+        sspd\_dist & int & similarity value between the voyage trajectory and the most similar historical trajectory   \\ \midrule
+        arrival\_port & string & \gls{locode} of the vessel's arrival port \\ \bottomrule
+    \end{tabularx}
+\caption{Final structure of the ml\_training\_data database table.}\label{tab:ml_training_data}
+\end{table}
+
+
 
 
 \section{ML-based training and destination prediction}
