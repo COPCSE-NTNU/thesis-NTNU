@@ -113,7 +113,8 @@ The first step including defining trajectories based on vessel transitions is a 
 \begin{lstlisting}[
     caption={Golang code used to compute voyage times from vessel transitions. The code has been reduced slightly for readability.},
     label=lst:voyage_times,
-    language=Go
+    language=Go,
+    showstringspaces=false,
 ]
 func getVoyageTimes(transitions []VesselTransition) []Voyage {
 	var voyages []Voyage
@@ -184,7 +185,8 @@ The noise filtering employed in the trajectory builder is shown in \cref{fig:noi
 \begin{lstlisting}[
     caption={Golang code used find the next valid point for any given point in a trajectory.},
     label=lst:noise_filter,
-    language=Go
+    language=Go,
+    showstringspaces=false,
 ]
 // nextValidPoint returns the index of the next valid point checking distances to
 // every point within tolerance. If no valid distances were found wihin tolerance,
@@ -250,7 +252,8 @@ For these reasons, throughout the rest of the implementation, sampling is done b
 \begin{lstlisting}[
     caption={Golang code from a sampler package written to sample a trajectory based on time.},
     label=lst:trajectory_sampler,
-    language=Go
+    language=Go,
+    showstringspaces=false,
 ]
 // resampleTime resamples trajectory based on s.SampleRate given in hours.
 // Extracts the first position within intervals based on sample rate
@@ -300,7 +303,23 @@ func (s *Instance) resampleTime() (string, error) {
 }
 \end{lstlisting}
 
-The function listed in \cref{lst:trajectory_sampler} is used in a batch process that samples every voyage's trajectory and keeps the sampled voyages in a separate table called ``sampled transition voyages''. The batch process extracts 5000 voyages at a time, samples their trajectories, and batch-inserts them into the separate table. By not mutating the original voyage data, different sampling methods can be applied and tested to find differences in trajectory comparisons.
+The function listed in \cref{lst:trajectory_sampler} is used in a batch process that samples every voyage's trajectory and keeps the sampled voyages in a separate table called ``sampled transition voyages''. The batch process extracts 5000 voyages at a time, samples their trajectories, and batch-inserts them into the separate table. By not mutating the original voyage data, different sampling methods can be applied and tested to find differences in trajectory comparisons. The final structure of the sampled transition voyages database table is described in \cref{tab:sampled_voyages}
+
+\begin{table}[htbp]
+    \centering
+    \small{\begin{tabularx}{1.0\textwidth}{p{1.3in} p{0.75in} X}
+        \bfseries{Column} & \bfseries{Type} & \bfseries{Description} \\ \toprule
+        voyage\_id & int & reference to the original voyage id \\ \midrule
+        imo & int & identifier for the traveling vessel\\ \midrule
+        mmsi & int & identifier for the traveling vessel\\ \midrule
+        departure\_port & string & \gls{locode} of the vessel's departure port \\ \midrule
+        departure\_timestamp & int & Unix timestamp from when the vessel departed the departure port \\ \midrule
+        arrival\_port & string & \gls{locode} of the vessel's arrival port \\ \midrule
+        arrival\_timestamp & int & Unix timestamp from when the vessel arrived at the arrival port \\ \midrule
+        trajectory & geometry & 3D linestring with longitude, latitude, and timestamp for each point \\ \bottomrule
+    \end{tabularx}}
+\caption{Structure of the ``sampled\_transition\_voyages'' table.}\label{tab:sampled_voyages}
+\end{table}
 
 \subsection{\acrfull{mstd}}
 
@@ -326,28 +345,91 @@ The \acrshort{mstd} value for a given voyage is calculated in the following step
 
 \subsection{Building ML data training set}
 
-\begin{itemize}
-    \item Batch calculating MSTD with incomplete voyages
-    \item Different trajectory similarity approaches
-    \item Adding more data attributes per voyage such as seasons, ballast/laden, etc\ldots
-    \item Final result/structure
-\end{itemize}
+After the data has been collected, and the \acrshort{mstd} method has been implemented to translate geographical trajectories into categorical and numerical values, the last step is to collect data attributes from the initial data foundation and to calculate \acrshort{mstd} values for every historical trajectory. The final dataset is used to train a \acrfull{ml} model that aims to predict the arrival port of voyages based on these values. Furthermore, to ensure that the training data is reflective of actual scenarios, the full historical trajectories were divided into several incomplete voyages when calculating \acrshort{mstd} values. This ensures that the final model is able to predict the arrival port of traveling vessels before they reach their final destination. Thus, the process of constructing the final training dataset can be summarized in the following steps:
 
-\subsection{Dataset imbalance}
+\begin{enumerate}
+    \item Extract the values listed in \cref{tab:sampled_voyages} from the sampled voyages.
+    \item Divide the trajectory up to four different smaller trajectories based on the length of the trajectory.
+    \item Calculate the \acrshort{mstd} for every trajectory.
+    \item Collect the values from each voyage as well as the \acrshort{mstd}, similarity value, and length of the voyage trajectory for the training data.
+\end{enumerate}
 
-\begin{itemize}
-    \item Minority oversampling
-    \item Majority undersampling
-\end{itemize}
+The process of dividing a trajectory into multiple shorter lengths is relatively straight forward and is shown in \cref{lst:incomplete_voyages}. It is worth noting that trajectories containing less than four points are skipped as the constructed trajectories must have at least two points. Trajectories with exactly four points are divided into two parts instead of four for the same reason.
 
-\subsection{Categorical label encoding}
+\begin{lstlisting}[
+    caption={Python code used to create incomplete voayges by dividing them into multiple lengths.},
+    label=lst:incomplete_voyages,
+    language=Python,
+    showstringspaces=false,
+]
+def get_incomplete_trajectories(df, parts=4):
+    """divides trajectories in df into n parts
 
-\begin{itemize}
-    \item Categorical values/labels must be encoded
-    \item Label encoding vs one-hot encoding
-\end{itemize}
+    Given array of coords of length 8, with indicies:
+    [i, i, i, i, i, i, i, i]
+     0  1  2  3  4  5  6  7
+    We want to create the following trajectories by incrementing with 8/4=2
+     0  1
+     0  1  2  3
+     0  1  2  3  4  5
+     0  1  2  3  4  5  6  7 # original
+    """
 
-\section{The final dataset summary}
+    ret_df = pd.DataFrame(columns=df.columns)
+    for _, r in df.iterrows():
+        row = r.copy(deep=True)
+        traj = row["trajectory"]
+        length = len(traj)
+
+        # we cant make trajectories of length 1
+        if length == parts:
+            # so use half the number of parts
+            parts = math.floor(parts/2)
+
+        inc = math.floor(length/parts)
+        if inc == 0:
+            # skip trajectories shorter than paths
+            continue
+
+        for i in range(inc, length, inc):
+            new_traj = traj[:i]
+            if len(new_traj) < 2:
+                print("warning: generated trajectory was invalid")
+                continue
+
+            row["trajectory"] = new_traj
+            row["trajectory_length"] = len(new_traj)
+            ret_df = ret_df.append(row, ignore_index=True)
+
+    return ret_df
+\end{lstlisting}
+
+
+\cref{fig:incomplete_voyage} shows an example of a voyage traveling from China to Argentina. The code listed in \cref{lst:incomplete_voyages} was use to divide it into four parts that are highlighted by the different colored segments of the trajectory.
+
+\noindent
+\begin{figure}[htbp]
+    \includegraphics[width=1.0\textwidth]{figures/incomplete_voyage}
+    \caption{A voyage (ID 3305) from China to Argentina divided up into four subsets emulating incomplete voyages.}
+    \label{fig:incomplete_voyage}
+\end{figure}
+
+The similarity value derived from the \acrshort{mstd} calculation and the length of the trajectory are also included in the training set so that a \acrshort{ml} model can find correlating patterns between the length of the trajectory, the similarity value, and the \acrshort{mstd} value. The length of the trajectory indicates how long the vessel has been at sea and thus how close it is to its destination. Therefore, both the trajectory length and the derived similarity value serves as weights for the \acrshort{mstd} value. The expected pattern from the constructed incomplete voyages is exemplified in \cref{tab:incomplete_voyage}. When the trajectories are short and the \acrshort{sspd} distance is high, it should indicate that the \acrshort{mstd} value is more likely to be wrong. When the vessel is closer to the destination, the trajectory length is longer and the \acrshort{mstd} is more likely to be correct. In the example of the vessel traveling from China to Argentina, the \acrshort{sspd}-based \acrshort{mstd} value was not correct until the last quarter of the voyage. The similarity value is also lower for the final entry which should indicate that, for the final entry, the \acrshort{mstd} value is likely to be correct.
+
+\begin{table}[htbp]
+    \centering
+    \small{\begin{tabularx}{0.9\textwidth}{X X X X X}
+        \bfseries{Voyage ID} & \bfseries{SSPD-based MSTD} & \bfseries{Arrival port} & \bfseries{Trajectory length} & \bfseries{SSPD dist.} \\ \toprule
+        3305 & INTUT & ARSLO & 37 & 1520108 \\ \midrule
+        3305 & MYPEN & ARSLO & 74 & 150733 \\ \midrule
+        3305 & BRRIG & ARSLO & 111 & 454581 \\ \midrule
+        3305 & ARSLO & ARSLO & 148 & 148770 \\ \bottomrule
+    \end{tabularx}}
+\caption{Extract from ml training data showing a voyage divided into four shorter voyages.}\label{tab:incomplete_voyage}
+\end{table}
+
+
+\subsection{The final dataset - summary}
 
 The final process of creating the dataset used in the analysis can be summarized in the following steps:
 
@@ -371,7 +453,7 @@ The final dataset is collected in a database table called \acrshort{ml} training
 
 \begin{table}[htbp]
     \centering
-    \begin{tabularx}{1.0\textwidth}{p{1.0in} p{0.75in} X}
+    \small{\begin{tabularx}{1.0\textwidth}{p{1.0in} p{0.75in} X}
         \bfseries{Column} & \bfseries{Type} & \bfseries{Description} \\ \toprule
         id & serial int & unique identifier \\ \midrule
         voyage\_id & int & the original voyage id from sampled transition voyages \\ \midrule
@@ -384,12 +466,25 @@ The final dataset is collected in a database table called \acrshort{ml} training
         sspd\_mstd & string & \gls{locode} of the \acrshort{mstd} value for the voyage trajectory \\ \midrule
         sspd\_dist & int & similarity value between the voyage trajectory and the most similar historical trajectory   \\ \midrule
         arrival\_port & string & \gls{locode} of the vessel's arrival port \\ \bottomrule
-    \end{tabularx}
+    \end{tabularx}}
 \caption{Final structure of the ml\_training\_data database table.}\label{tab:ml_training_data}
 \end{table}
 
-
 \section{ML-based training and destination prediction}
+
+\subsection{Dataset imbalance}
+
+\begin{itemize}
+    \item Minority oversampling
+    \item Majority undersampling
+\end{itemize}
+
+\subsection{Categorical label encoding}
+
+\begin{itemize}
+    \item Categorical values/labels must be encoded
+    \item Label encoding vs one-hot encoding
+\end{itemize}
 
 \subsection{Model selection}
 
