@@ -45,6 +45,7 @@ Moreover, the \acrshort{sspd} method proposed in \cite{besse2015review} is avail
 The methods mentioned thus far are all algorithmic approaches to measuring similarities between trajectories, however, there are also \acrshort{ml}-based methods as well such as the approach proposed in \cite{Zhang2020AISApproach} that also compares their results to the aforementioned methods. They used a \acrfull{rf} to measure similarities between a traveling trajectory and every historical trajectory traveling from the same departure port in order to predict the next destination port for a vessel. They achieved a higher general accuracy when compared to algorithmic methods such as \acrshort{sspd}. Moreover, for similar purposes, some unsupervised clustering methods have also been applied to similar problems such as the \acrfull{dbscan} which is capable of sequentially finding patterns in points and trajectories. This approach is more frequently used in trajectory predictions on a small geographical extent such as for collision detection and anomaly detection.
 
 \subsection{Machine learning (ML)}
+\label{sec:machine_learning}
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
@@ -64,6 +65,13 @@ The methods mentioned thus far are all algorithmic approaches to measuring simil
 
 Moreover, supervised learning can further be divided into regression and classification problems. The main difference between the two is that classification aims at predicting a label, or a class, while regression predicts a quantity that is not necessarily present in the training data. For instance, a regression model can be used to predict the price of an item for sale, while classification can be used to label emails as "spam" or "not spam". \cref{fig:classification_regression} shows the difference between classification and regression. The example of classifying emails as ``spam'' or ``not spam'' would be considered a binary classification problem as there are only two possible labels, however, classification can also involve predicting more than two outcomes which is commonly referred to as multi-class classification. In the context of this thesis, predicting a vessel's destination port can be formulated as a multi-class classification problem as every possible destination port are different possible labels for a given voyage in progress. \cref{fig:ml_terms} shows how \acrshort{ml} is hierarchically divided into more specific terms relevant for the scope of this thesis.
 
+\subsubsection{Categorical label encoding}
+\label{sec:label_encoding}
+
+Categorical values are values that are a subset of a finite number of possible values, while numerical values have infinite possible values. As mentioned in this section, the thesis problem can be formulated as a multi-class classification problem where the predicted arrival port is a single value in finite set of ports. Thus, this is a categorical value. In the context of \acrshort{ml}, models often perform better, or expect, numerical values in their inputs (\todo{Citation}). Therefore, it is common practice to use a form of encoding of the categorical values to transform them into numeric values. There are several different methods of achieving this, however, two common methods to use is ``Label Encoding'', and ``One-Hot Encoding''. In label encoding, each value in a category is transformed into a numerical value ranging from 0 to the number unique values in the column. This is a simple and practical encoding method, however, since the categorical values are now numeric, implicitly, the \acrshort{ml} might misunderstand the data to be ordered and derive meaning from the numerical relationships. In one-hot encoding, when a column of data is encoded, the column is split into multiple columns for each different category in the column. Then, the values are replaced by ones and zeros indicating what column contains that value. This solves the issue with implicit patterns in numerical values, however, with high cardinatlity datasets, \acrshort{ml} might struggle with the sparsity and the large number of features that are generated.
+
+
+\todo{TODO:}
 \begin{itemize}
     \item Cross-validation
     \item Hyperparameter optimization
