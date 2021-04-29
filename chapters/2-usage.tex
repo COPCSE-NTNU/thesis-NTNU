@@ -81,33 +81,65 @@ which shows that $\Phi$ is both Lipschitz continuous and coercive, since
 \end{align}
 
 
-Furthermore, the inverse map is
-\begin{numcases}{\Psi(z) = }
-     &\int_0^z k(\hat{z}) d\hat{z} &\text{ for } z \geq 0,\\
-     & \int_z^0 -k(\hat{z}) d\hat{z} &\text{ for } z < c, 
-\end{numcases}
-since 
-\begin{equation}
-    \Phi'(z) \Psi^{'}(z) = 1 \text{ and } \Phi(\Psi(0)) = 0,
+Since $\Phi$ is strictly increasing, there exists an inverse map $\Psi$, such that
+\begin{equation} \label{Psi_def}
+	\Psi \circ \Phi = \Phi \circ \Psi = \text{Id}.
 \end{equation}
-by (the Implicit function theorem). The goal is to express \eqref{FtL_model} as an autonomuous system of ordinary differential equations in new coordinate variables $\{\Phi_{i-1/2}\}_{i\in \{1,...,N\}}$, derived by transforming $\{z_{i-1/2}\}_{i\in \{1,...,N\}}$ under \eqref{Phi1}. Equation \eqref{FtL_transformed1} is only half-way, since the $z_{i-1/2}$ are implicit in $y_i$. These are handled by re-expressing $y_i$ in terms of $\Phi_{i+1/2}, \Phi_{i-1/2}$, 
+An application of the inverse function theorem shows that $\Psi \in \C^{\left(1\right)}\left(\R\right)$, since $\Phi \in \C^{\left(1\right)}\left(\R\right)$. Furthermore, the inverse function theorem implies that
+%overtydelig
+\begin{equation}
+    \Psi'(\Phi(x)) \Phi^{'}(x) = 1 \,\, \forall x \in \R.
+\end{equation}
+Inserting from \eqref{Phi1} and using \eqref{Psi_def}, the inverse function satisfies the following first-order non-linear autonomous ODE
+\begin{equation} \label{psi_ODE}
+	\Psi^{'}(\Phi) = k(\Psi(\Phi)). 
+\end{equation}
+In general, there is little hope in solving this explicitly. 
 
-\begin{align}
-    y_i = \frac{z_{i-1/2} - z_{i+1/2}}{l} 
-     = \frac{\Psi(\Phi_{i+1/2}) - \Psi(\Phi_{i-1/2})}{l}
-     = \frac{\int_{\Phi_{i-1/2}}^{\Phi_{i+1/2}} k(\hat{z}) d \hat{z}}{l}, \, \, \forall i \in \{1,...,N\}.
+ %The goal is to express \eqref{FtL_model} as an autonomuous system of ordinary differential equations in new coordinate variables $\{\Phi_{i-1/2}\}_{i\in \{1,...,N\}}$, derived by transforming $\{z_{i-1/2}\}_{i\in \{1,...,N\}}$ under \eqref{Phi1}. Equation \eqref{FtL_transformed1} is only half-way there, since the $y_i$ expresses a difference in $z_{i-1/2}$-terms%. 
+ 
+ To fully rewrite \eqref{FtL_model} in $\Phi$-coordinates, $y_i$ is to be expressed in terms of $\Phi_{i+1/2}, \Phi_{i-1/2}$. 
+
+\begin{align} \label{y_i_transformed}
+    y_i &= \frac{z_{i-1/2} - z_{i+1/2}}{l} 
+     = \frac{\Psi(\Phi_{i+1/2}) - \Psi(\Phi_{i-1/2})}{l} \nonumber \\
+     &\overset{MVT}{=} \frac{\Psi^{'}(c) \left(\Phi_{i+1/2} -\Phi_{i-1/2}\right)}{l} \overset{IVT}{=} \frac{k\left(\Psi(c)\right) \left(\Phi_{i+1/2} -\Phi_{i-1/2}\right)}{l}, \, \, \forall i \in \{1,...,N\}.
 \end{align}
+where $c \in (\Phi_{i-1/2},  \Phi_{i+1/2})$. The third equality is an application of the mean value theorem and the final equality follows from \eqref{psi_ODE}. 
 
-The transformed FtL system is 
+Let 
+\begin{align} \label{d_k}
+	d_k : \R \times \R &\mapsto \R^+_0 \nonumber \\ 
+	(x,y)  &\mapsto k\left(\Psi(c(x,y))\right) \left|y - x\right|,
+\end{align} 
+where $c(x,y)$ is the constant used in the application of the mean-value theorem in \eqref{y_i_transformed}, for the interval $[\min(x,y), \max(x,y)]$.  The map is symmetric in its arguments, non-negative, and zero if and only if $(x,y) \in D=\{{(x,x)|x\in \R}\}$. However, the triangle inequality may fail to hold, as the scaling of the distances may vary with $k\left(\Psi(c(x,y))\right)$. In conclusion, \eqref{d_k} is not necessarily a metric.
+
+We are ready to formulate the transformed FtL system:
 
 \begin{equation}\label{FtL_transformed2}  
-   \frac{d}{dt} \Phi_{i-1/2}  = V\left(\frac{\int_{\Phi_{i-1/2}}^{\Phi_{i+1/2}} k(\hat{z}) d \hat{z}}{l}\right) \text{ for } i \in \{1,..,N\}.
+   \frac{d}{dt} \Phi_{i-1/2}  = V\left(\frac{d_k(\Phi_{i-1/2}, \Phi_{i+1/2})}{l}\right) \text{ for } i \in \{1,..,N\},
 \end{equation}
-The cost of formulating the Follow the Leader model autonomuously is the non-linear metric induced by the $\Psi$-parametrisation, 
-\begin{equation} \label{FtL_metric}
-    d(x,y) = \left| x - y\right| \, \, \mapsto \, \, d_k(x,y) = \left|\int_{\min(x,y)}^{\max(x,y)} k(\hat{z}) d \hat{z}\right|.
-\end{equation}
-Replace $\Phi$ with $\Psi$ in \eqref{phi_lipschitz} and reverse the inequalities to see that the two metrics of \eqref{FtL_metric} are strongly equivalent. How $\Phi$ and $\Psi$ stretches the road is apparent from their corresponding metrics. It will be seen that $d_k$ is a relatively small price to pay to remove the position dependence of \eqref{FtL_model}. Call \ref{FtL_transformed2} TFtL - Transformed Follow the Leader model. 
+%DEF?
+where $d_k$ is defined in \eqref{d_k}. 
+
+
+The intuition is that $\Phi$ differentiably stretches the road in a manner inversely proportional to $\frac{1}{k}$, such the maximal velocity remains invariably 1. 
+
+The cost of reformulation is the non-linear distance function $d_k$, replacing the usual distance. 
+
+The velocity of a car along the stretched road depend on the scaled distance to the car ahead, and the scaling depends on the local behavior of $k(z)$ between the two vehicles. Since the exact form of $\Psi$ is unknown, this can only be approxmiated locally. %%Skrive om?
+
+One important property of $d_k$ can be derived from the inequalities 
+\begin{equation} \label{dk_ineq1}
+	\frac{1}{\norm{\frac{1}{k}}_\infty} \leq k\left(\Psi(c(x,y))\right) \leq \norm{k}_\infty, 
+\end{equation} 
+which hold $k(z) > 0$. \eqref{dk_ineq1} implies that 
+\begin{align} \label{dk_ineq2}
+	\frac{1}{\norm{\frac{1}{k}}_\infty} \left| y - x\right| \leq d_k(x,y)  \leq  \norm{k}_\infty \left| y - x\right|. 
+\end{align}
+
+The bounds acquired in \eqref{dk_ineq2} provides a way to compare transformed and non-transformed distances.
+
 
 \section{The behavior of limiting distancces between vehicles} \label{section:distance_cars}
 
@@ -117,6 +149,10 @@ The transformed system gives an elegant proof of the following lemma.
 	\begin{equation}
 		\max_{i \in {1,...,N-1}} l^\kappa y_i(t) \downarrow 0\text{ uniformly as } l \downarrow 0 \, \, \text{ on } [0,T] \,\, \forall T \in \R^+. 
 	\end{equation}
+	Furthermore, 
+	\begin{equation}
+		y_i(t) \geq 1 \text{ for } t \in \R^+
+ 	\end{equation}
 \end{lemma}
 
 
@@ -437,20 +473,20 @@ For the following integral it was more helpful to semi-discretize the $k\rho V(\
     %
     &= \int_0^{\infty} \sum_{i = 1}^{N-1} \rho^l_i k_{i-1/2}^l V^l_i \int_{z_{i-1/2}}^{z_{i+1/2}} D_+^z(\phi_{i-1/2}) dz dt \nonumber\\ 
     %
-    \overset{\mathrm{(\ref{discreteDiffPart})}}&{=} - \int_0^{\infty} \Big(\sum_{i = 1}^{N-1} D_+^z(\rho^l_i V^l_i k_{i-1/2}) \int_{z_{i-1/2}}^{z_{i+1/2}} \phi_{i+1/2}dz \nonumber\\
-    \quad \quad &+ \rho^l_N k^l_{N-1/2} V^l_N  \phi_{N-1/2} - \rho^l_1 k^l_{1/2} V^l_1 \phi_{1/2} \Big) dt \nonumber\\
+    \overset{\mathrm{(\ref{discreteDiffPart})}}&{=} \int_0^{\infty} \left(-\sum_{i = 1}^{N-1} D_+^z(\rho^l_i V^l_i k_{i-1/2}) \int_{z_{i-1/2}}^{z_{i+1/2}} \phi_{i+1/2}dz \nonumber\\
+    \quad \quad &+ \rho^l_N k^l_{N-1/2} V^l_N  \phi_{N-1/2} - \rho^l_1 k^l_{1/2} V^l_1 \phi_{1/2} \right)dt \nonumber\\
     %
-    &= - \int_0^{\infty} \sum_{i = 1}^{N-1} \Bigg(\int_{z_{i-1/2}}^{z_{i+1/2}} \Big(D_+^z(\rho^l_i)k^l_{i+1/2} V^l_{i+1}  + \rho^l_i D_+^z( k^l_{i-1/2} V^l_i)\Big) \phi_{i+1/2} dz \nonumber \\
-    \quad \quad &+ \rho^l_N k^l_{N-1/2} V^l_N  \phi_{N-1/2} - \rho^l_1 k^l_{1/2} V^l_1 \phi_{1/2}\Bigg)dt. \label{weak_2nd_int}
+    &= \int_0^{\infty} \left(\sum_{i = 1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} \left(D_+^z(\rho^l_i)k^l_{i+1/2} V^l_{i+1}  + \rho^l_i D_+^z( k^l_{i-1/2} V^l_i)\right) \phi_{i+1/2} dz \nonumber \\
+    \quad \quad &+ \rho^l_N k^l_{N-1/2} V^l_N  \phi_{N-1/2} - \rho^l_1 k^l_{1/2} V^l_1 \phi_{1/2}\right)dt. \label{weak_2nd_int}
 \end{align}
 
 Finally, 
 
 \begin{align}
-    \left|\int_{\R_0^+}\int_{\R} \rho \phi_t + k^l(x,t) f(u) \phi_x dx dt \right| =  \left| \int_0^{\infty} \sum_{i = 1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} D_+^z(k^l_{i-1/2} V^l_i) (\phi - \phi_{i+1/2}) dzdt \right| \nonumber\\
+    \left|\int_{\R_0^+}\int_{\R} \rho^l \phi_t + k^l(x,t) f(\rho^l) \phi_x dx dt \right| &=  \left| \int_0^{\infty} \sum_{i = 1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} D_+^z(k^l_{i-1/2} V^l_i) (\phi - \phi_{i+1/2}) dzdt \right| \nonumber\\
     &\leq  \max_{i \in \{1,..., N-1\}} \left| ly_i \right| \int_0^\infty \norm{\frac{\partial \phi}{\partial x}(\cdot,t)}_\infty \sum_{i = 1}^{N-1} \left| k^l_{i+1/2}V_{i+1}  - k^l_{i-1/2}V_i\right|(t) dt, \label{weak_sol_int_bound}
 \end{align}
-where the bound can be found by noting that $\phi(z,t) - \phi(z_{i-1/2},t) = \frac{d\phi}{dz}(c(z))(z - z_{i-1/2})$ by the mean value theorem, for $c \in (z_{i-1/2}, z)$. The derivative is bounded with $\norm{\frac{\partial \phi}{\partial x}(\cdot,t)}_\infty$, defined as the maximal partial derivative in the $x$-direction as a function of $t$. Let this function be bounded by $M > 0$. The integrals leads to a quadratic of $z_{i+1/2} - z_{i-1/2}$, one exponent of which is canceled by the $z$ difference appearing in the denominator of $D_+^z$. The integration domain can be written as a compact interval, since $\supp \phi \subset [t_1,t_2]$. The sum term is $TV_x(k^lV^l)$, where $TV_x(\cdot)$ is the total variation in the $x$-direction. By \eqref{bound_TV_kv}, this is bounded on any finite interval. Let  $C > 0$ be such a bound. All terms accounted for, we have that 
+where the bound is found by using $\phi(z,t) - \phi(z_{i-1/2},t) = \frac{d\phi}{dz}(c(z))(z - z_{i-1/2})$, for $c \in (z_{i-1/2}, z)$. This is the mean value theorem.  The derivative is bounded with $\norm{\frac{\partial \phi}{\partial x}(\cdot,t)}_\infty$, defined as the maximal partial derivative in the $x$-direction as a function of $t$. Let this function be bounded by $M > 0$. The integrals leads to a quadratic of $z_{i+1/2} - z_{i-1/2}$, one exponent of which is canceled by the $z$ difference appearing in the denominator of $D_+^z$. The integration domain can be written as a compact interval, since $\supp \phi \subset [t_1,t_2]$. The sum term is $TV_x(k^lV^l)$, where $TV_x(\cdot)$ is the total variation in the $x$-direction. By \eqref{bound_TV_kv}, this is bounded on any finite interval. Let  $C > 0$ be such a bound. All terms accounted for, we have that 
 
 \begin{equation} \label{}
     \left|\int_{\R_0^+}\int_{\R} \rho^l \phi_t + k^l(x,t) f(\rho^l) \phi_x dx dt \right|  \leq (t_2 - t_1) M C \max_{i \in \{1,..., N-1\}} \left| ly_i \right| \rightarrow 0 \text{ as } l\downarrow 0, 
@@ -521,61 +557,63 @@ for differentiable convex functions $\rho, \mu$. If we have the coordinate trans
 \end{equation}
 
 The reason why \eqref{entropy_flux_lagrange} is used can be seen from taking a convex differentiable function $\eta$ and composing with $y_i(t)$, the discrete inverse density in the FtL model between cars $z_{i - 1/2}$ and $z_{i + 1/2}$. 
+
+The change of the entropy can be decomposed into a term associated with the derivative in road condition $k$ and the jump in lagrangian entropy flux. 
 \begin{align}
-    \frac{d\eta}{dt}(y_i) &= \frac{d\eta}{dy}(y_i) D_+(k_{i-1/2} V_i) = \frac{d\eta}{dy}(y_i) \big( V_{i} D_+(k_{i-1/2})  + k_{i+1/2} D_+( V_i)\big) \nonumber \\
+    \frac{d\eta}{dt}(y_i) &= \frac{d\eta}{dy}(y_i) D_+(k_{i-1/2} V_i) = \frac{d\eta}{dy}(y_i) \big(  D_+(k_{i-1/2})V_{i}  + k_{i+1/2} D_+( V_i)\big) \nonumber \\
     &\leq \frac{d\eta}{dy}(y_i) D_+(k_{i-1/2})V_i + k_{i+1/2}\frac{1}{l}\int_{y_i}^{y_{i+1}} \frac{d\eta}{dy}(y) \frac{dV}{dy}(y) dy \nonumber\\
     &= \frac{d\eta}{dy}(y_i) D_+(k_{i-1/2})V_i + k_{i+1/2} D_+(Q_i), \label{entropy_sol_eta_ineq1}
 \end{align}
 where the inequality holds as $\frac{dV}{dy} \geq 0$ and $\frac{d\eta}{dy}$ is an increasing function of $y$. 
-In words, the change of the entropy can be composed into a term associated with the derivative in road condition $k$ and the jump in lagrangian entropy flux. 
+
 
 %IMPROVE LATEX SKILLZ
 As in the discussion above, introduce 
 \begin{align}
-    \mu(\rho) := \rho \eta (\frac{1}{\rho}). 
+    \mu(\rho) := \rho \eta (\frac{1}{\rho}), \,\, \mu^l_i := \mu (\rho^l_i), \,\, q^l_i = Q\left(\frac{1}{\rho^l_i}\right)
 \end{align}
 The fact that $\mu$ is convex can be seen from the second derivative 
 
 \begin{align}
     \frac{d^2 \mu}{d^2\rho} = -\left \frac{1}{\rho^2} \frac{d\eta}{dy}\right|_{\frac{1}{\rho}} + \frac{1}{\rho^2}\frac{d \eta }{dy}(\frac{1}{\rho}) + \frac{1}{\rho^3}\frac{d^2 \eta}{d^2y}(\frac{1}{\rho}) = \left \frac{1}{\rho^3} \frac{d^2\eta}{d^2y}\right|_{\frac{1}{\rho}} \geq 0 \, \, \text{ for } \rho \geq 0. 
 \end{align}
+%what if rho = 0?
 
-Let $\mu^l_i := \mu (\rho^l_i), q^l_i = Q\left(\frac{1}{\rho^l_i}\right)$, where $\rho^l$ is the FtL-approximation for the density.  
+Furthermore,   
 
 \begin{align}
-    \frac{d\mu^l_i}{dt} &= - \big(\rho^l_i\big)^2 D_+(k_{i-1/2})\eta(\frac{1}{\rho}) + \rho^l_i \frac{d\eta^l_i}{dt} \nonumber \\
-    &\overset{\eqref{}}{\leq}\leq -\rho^l_i D_+^z(k_{i-1/2}V_i) \eta^l_i + \left \frac{d\eta}{dy} \right|_{\frac{1}{\rho^l_i}} D_+^z(k_{i-1/2})V_{i+1} + k_{i-1/2} D_+^z(Q_i). \label{mu_derivative}
+    \frac{d\mu^l_i}{dt} &= - \big(\rho^l_i\big)^2 D_+(k_{i-1/2} V_i)\eta(\frac{1}{\rho}) + \rho^l_i \frac{d\eta^l_i}{dt} \nonumber \\
+    &\overset{\eqref{entropy_sol_eta_ineq1}}{\leq} -\rho^l_i D_+^z(k_{i-1/2}V_i) \eta^l_i + \left \frac{d\eta}{dy} \right|_{\frac{1}{\rho^l_i}} D_+^z(k_{i-1/2})V_{i+1} + k_{i-1/2} D_+^z(Q_i). \label{mu_derivative}
 \end{align}
-The leading discussion has lead us to this, have that 
-the he set addition is to be understood in the sense of Minkowski sums. Write up why a second derivative must exist, by TV property. The proceding is similar to establishing that the limit is a weak solution. First, consider the term related to the change in density, 
+The proceding is similar to establishing that the limit is a weak solution. First, consider the term related to the change in density, 
 
 \begin{align}
     \int_0^{\infty} \int_{\mathscr{R}}\mu_l \frac{\partial \phi}{\partial t} dz dt 
     %
     &= \int_0^{\infty} \sum_{i = 1}^{N-1} \mu^l_i \int_{z_{i-1/2}}^{z_{i+1/2}} \frac{\partial \phi}{\partial t} dz dt \nonumber \\ 
     \overset{\mathrm{(\ref{WeakSolLeib}) \& \eqref{discreteDiffPart}}}&{=} - \int_0^{\infty} \sum_{i = 1}^{N-1} \frac{d\mu^l_i}{dt}
-    \int_{z_{i-1/2}}^{z_{i+1/2}}\phi dz  - D_+(\mu^l_i) \phi_{i+1/2} k_{i+1/2} V_{i+1} \nonumber ) dt \nonumber \\ 
+    \int_{z_{i-1/2}}^{z_{i+1/2}}\phi dz  - D_+(\mu^l_i) \phi_{i+1/2} k_{i+1/2} V_{i+1} \nonumber ) \nonumber \\
+    &-\left(k^l_{N-1/2} V^l_N  \mu^l_N \phi_{N-1/2} -  k^l_{1/2} V^l_1 \mu^l_1 \phi_{1/2}\right) dt \nonumber \\ 
     &\geq \int_0^\infty \sum_{i=1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} \Big( \overbrace{D_+^z(k_{i-1/2}V_i) \rho^l_i \eta^l_i}^\text{(A1)} - \overbrace{\left \frac{d\eta}{dy} \right|_{\frac{1}{\rho^l_i}} D_+^z(k_{i-1/2})V_{i+1}}^\text{(B1)} \nonumber \\ \quad & \underbrace{- k_{i-1/2} D_+^z(q_i)}_\text{(C1)}\Big)\phi - \underbrace{D_+^z(\mu^l_i) V_{i+1} k_{i+1/2} \phi_{i+1/2}}_\text{(D1)} dz  \nonumber \\
-    &+ \underbrace{k^l_{N-1/2} V^l_N  \mu^l_N \phi_{N-1/2} -  k^l_{1/2} V^l_1 \mu^l_1 \phi_{1/2}}_{(E1)}dt. \label{entropy_density_int}\\
+    &+ \underbrace{-\left(k^l_{N-1/2} V^l_N  \mu^l_N \phi_{N-1/2} -  k^l_{1/2} V^l_1 \mu^l_1 \phi_{1/2}\right)}_{(E1)}dt. \label{entropy_density_int}
 \end{align}
 
-The second equality is the same as for the weak solution. The final inequality is an application of \eqref{entropy_sol_eta_ineq1}.
-Consider next the entropy flux integral, 
-As seen in \ref{section:weak_sol}, the terms $\mu^l_N k^l_{N-1/2} V^l_N  \phi_{N-1/2} - \mu^l_1 k^l_{1/2} V^l_1 \phi_{1/2}$ will be cancelled by the same terms in the entropy-flux integral, and are omitted.
+The second equality is the same as for the weak solution. The inequality is an application of \eqref{entropy_sol_eta_ineq1}.
+Next, consider the entropy flux integral. As seen in \ref{section:weak_sol}, the terms $\mu^l_N k^l_{N-1/2} V^l_N  \phi_{N-1/2} - \mu^l_1 k^l_{1/2} V^l_1 \phi_{1/2}$ will be cancelled by the same terms in the entropy-flux integral, and are omitted. ???
 
 \begin{align}
     \int_0^{\infty} \int_{\mathscr{R}}  k^l \big(\mu^l V^l  - q^l) \frac{\partial \phi}{\partial z} dz dt  &= \int_0^{\infty} \sum_{i = 1}^{N-1} k_{i-1/2}^l \big( \mu^l_i V^l_i - q^l_i\big) \int_{z_{i-1/2}}^{z_{i+1/2}} \frac{\partial \phi}{\partial z} dz dt \nonumber\\
     %
     &= \int_0^{\infty} \sum_{i = 1}^{N-1} k_{i-1/2}^l \big( \mu^l_i  V^l_i  - q^l_i\big) \int_{z_{i-1/2}}^{z_{i+1/2}} D_+^z(\phi_{i-1/2}) dz dt \nonumber\\ 
     %
-    \overset{\mathrm{(\ref{discreteDiffPart})}}&{=} - \int_0^{\infty} \Big(\sum_{i = 1}^{N-1} D_+^z(\mu^l_i k_{i-1/2} V^l_i ) + D_+^z(k_{i-1/2} q^l_i)\int_{z_{i-1/2}}^{z_{i+1/2}} \phi_{i+1/2}dz \nonumber\\
-    \quad \quad &+  k^l_{N-1/2} \big(V^l_N  \mu^l_N - q^l_n) \phi_{N-1/2} -  k^l_{1/2} \big(V^l_1 \mu^l_1 - q^l_1\big) \phi_{1/2} \Big) dt \nonumber\\
-    &= \int_0^\infty \sum_{i=1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} \Bigg( \overbrace{\mu_i^l D_+^z(k_{i-1/2}V_i)}^\text{(A2)} - \overbrace{q_i^lD_+^z(\kim)}^\text{(B2)} \nonumber \\
+    \overset{\mathrm{(\ref{discreteDiffPart})}}&{=}  \int_0^{\infty} -\Big(\sum_{i = 1}^{N-1} D_+^z(\mu^l_i k_{i-1/2} V^l_i ) + D_+^z(k_{i-1/2} q^l_i)\int_{z_{i-1/2}}^{z_{i+1/2}} \phi_{i+1/2}dz \nonumber\\
+    \quad \quad &+  \left(k^l_{N-1/2} \left(V^l_N  \mu^l_N - q^l_N\right) \phi_{N-1/2} -  k^l_{1/2} \left(V^l_1 \mu^l_1 - q^l_1\right) \phi_{1/2}\right) dt \nonumber\\
+    &= \int_0^\infty \sum_{i=1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} - \Bigg( \overbrace{\mu_i^l D_+^z(k_{i-1/2}V_i)}^\text{(A2)} - \overbrace{q_i^lD_+^z(\kim)}^\text{(B2)} \nonumber \\
     & \underbrace{-\kip D_+^z(q_i)}_\text{(C2)} + \underbrace{\kip V_{i+1} D_+^z(\mu_l^i)}_\text{(D2)}  \Bigg) \phi_{i+1/2} dz \nonumber \\
-    \quad \quad &+  \underbrace{k^l_{N-1/2} \big(V^l_N  \mu^l_N - q^l_N) \phi_{N-1/2} -  k^l_{1/2} \big(V^l_1 \mu^l_1 - q^l_1\big) \phi_{1/2}}_\text{(E2)} \Big) dt. \label{entropy_flux_int}
+    \quad \quad &+   \underbrace{\left(k^l_{N-1/2} \left(V^l_N  \mu^l_N - q^l_N\right) \phi_{N-1/2} -  k^l_{1/2} \left(V^l_1 \mu^l_1 - q^l_1\right) \phi_{1/2}\right)}_\text{(E2)}  dt. \label{entropy_flux_int}
 \end{align}
 
-Adding \eqref{entropy_density_int} and \eqref{entropy_flux_int} together, the terms corresponding to $A, C$ and $D$ will go to zero by an analoguous argument that lead to \eqref{weak_sol_int_bound}. Sufficient conditions are $\mu^l, q^l, k^l \in L^\infty(\R_0^+ \times \R)$, and that $TV_x(k^lV^l), TV_x(q^l), TV_x(q^l) \in L^\infty(\R_0^+)$, where we REFER TO DEF for def of TV_x.
+Adding \eqref{entropy_density_int} and \eqref{entropy_flux_int} together, the terms corresponding to $A, C$ and $D$ will go to zero by an analoguous argument that lead to \eqref{weak_sol_int_bound}. Sufficient conditions are $\mu^l, q^l, k^l \in L^\infty(\R_0^+ \times \R)$, and that $TV_x(k^lV^l), TV_x(\mu^l), TV_x(q^l) \in L^\infty(\R_0^+)$, where we REFER TO DEF for def of TV_x.
 
 %TAKE THE LIMIT FOR ALMOST ALL $C$
 
