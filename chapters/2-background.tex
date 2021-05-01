@@ -71,12 +71,6 @@ Moreover, supervised learning can further be divided into regression and classif
 Categorical values are values that are a subset of a finite number of possible values, while numerical values have infinite possible values. As mentioned in this section, the thesis problem can be formulated as a multi-class classification problem where the predicted arrival port is a single value in finite set of ports. Thus, this is a categorical value. In the context of \acrshort{ml}, models often perform better, or expect, numerical values in their inputs (\todo{Citation}). Therefore, it is common practice to use a form of encoding of the categorical values to transform them into numeric values. There are several different methods of achieving this, however, two common methods to use is ``Label Encoding'', and ``One-Hot Encoding''. In label encoding, each value in a category is transformed into a numerical value ranging from 0 to the number unique values in the column. This is a simple and practical encoding method, however, since the categorical values are now numeric, implicitly, the \acrshort{ml} might misunderstand the data to be ordered and derive meaning from the numerical relationships. In one-hot encoding, when a column of data is encoded, the column is split into multiple columns for each different category in the column. Then, the values are replaced by ones and zeros indicating what column contains that value. This solves the issue with implicit patterns in numerical values, however, with high cardinatlity datasets, \acrshort{ml} might struggle with the sparsity and the large number of features that are generated.
 
 
-\todo{TODO:}
-\begin{itemize}
-    \item Cross-validation
-    \item Hyperparameter optimization
-\end{itemize}
-
 \section{Technologies and protocols}
 
 \subsection{Database system}
