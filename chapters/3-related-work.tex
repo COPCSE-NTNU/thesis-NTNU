@@ -118,22 +118,20 @@ First, the papers were evaluated based on the level of relevance as defined in \
 
 The large number of irrelevant papers resulted from the broadness of the query that was designed to find results in multiple topic areas. Furthermore, there were some papers that were medical in nature but labeled incorrectly in some of the search engines. Usually, these occurred as the term \acrshort{ais} is also an acronym of \textit{Arterial Ischemic Stroke}. Furthermore, some papers that were not publicly available appeared in the search, and other papers were deemed irrelevant as they concerned topics such as mapping fishing areas in a specific region, power and performance predictions using \acrshort{ais} data, or high-level discussions of potential applications of \acrshort{ais} data analysis.
 
-The large number of papers within \textit{category 1} further confirms the general trend of \acrshort{ais} -based predictions as the primary goal of most of the resulting papers were to predict future positions of vessels within shorter time intervals for the purpose of either safety and navigation or anomaly detection. None of the papers within \textit{category 1} seemed applicable to predict vessel destination ports at a global scale, however, for reproducibility, all papers with the relevancy of \textit{1} are listed in \todo{figure out how to add big tables of all the papers}.
+The large number of papers within \textit{category 1} further confirms the general trend of \acrshort{ais} -based predictions as the primary goal of most of the resulting papers were to predict future positions of vessels within shorter time intervals for the purpose of either safety and navigation or anomaly detection. None of the papers within \textit{category 1} seemed applicable to predict vessel destination ports at a global scale, therefore, specific papers within this category are not discussed in detail throughout this section. However, all papers placed within \textit{category 1} are listed in tables \cref{tab:lit_review_cat_1_1,tab:lit_review_cat_1_2,tab:lit_review_cat_1_3,tab:lit_review_cat_1_4,tab:lit_review_cat_1_5,tab:lit_review_cat_1_6}
 
 % most relevant papers collected from literature review
 \begin{table}[htbp]
     \centering
-    {\small
-    \begin{tabular}{p{0.6in} p{0.8in} p{0.75in} p{0.6in} p{0.4in} p{0.8in} p{0.7in}}
-    \hline
-    \bfseries{Paper} & \bfseries{Goal} & \bfseries{Pred.\ method} & \bfseries{Geo-extent} & \bfseries{Time frame} & \bfseries{Validation} & \bfseries{Metrics} \\ \hline
-        \cite{Karatas2020TrajectoryData} & arrival port, arrival time, and next position prediction based on trajectories & LSTM RNN, DBSCAN, K-NN & large, tested regionally & large & 10-fold cross validation & accuracy, f1-score, precision, recall \\ \hline
-        \cite{Zhang2020AISApproach} & Destination prediction based on trajectories and port frequencies & Random forest, DBSCAN & global & any & 5-folder cross validation, comparison with other models & port accuracy, city accuracy, MAE, mean distance error \\ \hline
-        \cite{Rosca2018GrandRoutes} & predicting arrival times and destinations of vessels & nearest neighbor search on trajectories & large, tested regionally & large & hyperparam. selection by genetic algorithm, train / test data split & general accuracy \\ \hline
-        \cite{Bachar2018GrandDestination} & predicting arrival times and destinations of vessels & venilia based on markov predictive models & large, tested regionally & large & train / test data split (details lacking) & mean distance error for ETA, general accuracy for destination \\ \hline
-        \cite{Dobrkovic2018MaritimeData} & longer term predictions of vessel arrival times & genetic algorithm clustering & large, tested regionally & large & case study testing, parameter testing, and simulation & general accuracy, extraction quality, execution time \\ \hline
-    \end{tabular}
-    }
+    {\small\begin{tabular}{p{0.6in} p{0.8in} p{0.75in} p{0.6in} p{0.4in} p{0.8in} p{0.7in}}
+    \toprule
+    \bfseries{Paper} & \bfseries{Goal} & \bfseries{Pred.\ method} & \bfseries{Geo-extent} & \bfseries{Time frame} & \bfseries{Validation} & \bfseries{Metrics} \\ \midrule
+        \cite{Karatas2020TrajectoryData} & arrival port, arrival time, and next position prediction based on trajectories & LSTM RNN, DBSCAN, K-NN & large, tested regionally & large & 10-fold cross validation & accuracy, f1-score, precision, recall \\ \midrule
+        \cite{Zhang2020AISApproach} & Destination prediction based on trajectories and port frequencies & Random forest, DBSCAN & global & any & 5-folder cross validation, comparison with other models & port accuracy, city accuracy, MAE, mean distance error \\ \midrule
+        \cite{Rosca2018GrandRoutes} & predicting arrival times and destinations of vessels & nearest neighbor search on trajectories & large, tested regionally & large & hyperparam. selection by genetic algorithm, train / test data split & general accuracy \\ \midrule
+        \cite{Bachar2018GrandDestination} & predicting arrival times and destinations of vessels & venilia based on markov predictive models & large, tested regionally & large & train / test data split (details lacking) & mean distance error for ETA, general accuracy for destination \\ \midrule
+        \cite{Dobrkovic2018MaritimeData} & longer term predictions of vessel arrival times & genetic algorithm clustering & large, tested regionally & large & case study testing, parameter testing, and simulation & general accuracy, extraction quality, execution time \\ \bottomrule
+    \end{tabular}}
 \caption{Papers collected from literature review with relevant geographical and time limitations}\label{tab:most_relevant_papers}
 \end{table}
 
@@ -210,15 +208,16 @@ As discussed throughout this section, the existing literature within the thesis'
     \cite{Hexeberg2017AIS-basedPrediction} & collision detection & single neighbor search & region & 10 min. & cross validation, selected scenarios & RMSE \\
     \midrule
     \cite{Jin2020MaritimeNetwork} & predictions for collision & RNN, LSTM & region & small & model simulation & distance error, MAE, SSE \\ \midrule
-    \cite{Kim2018PreprocessingArea} & predictions for Vessel Traffic Service (VTS) & NN & small & small & case study on region & speed and distance error \\ \midrule
 \end{tabularx}}
 \caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was prediction (part 1/3).}
+\label{tab:lit_review_cat_1_1}
 \end{table}
 
 \noindent
 \begin{table}[htbp]
 {\small\begin{tabularx}{1.2\textwidth}{p{0.6in} X X X p{0.4in} X p{0.5in}}
     \midrule
+    \cite{Kim2018PreprocessingArea} & predictions for Vessel Traffic Service (VTS) & NN & small & small & case study on region & speed and distance error \\ \midrule
     \cite{Li2018ShipMining} & data mining for predictions & RBF RNN & small & hours & case study on river in China & trajectory accuracy \\ \midrule
     \cite{Li2019Long-termData} & collision avoidance & LSTM, LCS, DBSCAN & meters & 15 min. & case studies & distance error \\ \midrule
     \cite{Lian2019ResearchAlgorithm} & particle filtering, least squares estimation & linear prediction, least squares, particle filtering & meters & minutes & simulations & distance error, speed error \\ \midrule
@@ -230,15 +229,16 @@ As discussed throughout this section, the existing literature within the thesis'
     \cite{Murray2020AData} & trajectory predictions for early warnings and safety & GMM clustering, dual autoencoder & region (tromsø) & 30 minutes & case studies & accuracy at time intervals \\ \midrule
     \cite{Rong2019ShipModel} & modelling uncertainty of trajectory predictions & Bayesion model, Gaussian Process & small & 10-30 min. & case study in region, training / validation data & accuracy, distance error \\ \midrule
     \cite{Suo2020ANetwork} & trajectory predictions for early warnings and safety & GRU (gate recurrent unit), DBSCAN, comp. with LSTM & tested on single port in china & small, minutes to hour & training, validation, test set (not defined how much) & accuracy \\ \midrule
-    \cite{Tafa2019AutomaticPrediction} & synthetic route representation and predictions & DBSCAN, route similarity probability model & east china sea region & 10-80 minutes & simulation & accuracy \\ \midrule
 \end{tabularx}}
 \caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was prediction (part 2/3).}
+\label{tab:lit_review_cat_1_2}
 \end{table}
 
 \noindent
 \begin{table}[htbp]
 {\small\begin{tabularx}{1.2\textwidth}{p{0.6in} X X X p{0.4in} X p{0.5in}}
     \midrule
+    \cite{Tafa2019AutomaticPrediction} & synthetic route representation and predictions & DBSCAN, route similarity probability model & east china sea region & 10-80 minutes & simulation & accuracy \\ \midrule
     \cite{Tang2019ANetwork} & collision avoidance for automonous ships & LSTM & region in china & 20 min. & training/validation sets & MAE, MSE \\ \midrule
     \cite{Uney2019DataModels} & forecasting trajectories from historical and streaming trajectories & directed grid based bayesion model / gaussian mixture forecast density & tested on region (15x15 grid) & any (tested with 2 months of data) & real life case study in region & not explained \\ \midrule
     \cite{Virjonen2018ShipMethod} & predictions in area in finnland that has to be several hours ahead in time & k-nearest neighbours & medium (region of finnland test case) & medium, several hours & nested leave-one-out-cross-validation (LOOCV) & distance accuracy \\ \midrule
@@ -251,6 +251,7 @@ As discussed throughout this section, the existing literature within the thesis'
 \end{tabularx}}
 \caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was prediction (part 3/3).}
 \label{tab:less_relevant_papers}
+\label{tab:lit_review_cat_1_3}
 \end{table}
 
 %% Other OBJECTIVES
@@ -265,6 +266,7 @@ As discussed throughout this section, the existing literature within the thesis'
     \cite{Dobrkovic2015TowardsTimes} & systematic mapping of short to long term predictions & literature review (N/A) & N/A & N/A & N/A & N/A \\ \bottomrule
 \end{tabularx}}
 \caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was clustering also including \cite{Dobrkovic2015TowardsTimes} who conducted a literature review.}
+\label{tab:lit_review_cat_1_4}
 \end{table}
 
 %% CLASSIFICATION OBJECTIVES
@@ -284,6 +286,7 @@ As discussed throughout this section, the existing literature within the thesis'
     \cite{Ma2020OptimizedTrajectory} & collision avoidance & genetic optimization algorithm, particle swarm optimization, neural network & small & small & cross validation & MSE \\ \midrule
 \end{tabularx}}
 \caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was classification (part 1/2).}
+\label{tab:lit_review_cat_1_5}
 \end{table}
 
 \noindent
@@ -301,4 +304,5 @@ As discussed throughout this section, the existing literature within the thesis'
     \cite{Wen2020AutomaticMethod} & defining routes between connected regions for route planning & DBSCAN, ANN & global & N/A & N/A & N/A \\ \bottomrule
 \end{tabularx}}
 \caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was classification (part 2/2).}
+\label{tab:lit_review_cat_1_6}
 \end{table}
