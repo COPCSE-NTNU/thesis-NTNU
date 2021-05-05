@@ -112,12 +112,11 @@ TITLE-ABS-KEY (
 
 \subsection{Results}
 
-Using the aforementioned (\cref{sec:lit_review}) search libraries, the defined search query returned a total of \textbf{109} papers. After removing the overlapping results from the different search engines there were a total of \textbf{89} unique papers that formed the foundation of the literature review.
+Using the aforementioned (\cref{sec:lit_review}) search libraries, the defined search query returned a total of \textbf{109} papers. After removing the overlapping results from the different search engines there were a total of \textbf{91} unique papers that formed the foundation of the literature review.
 
-\todo{update numbers}
-First, the papers were evaluated based on the level of relevance as defined in \cref{sec:lit_review}. Out of the \textbf{89} papers, \textbf{49} fell within \textit{category 0}, \textbf{32} within \textit{category 1}, and \textbf{6} within \textit{category 2}.
+First, the papers were evaluated based on the level of relevance as defined in \cref{sec:lit_review}. Out of the \textbf{91} papers, \textbf{31} fell within \textit{category 0}, \textbf{54} within \textit{category 1}, and \textbf{5} within \textit{category 2}.
 
-The large number of irrelevant papers resulted from the broadness of the query that was designed to find results in multiple topic areas. Furthermore, there were some papers that were medical in nature but not labeled correctly in \textit{Scopus} and were returned as the term \acrshort{ais} is also an acronym of \textit{Arterial Ischemic Stroke}. Some papers were also not publicly available but were not excluded by the search, while other papers were deemed irrelevant as they concerned topics such as mapping fishing areas in a specific region, power and performance predictions using \acrshort{ais} data, or high-level discussions of potential applications of \acrshort{ais} data analysis.
+The large number of irrelevant papers resulted from the broadness of the query that was designed to find results in multiple topic areas. Furthermore, there were some papers that were medical in nature but labeled incorrectly in some of the search engines. Usually, these occurred as the term \acrshort{ais} is also an acronym of \textit{Arterial Ischemic Stroke}. Furthermore, some papers that were not publicly available appeared in the search, and other papers were deemed irrelevant as they concerned topics such as mapping fishing areas in a specific region, power and performance predictions using \acrshort{ais} data, or high-level discussions of potential applications of \acrshort{ais} data analysis.
 
 The large number of papers within \textit{category 1} further confirms the general trend of \acrshort{ais} -based predictions as the primary goal of most of the resulting papers were to predict future positions of vessels within shorter time intervals for the purpose of either safety and navigation or anomaly detection. None of the papers within \textit{category 1} seemed applicable to predict vessel destination ports at a global scale, however, for reproducibility, all papers with the relevancy of \textit{1} are listed in \todo{figure out how to add big tables of all the papers}.
 
@@ -189,9 +188,11 @@ Finally,~\cite{Dobrkovic2018MaritimeData} is harder to compare to as destination
 As discussed throughout this section, the existing literature within the thesis' topic area seems to exhibit a few trends. First, the majority of the research discovered mostly focused on short-term navigational predictions of vessels, usually for the purpose of collision avoidance, anomaly detection, or safety and management within ports or smaller regions. Second, there is a very limited amount of research that focuses on longer time intervals or geographical extent, and these studies are also quite limited in the sense that they rarely consider global port destination predictions, but rather port destinations within a given region. Lastly, there was no research found that considered much more than purely geographical attributes of historical \acrshort{ais} data. When only considering geographical travel patterns of vessels, it is implicitly assumed that all vessels behave in a similar fashion which, as shown in \cref{fig:segment_map}, is not the case. Since the existing literature is lacking general global destination predictions as well methods that consider specific details for individual vessels, it can be concluded that the existing literature does not provide enough insight into \texttt{RQ1} as a whole.
 
 
+%% PREDICTION OBJECTIVES
+
 \noindent
-{\small
-\begin{tabularx}{1.2\textwidth}{p{0.6in} X X p{0.5in} p{0.4in} X p{0.5in}}
+\begin{table}[htbp]
+{\small\begin{tabularx}{1.2\textwidth}{p{0.6in} X X p{0.5in} p{0.4in} X p{0.5in}}
     % \setlength{\tabcolsep}{4pt} %% default is 6pt
     \toprule
     \textbf{Paper} & \textbf{Motivation} & \textbf{Pred. method} & \textbf{Geo-extent} & \textbf{Time scale} & \textbf{Validation} & \textbf{Metrics} \\ \midrule
@@ -210,11 +211,13 @@ As discussed throughout this section, the existing literature within the thesis'
     \midrule
     \cite{Jin2020MaritimeNetwork} & predictions for collision & RNN, LSTM & region & small & model simulation & distance error, MAE, SSE \\ \midrule
     \cite{Kim2018PreprocessingArea} & predictions for Vessel Traffic Service (VTS) & NN & small & small & case study on region & speed and distance error \\ \midrule
-\end{tabularx}
-}
+\end{tabularx}}
+\caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was prediction (part 1/3).}
+\end{table}
+
 \noindent
-{\small
-\begin{tabularx}{1.2\textwidth}{p{0.6in} X X X p{0.4in} X p{0.5in}}
+\begin{table}[htbp]
+{\small\begin{tabularx}{1.2\textwidth}{p{0.6in} X X X p{0.4in} X p{0.5in}}
     \midrule
     \cite{Li2018ShipMining} & data mining for predictions & RBF RNN & small & hours & case study on river in China & trajectory accuracy \\ \midrule
     \cite{Li2019Long-termData} & collision avoidance & LSTM, LCS, DBSCAN & meters & 15 min. & case studies & distance error \\ \midrule
@@ -228,13 +231,14 @@ As discussed throughout this section, the existing literature within the thesis'
     \cite{Rong2019ShipModel} & modelling uncertainty of trajectory predictions & Bayesion model, Gaussian Process & small & 10-30 min. & case study in region, training / validation data & accuracy, distance error \\ \midrule
     \cite{Suo2020ANetwork} & trajectory predictions for early warnings and safety & GRU (gate recurrent unit), DBSCAN, comp. with LSTM & tested on single port in china & small, minutes to hour & training, validation, test set (not defined how much) & accuracy \\ \midrule
     \cite{Tafa2019AutomaticPrediction} & synthetic route representation and predictions & DBSCAN, route similarity probability model & east china sea region & 10-80 minutes & simulation & accuracy \\ \midrule
-\end{tabularx}
-}
+\end{tabularx}}
+\caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was prediction (part 2/3).}
+\end{table}
 
 \noindent
-{\small
-\begin{table}
-\begin{tabularx}{1.2\textwidth}{p{0.6in} X X X p{0.4in} X p{0.5in}}
+\begin{table}[htbp]
+{\small\begin{tabularx}{1.2\textwidth}{p{0.6in} X X X p{0.4in} X p{0.5in}}
+    \midrule
     \cite{Tang2019ANetwork} & collision avoidance for automonous ships & LSTM & region in china & 20 min. & training/validation sets & MAE, MSE \\ \midrule
     \cite{Uney2019DataModels} & forecasting trajectories from historical and streaming trajectories & directed grid based bayesion model / gaussian mixture forecast density & tested on region (15x15 grid) & any (tested with 2 months of data) & real life case study in region & not explained \\ \midrule
     \cite{Virjonen2018ShipMethod} & predictions in area in finnland that has to be several hours ahead in time & k-nearest neighbours & medium (region of finnland test case) & medium, several hours & nested leave-one-out-cross-validation (LOOCV) & distance accuracy \\ \midrule
@@ -244,8 +248,57 @@ As discussed throughout this section, the existing literature within the thesis'
     \cite{Zheng2020HeterogenousModeling} & combining multiple datasources like GPS and ARPA with AIS to improve predictions for safety & LSTM (on different data and a fusion component to merge the predictions) & small & small & training, validation (1:10), and compare to other model & MSE \\ \midrule
     \cite{Zhou2019ShipNetwork} & collision avoidance in busy areas & back propagation nerual network & region (area in china) & small & training/validation 70/30 & RMSE \\
     \bottomrule
-\end{tabularx}
-\caption{Papers gathered from literature study labeled with relevancy level 1.}
+\end{tabularx}}
+\caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was prediction (part 3/3).}
 \label{tab:less_relevant_papers}
 \end{table}
-}
+
+%% Other OBJECTIVES
+
+\noindent
+\begin{table}[t]
+{\small\begin{tabularx}{1.2\textwidth}{p{0.6in} X X p{0.5in} p{0.4in} X p{0.5in}}
+    \toprule
+    \textbf{Paper} & \textbf{Motivation} & \textbf{Pred. method} & \textbf{Geo-extent} & \textbf{Time scale} & \textbf{Validation} & \textbf{Metrics} \\ \midrule
+    \cite{Hamada2021DevelopmentPlanning} & Main: effective information from marine big data + predicting the demand of ships & "deep learning, clustering" & global & any & 25/75 validation/training & "accuracy, standard deviation" \\ \midrule
+    \cite{Wang2021AISAuto-encoder} & Improved trajectory clustering for prediction and anomoly detection & convolutional auto-encoders + clustering MFA+K-means & tested on a single city area & small & "not explained, compared to other methods" & "precision, accuracry, recall, f1 score" \\ \midrule
+    \cite{Dobrkovic2015TowardsTimes} & systematic mapping of short to long term predictions & literature review (N/A) & N/A & N/A & N/A & N/A \\ \bottomrule
+\end{tabularx}}
+\caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was clustering also including \cite{Dobrkovic2015TowardsTimes} who conducted a literature review.}
+\end{table}
+
+%% CLASSIFICATION OBJECTIVES
+
+\noindent
+\begin{table}[htbp]
+{\small\begin{tabularx}{1.2\textwidth}{p{0.6in} X X p{0.5in} p{0.4in} X p{0.5in}}
+    \toprule
+    \textbf{Paper} & \textbf{Motivation} & \textbf{Pred. method} & \textbf{Geo-extent} & \textbf{Time scale} & \textbf{Validation} & \textbf{Metrics} \\ \midrule
+    \cite{Braca2018DetectingProcess} & detecting vessels turning off AIS transmitters & Ornstein-Uhlenbeck (OU) mean-reverting stochastic process & large & medium to large & case study using scenario/simulation & accuracy, use-case effectiveness \\ \midrule
+    \cite{Chatzikokolakis2018MiningRescue} & detecting search and rescue activity before they are emitted & random forest & regional & N/A & cross validation folder & F1 score, recall, precision \\ \midrule
+    \cite{Dobrkovic2015UsingData} & predicting arrivals for Dutch logistics service providers (LSPs) & directed graph, DBSCAN, genetic algorithm & large & 24 hours & simulation & extraction quality, efficiency, noise tolerance \\ \midrule
+    \cite{ElMekkaoui2020PredictingData} & ETA prediction for known destinations & FFNN, RNN, LSTM, GRU & regional & large & cross validation & MAE, MSE \\ \midrule
+    \cite{Jia2019LatinApproach} & destination classification for Latin-American crude oil exports & random forest & large & cross validation & gaussian naive bayes (GNB) classification & accuracy \\ \midrule
+    \cite{Jung2019OutlierPrediction} & trajectory anomaly detection (ACM DEBS GC 2018 challenge) & Hausdorff distance & region & medium & predictability increase after anomaly removals & accuracy, model performance increase \\ \midrule
+    \cite{Lei2020MiningData} & constructing a database for detecting collision situations & time/distance at closest point (DCPA/TCPA), clustering & regional & hourly & region analysis, number and distribution of conflicting trajectories & N/A \\ \midrule
+    \cite{Ma2020OptimizedTrajectory} & collision avoidance & genetic optimization algorithm, particle swarm optimization, neural network & small & small & cross validation & MSE \\ \midrule
+\end{tabularx}}
+\caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was classification (part 1/2).}
+\end{table}
+
+\noindent
+\begin{table}[htbp]
+{\small\begin{tabularx}{1.2\textwidth}{p{0.6in} X X p{0.5in} p{0.4in} X p{0.5in}}
+    \midrule
+    \cite{Murray2020UnsupervisedNavigation} & collision avoidance, anomaly detection & GMM & regional & N/A & top/bottom eigenvector analysis, mahalanobis distance analysis & accuracy \\ \midrule
+    \cite{Nguyen2018GrandGrid} & arrival port and ETA classification & sequence to sequence on a grid & regional & medium & case study & N/A \\ \midrule
+    \cite{Patmanidis2016MaritimeData} & anomaly detection and route prediction & linear filtering using ARMA models & region & small & simulation & distance error \\ \midrule
+    \cite{Prochazka2020FeatureTransportation} & feature selection for enhancing predictions & N/A & regional & N/A & N/A & N/A \\ \midrule
+    \cite{Rong2020CollisionTrajectories} & collision probability prediction & Gaussian process & small & small & case study & reliability / accuracy \\ \midrule
+    \cite{Shen2020ALearning} & improving detection of fishing activities & RNN, LSTM & regional & N/A & cross validation & F1 score, AUC, accuracy \\ \midrule
+    \cite{Tang2020DetectionModel} & anomaly detection and safety in maritime navigation & DBSCAN, mesh-based deviation detection on directed graph & regional & N/A & simulation & N/A \\ \midrule
+    \cite{Watawana2018AnalyseDataset} & collision detection & SVM, Naive Bayes, CART & regional & small & case study & prediction accuracy \\ \midrule
+    \cite{Wen2020AutomaticMethod} & defining routes between connected regions for route planning & DBSCAN, ANN & global & N/A & N/A & N/A \\ \bottomrule
+\end{tabularx}}
+\caption{Papers gathered from literature study labeled with relevancy level 1 whose objective was classification (part 2/2).}
+\end{table}
