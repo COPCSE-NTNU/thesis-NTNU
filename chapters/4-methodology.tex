@@ -480,6 +480,7 @@ In the training dataset there are both numerical values as well as categorical v
 \todo{figure or code}
 
 \subsection{Dataset imbalance}
+\label{sec:dataset_imbalance}
 
 Due to the nature of vessel voyage patterns based on vessels of different types and sizes, there is a substantial imbalance in the number of voyages arriving at different ports. In other words, there is severe imbalance in occurrences of arrival port values in the training set. Imbalanced datasets are usually problematic in \acrshort{ml} as models see more of certain samples while fewer of others which makes the model biased toward the more frequent outcomes. This can also lead to misleading accuracy values as during the evaluation process, some values occur more often than others. For example, consider a binary classification problem where the arrival port is either port A or port B. If the dataset contains 90 samples where the arrival port was port A, and 10 was port B, you could implement a simple function that always predicts the arrival port to be port A without even considering the input values and the model would have an accuracy of \textit{90\%}. However, this accuracy would be misleading as the model will never predict port B as the arrival port no matter what the input data is. The same phenomena can occur in \acrshort{ml} models that are trained on imbalanced datasets. Some \acrshort{ml} models deals with the problem of imbalance better than others, especially decision trees ensemble methods such as the Random Forest (RF) model, however, these models might still struggle with highly imbalanced datasets.
 
@@ -491,7 +492,7 @@ For minority oversampling, there has been attempts at producing more samples of 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures/imbalance/original}
+    \includegraphics[width=0.8\textwidth]{figures/imbalance/original}
     \caption{Graph showing the distribution of frequencies among the arrival port classes.}
     \label{fig:data_imbalance}
 \end{figure}
@@ -538,26 +539,110 @@ Note that One vs. Rest (OVR) classifiers differs from the multi-class classifica
 
 \subsection{Configuration and parameter optimization}
 
-\subsection{The training process}
-
-After finding appropriate configuration for the model, the next step is to train it. In this process, the chosen tree-based \acrshort{xgb} model was trained using the full dataset of \textbf{4.3} million voyages which was encoded and balanced before training. Because of the considerable size of dataset, different approaches were tested for the final training process. The first approach included attempting to train the full dataset on one machine with 48GB of RAM available. However, this was only sufficient to train a subset of around 1 million samples. Next, the external memory, or out-of-core memory version of \acrshort{xgb} was attempted on the same machine, but the process still ran into errors related to memory allocation. Finally, the training set was trained using the support for incremental learning. The dataset was prepared, and split into batches of 800 000 samples. For this process, the additional parameters \textit{updater} and \textit{process\_type} were set to ``refresh'' and ``update'' respectively in order to ensure that the model correctly adapts to exposure to new samples. The results from the training process is later discussed in \cref{chap:results}.
+For different \acrshort{ml} methods, there are usually many different configurations available to tune how the model learns. For the selected \acrfull{xgb} model, based on the library's documentation, the most important parameters to configure are the following:
 
 \begin{itemize}
-    \item Evaluation process and metrics
-    \begin{itemize}
-        \item X-Folder-cross-validation
-        \item Metrics: F1, precision, recall, AUC, vs accuracy
-        \item Computing performance?
-        \item How fast is it to compute the next destination of every vessel in the world
-    \end{itemize}
+    \item \textit{n\_estimators} - the number of boosting rounds used. Default is 100.
+    \item \textit{max\_depth} - the max depth per tree in the model. Default is 6.
+    \item \textit{subsample} - fraction of samples from the training data considered when building each tree. Default is 1.0.
+    \item \textit{colsample\_bytree} - the number of features to consider when building each tree. Default is 1.0.
+    \item \textit{min\_child\_weight} - the minimum weight required for a child node. Default is 1.0.
+    \item \textit{gamma} - the minimum loss reduction required to split a node in the tree. Default is 0.
 \end{itemize}
+
+The parameters \textit{n\_estimators}, \textit{max\_depth}, \textit{min\_child\_weight}, and \textit{gamma} helps control the complexity of the model, while the others introduces randomness to tree building process. All of these parameters can be tuned to prevent overfitting and produce a well performing model. In order to find the best parameters to use, the model was trained several times using different configurations on a subset of the original dataset in a process called hyper-parameter optimization. First, the parameters listed above were listed with a range of different values for each to test. Initially, these ranges were large to get an initial idea of what parameters fit the best. A random grid search was used to find a rough estimate of what values perform the best. In this process 100 different configurations were randomly selected from all the possible permutations in order to get a feeling of what types of ranges fit the different parameters without attempting to train on all of them. The best result from this process provided insight into what general values seemed to work for the dataset. \cref{lst:grid_search} shows an example of how parameters are defined and used in a random search. Note that early stopping rounds tells the model to stop training if it sees no improvements after a given number of rounds to prevent overfitting. Next, a grid search was applied using smaller ranges based on the best result from the random search to further fine-tune the parameters. The grid search methods both use cross folder validation to arrive at the best performing configuration to consider overfitting in the final result, so the resulting parameters are a good place to start in the initial training process.
+
+\begin{lstlisting}[
+    caption={Python example of parameters used for random grid search in hyper-parameter optimization process.},
+    label=lst:grid_search,
+    language=Python,
+    showstringspaces=false,
+]
+random_grid = {
+    "n_estimators": [100, 200, 300],
+    "max_depth": [6, 8, 10],
+    "subsample": [0.6, 0.8, 1.0],
+    "learning_rate": [0.1, 0.2, 0.3],
+    "colsample_bytree": [0.7, 0.8, 0.9, 1.0],
+    "min_child_weight": [1, 2, 5, 8],
+    "gamma": [0.0, 0.1, 0.2, 0.3],
+}
+
+# ...
+
+best_params = best_random.random_search_cv(X_train, y_train, random_grid)
+print("Best params from random search")
+pprint(best_params)
+
+# ...
+
+def random_search_cv(self, X, y, param_grid, folds=3):
+    # Random search of parameters, using X-fold cross validation,
+    # search across 100 different combinations, and use all available cores
+    self.classifier = RandomizedSearchCV(estimator=self.classifier,
+                                         param_distributions=param_grid,
+                                         n_iter=100, cv=folds, verbose=3,
+                                         random_state=42, n_jobs=-1)
+
+    # Fit the random search model
+    self.classifier.fit(X, y, early_stopping_rounds=10)
+    return self.classifier.best_params_
+
+\end{lstlisting}
+
+
+\subsection{The training process}
+
+After finding appropriate parameters for the model, the next step was to conduct the training process. The process is straight forward, however, the size of the training set resulted in high computing requirements, especially in terms of available RAM on the running computer. \acrshort{xgb} supports both iterative and external memory training routines, therefore, these alternatives were also evaluated to see what method works best. In total, the three alternatives available for the training process were: training the model iteratively by dividing the training data into multiple batches, using the computer's hard drive as memory using \acrshort{xgb}'s external memory mode, or simply training the model normally using a computer with sufficient hardware requirements. The training process was conducted using the full dataset containing \textbf{4.3} million voyages which were encoded and balanced beforehand. The training set was divided into \textit{80\%} training data and \textit{20\%} testing data which was used to estimate the performance of the model.
+
+Moreover, the aforementioned approaches were initially tested using a computer with a \textit{AMD Ryzen 7 2700} processor with 8 physical CPU cores and 8 additional virtual ones, a \textit{NVIDIA GeForce GTX 1080} GPU, and 48GB of available RAM\@.
+
+First, the full training set was used in the standard training process. However, this process demanded more memory than available on the machine. By trial and error, it was established that 48GB of memory was only sufficient to train on a subset of around 1 000 000 samples. Thus, the iterative training approach was tested using a limited subset of the available data in different batches. In this process, the full dataset was fetched, encoded, and balanced before it was split into batches. As the entire dataset was kept in memory during the batch process, the batch size was set to 600 000 for the iterative training process. For this process, the additional parameters \textit{updater} and \textit{process\_type} were set to ``refresh'' and ``update'' respectively in order to ensure that the model correctly adapts to exposure to new samples.
+
+Next, the external memory version of \acrshort{xgb} was tested in an attempt to run the training process in one training round using the machine's hard drive as additional memory. In this process, the full dataset was fetched, sampled, and balanced before it was written to a \textit{libsvm} file as recommended by the library's documentation. The algorithm then produces a memory optimized cache file on the computers disc which is then used in the training process.
+
+Finally, in order to establish the differences and to find the most optimal training process, a standard training process was tested on the full dataset on a more powerful computer. In this process a virtual machine hosted on the collaborative company \acrfull{mo}'s cloud computing environment was used in the training process. This machine has 256GB of available memory and 32 virtual CPU cores. This was sufficient to train the full dataset and was the preferred method as it also allowed testing other \acrshort{ml} models that does not support incremental or external memory training processes.
+
+The results from the training processes are later discussed in \cref{chap:results}.
+
+\subsubsection{Evaluation process}
+
+For all of the different training processes tested, the same evaluation process was used in order to establish the performance of the model. First, to detect if the trained model is overfitted, three-fold cross validation applied during the training process. In this process, the model is trained three times using different parts of the training set as training and evaluation data. If the performance of each training process does not deviate significantly, the model is less likely to be overfitted and should be able to efficiently predict previously unseen samples. Moreover, plotting performance metrics for each iteration of the training process also provides insight into when the model stops learning and starts to overfit.
+
+Based on \acrshort{ml} conventions and related works, several performance metrics were used in addition to conventional accuracy. As already mentioned in \cref{sec:dataset_imbalance}, accuracy can be a misleading metric in some cases such as for imbalanced datasets. This is, however, a smaller issue after sampling has been used to balanced the dataset beforehand, but other performance metrics still provide more insight in to the performance of the model. In addition to accuracy, the metrics, \textit{logarithmic loss}, \textit{classification error}, \textit{precision}, \textit{recall}, and \textit{F1 score} were used. Furthermore, to gain more insight into the model performance on the particular dataset, accuracies per segment and sub-segment were also collected as listed in \cref{lst:segment_accuracy}. Furthermore, this helps to gain insight into the traveling patterns of different vessel types as it pertains to the predictability of vessels of different types and sizes.
+
+\begin{lstlisting}[
+    caption={Python code used to calculate accuracies per segment and sub-segment to gain insight into the predictability of different vessels.},
+    label=lst:segment_accuracy,
+    language=Python,
+    showstringspaces=false,
+]
+def column_accuracy(correct, incorrect, columns=["segment", "sub_segment"]):
+    cr = correct.groupby(columns).size()
+    cr.name = "correct"
+    icr = incorrect.groupby(columns).size()
+    icr.name = "incorrect"
+
+    df = pd.concat([cr, icr], axis=1).fillna(0)
+    df["total"] = df["correct"] + df["incorrect"]
+    df = df.astype({ "correct": "int32", "incorrect": "int32", "total": "int32" })
+    df["accuracy"] = df["correct"]/df["total"]
+
+    # sort groups by accuracy if grouped by more than 1 column
+    if len(columns) > 1:
+        g = df["accuracy"].groupby(columns[0], group_keys=False)
+        res = g.apply(lambda x: x.sort_values(ascending=False))
+        return res
+
+    return df.sort_values(by=["accuracy"], ascending=False)
+\end{lstlisting}
 
 \section{Vessel destination prediction method summary}
 
-Given the final trained model, the overall prediction process for a single traveling vessel can be conceptualized using the following steps:
+After the training process, the final trained model is saved and can then be used to predict the outcome of new samples of traveling voyages. To predict a traveling vessels next destination, the steps described throughout this chapter must be replicated for that single vessel. Given the trained model, the overall prediction process for a single traveling vessel can be conceptualized using the following steps:
 
 \begin{itemize}
     \item The current trajectory of the traveling vessel is collected using \acrshort{ais} records ranging from the last transmitted \textit{``MOORED''} status to its current position along with the id (\gls{locode}) of the departure port where it was moored and the vessel's segmentation values.
     \item The vessel's trajectory is then sampled based on a predefined time interval, then compared to every historical outgoing trajectory from the same departure port from vessels of the same segment and sub-segment to establish the \acrfull{mstd}.
-    \item The vessel's segment, sub-segment, departure port, trajectory length, \acrshort{mstd}, and the \acrshort{mstd} similarity value is then passed to a \acrshort{xgb} model that predicts the traveling vessel's arrival port.
+    \item The vessel's segment, sub-segment, departure port, trajectory length, \acrshort{mstd}, and the \acrshort{mstd} similarity value is then passed to the trained \acrshort{xgb} model that predicts the traveling vessel's arrival port.
 \end{itemize}
