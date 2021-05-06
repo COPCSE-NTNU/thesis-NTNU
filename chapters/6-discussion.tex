@@ -2,31 +2,26 @@
 
 \section{Summary}
 
-\section{Data architecture}
+\begin{itemize}
+    \item Brief summary of the entire process
+\end{itemize}
 
+\section{Dataset and problem formulation}
+
+\subsection{Vessel voyage definition}
+
+\subsection{Geographical trajectory abstraction and MSTD}
+
+\subsection{Data preparation and dataset imbalance}
+
+\subsection{Data storage and architecture}
 \begin{itemize}
     \item Scalability, availability. PostGreSQL DB structure advantages/disadvantages
-    \item Trajectory definitions, full voyages vs port-to-port voyages
-\end{itemize}
-
-\subsection{Trajectory sampling}
-
-\begin{itemize}
-    \item Benefits of sampling.
-    \item Different approaches to sampling.
-\end{itemize}
-
-\section{ML training structure}
-
-\begin{itemize}
-    \item MSTD
-    \item Dataset imbalance
 \end{itemize}
 
 \section{ML-based destination prediction}
-
 \begin{itemize}
-    \item Performance
+    \item Why did we get the described performance.
     \item Weaknesses/limitations
     \item Dataset vs real life
 \end{itemize}
@@ -36,16 +31,26 @@
 \begin{itemize}
     \item What is the value of this solution
     \item What can it be used for
+    \item Response from external actors
     \item Is this something that contributes to the industry as well as academia
-    \item Value for MO. future applications and integrations in MO's product (teasers)
+    \item Value for MO\@. Future applications and integrations in MO's product (teasers)
 \end{itemize}
 
 \section{Limitations and future work}
 
 \begin{itemize}
     \item Voyage definition - anchoring, bunkering
+\begin{itemize}
     \item AIS navigational status is manual input, can we better claim that a vessel has arrived/departed a port?
+    \item clustering vs. transitions
+\end{itemize}
     \item MSTD - trajectory similarity measurement. Zhang et al. achieved better results using RF than SSPD.
     \item Improving the model by adding more features such as weather, seasons, ballast/laden, \ldots more?
     \item Implementing at large scale providing on-demand predictions and availability
+\begin{itemize}
+    \item Implement a real-time updated voyage database
+    \item Fetch every vessels current trajectory and estimate MSTD
+    \item Pass all vessel data to ML model which, very quickly, predicts destination ports.
+    \item Use a routing concept to get ETA (mesh-based routing, ais-based routing)
+\end{itemize}
 \end{itemize}
