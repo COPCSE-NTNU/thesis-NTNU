@@ -3,7 +3,8 @@
 
 
 \section{The discretisation scheme and assumptions}
-The FtL model first proposed by Petis consist of a set of cars $\{z^l_{i-1/2}\}$ for $i \in {1,...,N}$ and $l = \frac{1}{N}$. The propagation of cars is goverened by the system
+The FtL model first proposed by Petis consist of a car ensemble $\{z^l_{i-1/2}\}$ for $i \in \{1,...,N\}$ and $l = \frac{1}{N}$. The propagation of cars is goverened by the system
+
 
 \begin{equation} \label{FtL_model}
     \frac{d z_{i-1/2}}{dt} = k(z_{i-1/2}) V( y_i), \, \, \forall i \in \{1,...,N\}, 
@@ -14,13 +15,13 @@ where the following has been defined
 \end{equation}
 The assumptions on $v\left(\rho\right) = V\left(\frac{1}{\rho}\right)$ are 
 \begin{align} 
-    v &\in \C^{0,1}(\R), \, \, v^{-1} \in \C^{0,1}(\R), \label{assump_v1} \\
-    v &\text{ is monotonically decreasing} \label{assump_v2}\\
-    -v' &\leq M \text{ which implies }\rightleftarrow V^{'}\left(y\right) \leq \frac{M}{y^2} \label{assump_v3}\\
-    0&\leq v\left(\rho\right) \leq 1 \label{assump_v4}\\
-    v&\geq 1 - \rho^{\sigma - 1} \text{ for some } \sigma > 1 \label{assump_v5}. 
+    v &\in \C^{0,1}(\R), \, \, v^{-1} \in \C^{0,1}(\R), \label{assump_v_lipschitz} \\
+    v &\text{ is monotonically decreasing} \label{assump_v_decrease}\\
+    -v' &\leq M \text{ which implies }\rightleftarrow V^{'}\left(y\right) \leq \frac{M}{y^2} \label{assump_v_derivative}\\
+    0&\leq v\left(\rho\right) \leq 1 \text{ and } v(0) = 1, v(1) = 0\label{assump_v_image}\\
+    v&\geq 1 - \rho^{\sigma - 1} \text{ for some } \sigma > 1 \label{assump_v_lower_bound}. 
 \end{align}
-\eqref{assump_v1} states that $v$ is bi-Lipschitz, and implicitly strengthens \eqref{assump_v2} to strigtly decreasing. The classical Lighthill-Whitham-Richards model, 
+\eqref{assump_v_lipschitz} states that $v$ is bi-Lipschitz, and implicitly strengthens \eqref{assump_v_decrease} to strigtly decreasing. \eqref{assump_v_image} includes a no-collision assumption in $v(1) = 0$, which will be shown in \eqref{lemma:boundY}. The classical Lighthill-Whitham-Richards model, 
 \begin{equation}
     v(\rho) = 1 - \rho,
 \end{equation}
@@ -28,8 +29,8 @@ satisfies these assumptions for $\rho \in [0,1]$. As does any strictly increasin
 The assumptions on $k$ are 
 
 \begin{align}
-    &k \in BV(\R) \cap C^{(2)}(\R) \cap L^\infty(\R) \text{ and } \frac{1}{k} \in L^\infty\left(\R\right) \label{assump_k1}\\
-    &\dkdx \in BV(\R)\cap L^\infty(\R) \label{assump_k2}\\
+    &k \in BV(\R) \cap \C^{(2)}(\R) \cap L^\infty(\R) \text{ and } \frac{1}{k} \in L^\infty\left(\R\right) \label{assump_k1}\\
+    &\dkdx \in BV(\R)\cap L^\infty(\R) \cap \C(\R) \label{assump_k2}\\
     &\ddkdxdx \in L^\infty(\R). \label{assump_k3}
 \end{align}
 The assumptions that $k, \dkdx, \ddkdxdx \in L^\infty$ are natural, since $k$ models the road conditition it will have be bounded. The assumptions on smoothness and the total variation can for example be seen as a conditions on how the traffic authorities warn a slowdown region for the incoming traffic. If $k$ is to model road work, it is reasonable to expect that the traffic authorities will warn incoming traffic in a manner that can be modelled as smooth, as to avoid road congestion and ensure comfortable travel. 
@@ -112,7 +113,7 @@ Let
 	d_k : \R \times \R &\mapsto \R^+_0 \nonumber \\ 
 	(x,y)  &\mapsto k\left(\Psi(c(x,y))\right) \left|y - x\right|,
 \end{align} 
-where $c(x,y)$ is the constant used in the application of the mean-value theorem in \eqref{y_i_transformed}, for the interval $[\min(x,y), \max(x,y)]$.  The map is symmetric in its arguments, non-negative, and zero if and only if $(x,y) \in D=\{{(x,x)|x\in \R}\}$. However, the triangle inequality may fail to hold, as the scaling of the distances may vary with $k\left(\Psi(c(x,y))\right)$. In conclusion, \eqref{d_k} is not necessarily a metric.
+where $c(x,y)$ is the constant used in the application of the mean-value theorem in \eqref{y_i_transformed}, for the interval $[\min(x,y), \max(x,y)]$.  The map is symmetric in its arguments, non-negative, and zero if and only if $(x,y) \in D=\{{(x,x)|x\in \R}\}$. However, the triangle inequality may fail to hold, as the scaling of the distances may vary with $k\left(\Psi(c(x,y))\right)$. In conclusion, \eqref{d_k} is not necessarily a metric. %it is, show it!
 
 We are ready to formulate the transformed FtL system:
 
@@ -164,7 +165,7 @@ The transformed system gives an elegant proof of the following lemma.
 		&\leq \frac{1 - V\left(\inf_{x \in \R} \{k(x)\} \hat{y}_i\right)}{l} \leq \frac{\norm{\frac{1}{k}}_\infty^{\sigma - 1}}{l \hat{y}_i^{\sigma - 1}} \label{bound_deriv_y_hat}
 	\end{align}
 	
-	The first inequality holds due to  \eqref{assump_v2} and \eqref{assump_v4}, using \eqref{psi_lipschitz}. The second inequality is a consequence of \eqref{assump_v5}. \eqref{bound_deriv_y_hat} can be rewritten in the form 
+	The first inequality holds due to  \eqref{assump_v_decrease} and \eqref{assump_v_image}, using \eqref{psi_lipschitz}. The second inequality is a consequence of \eqref{assump_v_lower_bound}. \eqref{bound_deriv_y_hat} can be rewritten in the form 
 	\begin{align}
 		\frac{d\left(y_{i}^{\sigma}\right)}{dt} &\leq \frac{\sigma \norm{\frac{1}{k}}^{\sigma - 1}_\infty}{l} \nonumber\\
 		\implies \hat{y}_{i} &\leq \sqrt[\sigma]{\hat{y}_i(0)^\sigma + \frac{\sigma \norm{\frac{1}{k}}^{\sigma - 1}_\infty}{l} t }
@@ -181,7 +182,7 @@ The transformed system gives an elegant proof of the following lemma.
 	\begin{equation} \label{proof:bound_lk_y}
 		l^\kappa y_{i} &\leq \sqrt[\sigma]{ l^{\sigma\kappa}\left( \norm{\frac{1}{k}}_\infty \norm{k}_\infty y_i(0)\right)^\sigma +\frac{\sigma  l^{\sigma\left(\kappa - \frac{1}{\sigma}\right)} \norm{\frac{1}{k}}_\infty}{l} t }.
 	\end{equation}
-	Under the stated assumptions, the lefthand side of \eqref{proof:bound_lk_y} converges to zero on bounded intervals $[0,T]$ for $T \in \R^$, which concludes the proof. 	
+	Under the stated assumptions, the left-hand side of \eqref{proof:bound_lk_y} converges to zero on bounded intervals $[0,T]$ for $T \in \R^$, which concludes the proof. 	
 \end{proof}
 
 \begin{remark}
@@ -201,7 +202,7 @@ The transformed system gives an elegant proof of the following lemma.
 	\begin{equation} \label{y_bound2}
 		ly_i^\sigma(t) \leq \left( l y_i^\sigma(0) + \frac{\norm{k}_\infty}{\norm{\dkdx}_\infty}\right) e^{\sigma \norm{\dkdx}_\infty t} - \frac{\norm{k}_\infty}{\norm{\dkdx}_\infty}.
 	\end{equation}
-	Although exponential and asymptotically much weaker than \eqref{proof:y_bound1}, it is clear that the righthand side of \eqref{y_bound} converges to $ly_i^\sigma(0)$ as $t \downarrow 0$, when $l$ is fixed. Both \eqref{proof:y_bound1} and \eqref{y_bound2} can be used to prove \eqref{lemma:boundY}. 
+	Although exponential and asymptotically much weaker than \eqref{proof:y_bound1}, it is clear that the right-hand side of \eqref{y_bound} converges to $ly_i^\sigma(0)$ as $t \downarrow 0$, when $l$ is fixed. Both \eqref{proof:y_bound1} and \eqref{y_bound2} can be used to prove \eqref{lemma:boundY}. 
 \end{remark}
 
 \begin{corollary} \label{corollary:max_dist_cars}
@@ -225,9 +226,9 @@ The aim of this section is therefore to prove that FtL scheme is $TVB$, or concr
 At the current time, an attempt was made to attack $TV_x(\rho^l)$ in the transformed space, but the proof is not quite finished. Intermediary results are summed up in the next section. Instead, a bound for $TV_x(k^l V^l)$ was aquired directly. A bound for $TV_x(\rho^l)$ was aquired through the back-door, by using the established bounds as well as some extra assumptions on $v$. 
 
 
-\subsection{A bound for $TV_x(k^lV^l)$}
+\subsection{A bound for T.V.$_x(k^lV^l)$}
 First, consider the discontinuous system of ODEs  (TRansversality conditions!)
-
+ %Hva skjer når sign potensielt skifter fortegn?
 \begin{align} \label{local_TV_kv_deriv}
     &\frac{d \left| \Delta_+\left(k_{i-1/2}V_{i}\right) \right|}{dt}=
      \sgn_k(i) \Delta_+\left(\dkdx_{i-1/2} \frac{dx_{i-1/2}}{dt} V_{i}\right) \nonumber\\
@@ -241,7 +242,10 @@ for $i \in \{1,...,N-1\}$. The terms have been reordered and re-expressed. For c
 \end{align}
 The last equality of \eqref{sign_i} comes from the assumption that $V$ is increasing in $y$, and decreasing in $\rho = \frac{1}{y}$.  
 
-Consider the second and third term of the righthand side of \eqref{Diff_kV_1}. For each equation, pass the second term to the next equation in the system and recieve a  term equals the third term, up to a sign.  Implicitly, a sum is taken over \eqref{Diff_kV_1} and the righthand side terms are reordered. In the new system of equations, the second and third term can be combined into
+Consider the second and third term of the right-hand side of \eqref{Diff_kV_1}. For each equation, pass the second term to the next equation in the system and recieve a  term equals the third term, up to a sign.  Implicitly, a sum is taken over \eqref{Diff_kV_1} and the right-hand side terms are reordered. In the new system of equations, the second and third term can be combined into
+
+%Write out the sums and show what happens
+
 \begin{align} \label{bound_TVkV1}
     (\sgn_k(i)\sgn_k(i-1) - 1) k_{i-1/2} \frac{dV}{dy}(y_i) \vert D_+{k_{i-1/2}V_{i}})\vert \leq 0. 
 \end{align}
@@ -251,7 +255,7 @@ The exceptional cases for this exhange of terms are the equations $i \in \{ 1, N
     -k_{1/2}\left| D_+\left(k_{1/2}V_{1}\right) \right| &\text{ for } i = 1 \label{excep_term1}\\
     \sgn_k(N) k_{N+1/2} \frac{dV}{dy}(y_N) D_+\left(k_{N-1/2}V_{N}\right) &\text{ for } i = N. \label{excep_term2},
 \end{numcases}
-both of which are non-positive.  \eqref{excep_term2} is 0, as $y_N = \infty$ and  $V'(y) \leq \frac{M}{y^2}$ by assumption \eqref{assump_v3}. All in all, the global contribution of terms associated with \eqref{bound_TVkV1} to the change of $TV_x(k^l V^l)$ is non-positive. 
+both of which are non-positive.  \eqref{excep_term2} is 0, as $y_N = \infty$ and  $V'(y) \leq \frac{M}{y^2}$ by assumption \eqref{assump_v_derivative}. All in all, the global contribution of terms associated with \eqref{bound_TVkV1} to the change of $TV_x(k^l V^l)$ is non-positive. 
 
 Next, we consider the contribution of the road condition function $k$ to the total variation, which corresponds to the first term of \eqref{k}. Insert the model assumption \eqref{FtL_model} $\frac{dx_{i-1/2}}{dt} = k_{i-1/2} V_i$ in the first term of \eqref{local_TV_kv_deriv} and compute
 \begin{align} \label{kv_bound3}
@@ -262,7 +266,7 @@ Next, we consider the contribution of the road condition function $k$ to the tot
     &+\Delta_+\left(k_{i-1/2} V_{i}\right)\dkdx_{i-1/2}(V_{i+1} + V_i) \nonumber\\
     &-\Delta_+\left(k_{i-1/2}\right)\dkdx_{i-1/2} V_{i+1} V_i, \label{kv_bound3}
 \end{align}
-Can be seen from two applications of \eqref{Diff_kV_1}.  Under assumptions \eqref{assump_v3}, \eqref{assump_k1}, \eqref{assump_k2} and \eqref{assump_k3} and using \eqref{kv_bound3}, a differential inequality for $TV_x(k_l V_l)$ can be established. 
+Can be seen from two applications of \eqref{Diff_kV_1}.  Under assumptions \eqref{assump_v_derivative}, \eqref{assump_k1}, \eqref{assump_k2} and \eqref{assump_k3} and using \eqref{kv_bound3}, a differential inequality for $TV_x(k_l V_l)$ can be established. 
 
 \begin{align}
     %\frac{d \big( \sum_{i=1}^{N-1} \left|\Delta_+\right(k_{i-1/2}V_i\left)\right| \big)}{dt}
@@ -280,7 +284,7 @@ then \eqref{kV_diff_ineq} implies that
 \begin{equation} \label{bound_TV_kv}
     \text{TV}_x(k^lV^l)(t) \leq \left( \text{TV}_x(k^lV^l)(0) + \frac{C_1}{C_2}\right) e^{C_2 t} - \frac{C_1}{C_2},
 \end{equation}
-using standard techniques. 
+using standard techniques and the fact that $T.V._x\right(k^l V^l\left)$ is a sum over Lipschitz functions and is Lipschitz. The fact that any Lipschitz function is absolutely continuous implies that the differential inequality holds. 
 
 \subsection{A bound on $TV_x\left(\rho^l\right)$}
 
@@ -347,7 +351,7 @@ Consider the size of the jump
 \begin{align} \label{distance_deriv_trans}
 	\frac{d}{dt} \left| \hat{\rho}_{i+1} - \hat{\rho}_{i} \right| = \sgn\left(\hat{y}_{i+1} - \hat{y_{i}}\right) \left(\hat{\rho}_{i+1}^2D_+(V_{i+1}) - \hat{\rho}_{i}^2 D_+(V_i)\right) \text{ for } i \in \{1,..,N-1\}
 \end{align}
-The intuition of the proof is to use the fact that the righthand side in \eqref{distance_deriv_trans} is similar to 
+The intuition of the proof is to use the fact that the right-hand side in \eqref{distance_deriv_trans} is similar to 
 \begin{equation} \label{sign_eq1}
 	\sgn\left(y_{i+1} - y_{i}\right) \left(\hat{\rho}_{i+1}^2 D_+(V_{i+1}) - \hat{\rho}_{i}^2 D_+(V_i)\right),
 \end{equation}
@@ -401,6 +405,206 @@ Two cases are considered.
 	sgn(D_+(V_i^l)) \neq sgn(D_+(k_{i-1/2}^l V_i^l)) \label{CaseB}
 \end{numcases}
 
+\section{Bound on T.V.($\rho^l$))} \label{section:tv_rho}
+We proceed as before to establish a bound on $\rho^l$. Here, the decomposition 
+
+\begin{equation}
+\left| x \right| = \max(x,0) + \min(x,0),
+\end{equation}
+is used. For convenience, define 
+
+\begin{align}
+	(x)_+ &:= \max(x,0) \text{ and } (x)_{-} = \min(x,0), \\
+	\mathbb{H}^(i) &:= [\rho_{i+1} - \rho_{i} > 0]. \label{Iverson}
+\end{align}
+%Definer H som en multifunksjon. 
+$[\cdot]$ is the Iverson bracket, which evaluates to 1 if the statement is true and 0 if the statement is false. It is an alternative notation for the Heavyside function. 
+Note first that 
+
+\begin{equation} \label{diffrhomax_lipschitz}
+	(\rho_{i+1} - \rho_i)_+ \text{ is Lipschitz continuous}.
+\end{equation}
+This follows from the fact that $(\cdot)_+$ is Lipschitz continuous with constant 1. Since 
+\begin{equation}
+	\left|\frac{d}{dt} (\rho_{i+1} - \rho_i) \right|= \left| \rho_{i+1}^2D_+(k_{i+1/2}V_{i+1}) - \rho_{i}^2D_+(k_{i-1/2}V_i)\right| \leq \frac{C}{l}, 
+\end{equation}
+for some $C \in \R$, under assumptions ON V and k. The composition of two Lipschitz continuous functions is also Lipschitz continuous. The composition is therefore Lipschitz continuous and can be differentiated almost everywhere. The claim is now that for $i \in \{1,...,n-2\}$,
+
+\begin{align} \label{deriv_diff_rho1}
+	\frac{d}{dt} (\rho_{i+1} - \rho_i)_+ =  -\mathbb{H}(i)\left( \rho_{i+1}^2D_+(k_{i+1/2}V_{i+1}) - \rho_{i}^2D_+(k_{i-1/2}V_i)\right), 
+\end{align}
+outside of a possibly countable set. This is a consequence of the fact that $\rho_{i+1} - \rho_i$ is differentiable $ \forall i \in \{1,..,n-2\}$, and can attain zero either on connected segments or at isolated points. %hva menes med et isolert punkt, kan disse ha et akkumulasjonspunkt?
+On the interior of such connected segments, the derivative of $(\rho_{i+1} - \rho_i)_+$ is zero. Therefore, the choice of version
+\begin{equation}
+	\frac{d(x)_+}{dx} \overset{a.e.}{=} [x > 0]
+\end{equation}
+is appropriate for such segments, as the entire right hand side of \eqref{deriv_diff_rho1} will evaluate to zero. 
+Let 
+\begin{equation}
+	U = \cup_{j} O_j, 
+\end{equation}
+denote the possibly uncountable union over such interiors $O_j$. $U$ is a union of open sets and is therefore open. By exercise 1.6.10 in Terence Tao measure thery be written as a countable union of disjoint open sets with endpoints outside of the union. Therefore, on these endpoints and a possibly countable set of isolated zeros, \eqref{deriv_diff_rho1} may fail to hold. Since ${1,...,n-1}$ is finite, the set is still countable when taken over all $i$. So \eqref{deriv_diff_rho1} holds in the almost everywhere sense. By \eqref{diffrhomax_lipschitz}, it absolutely continuous and the fundamental theorem of calculus holds. With these preliminaries in order, we are ready to state main result of this section. 
+
+\begin{lemma}
+	Under \eqref{assump_v_lipschitz}, \eqref{assump_v_decrease}, \eqref{assump_v_image}, \eqref{assump_k1}, \eqref{assump_k2}. For $t \in \R^+$, 
+	\begin{equation}
+		\text{T.V.}_x(\rho_l)(t) \leq \left(\text{T.V.}_x(\rho_l)(0) + \frac{B_1}{B_2}\right) e^{B_2 t} - \frac{B_1}{B_2}. \label{TV_rho_bound_lemma}
+	\end{equation}
+	For positive constants $B_1, B_2$. These are given as 
+	\begin{align}
+		B_1 &= \text{T.V.}\left(\dkdx\right) + 5 \norm{\dkdx}_\infty, \\
+		B_2 &= \left(1 + L\right)\norm{\dkdx}_\infty.
+	\end{align}
+	In other words, the scheme \eqref{disc_rho} is total variation bounded, or T.V.B. 
+\end{lemma}
+
+\begin{proof}
+	Consider first the change in positive total variation 
+	%explain D_+^z transition
+	%Do the two for one special, by hiding notation in H(i)
+	\begin{align}
+		&\frac{d}{dt}\left(\rho_1 + \rho_{N-1} + \sum_{i = 1}^{N-2} (\rho_{i+1} - \rho_i)_+\right) = \label{TV_rho_left-hand_side}\\
+		&=\sum_{i = 1}^{N-2} -\mathbb{H}(i)\left(\rho_{i+1}^2 D_+(k_{i+1/2}V_{i+1})) - \rho_{i}^2 D_+(k_{i-1/2}V_{i}) + \right) + \frac{d}{dt}\rho_1 + \frac{d}{dt}\rho_{N-1}\nonumber \\
+		&= \sum_{i = 2}^{N-1} -\mathbb{H}(i-1)\rho_{i} D_+^z(k_{i-1/2}V_{i}) + \sum_{i = 1}^{N-2} \mathbb{H}(i)\rho_{i} D_+^z(k_{i-1/2}V_{i}) + \frac{d}{dt}\rho_1 + \frac{d}{dt}\rho_{N-1}, \label{TV_rho_split_sum} 
+	\end{align}
+	where the second equation is obtained by an index shift and using the fact that 
+	\begin{align}
+		\rho_i D_+(k_{i-1/2}V_i) = D_+^z(k_{i-1/2}_i).
+	\end{align}
+	 The indices overlap outside of $i \in \{1,N-1\}}$. These can each be added to with its corresponding term, $\frac{d}{dt}\rho_1$ and $  \frac{d}{dt}\rho_{N-1}$ which combined give the following inequalities. 
+	\begin{align}
+		-(1+\mathbb{H}(N-2))\rho_{N-1}\left(V_{N-1} D_+^z(k_{N-3/2}) + k_{N-1/2} D_+^z(V_{N-1})\right) &\leq 2 \norm{\dkdx}_\infty \label{TV_rho_bdry_ineq1}\\
+		-(1 -\mathbb{H}(1))\rho_{1}\left(V_1 D_+^z(k_{1/2}) + k_{3/2} D_+^z(V_{1})\right) &\leq \norm{\dkdx}_\infty \label{TV_rho_bdry_ineq2}. 
+	\end{align}
+	Start with \eqref{TV_rho_bdry_ineq1}. It follows from the following constraints
+	\begin{align}
+		0 &< (1+\mathbb{H}(N-2)) \leq 2 \label{constr1}\\
+		0 &\leq  V_{N-1} \leq 1 \text{ by } \eqref{assump_v_image} \label{constr2}\\
+		0 &\leq  \rho_{N-1} \leq 1 \text{ by } \eqref{lemma:boundY} \label{constr3}\\ 
+		0 &\leq \frac{v_{max} - v(\rho_{N-1})}{z_{N - 1/2} - z_{N-3/2}} = D_+^z(V_{N-1}) \label{diffV_N-1} \label{constr4}\\ 
+		\left|D_+^z(k_{N-3/2})\right| &\leq \norm{\dkdx}_\infty \label{constr5}. 
+	\end{align} 
+	The positivity of \eqref{constr1}, \eqref{constr2}, \eqref{constr3} and \eqref{constr4} imply the combined term is non-positive, due to the negative sign in front. The remaining terms can be bounded by $2\norm{\dkdx}_\infty$. 
+	%Use clever ref 
+	Similarly, for \eqref{TV_rho_bdry_ineq2}, we have
+	\begin{align}
+		0 &\leq (1-\mathbb{H}(1)) \leq 1 \label{constr6}\\
+		0 &\leq  V_{1} \leq 1 \text{ by } \eqref{assump_v_image} \label{constr7}\\
+		0 &\leq  \rho_{1} \leq 1 \text{ by } \eqref{lemma:boundY} \label{constr8}\\ 
+		0 &\leq (1-\mathbb{H}(1))D_+^z(V_{1}) \label{constr9}\\ 
+		\left|D_+^z(k_{1/2})\right| &\leq \norm{\dkdx}_\infty. \label{constr10} 
+	\end{align} 
+ 	\eqref{constr9} holds for the following reason. If $\mathbb{H}(1) = 1$, then the right hand side is zero. If $\mathbb{H}(1) = 0$, then $\rho_2 - \rho_1 < 0$ and $D_+^z(V_{1}) > 0$, by \eqref{assump_v_decrease}. The remaining terms are bounded by $\norm{\dkdx}_\infty$. The remaining terms of the right hand side of \eqref{TV_rho_split_sum} is
+ 	\begin{align}
+ 		\sum_{i = 2}^{N-2} \Delta_+(\mathbb{H}(i-1)) \rho_{i} D_+^z(k_{i-1/2}V_{i}) &= \sum_{i = 2}^{N-2} \Delta_+(\mathbb{H}(i-1)) \rho_{i} \left(V_i D_+^z(k_{i-1/2} + k_{i+1/2}D_+^z(V_{i})\right) \nonumber \\
+ 		&\leq \sum_{i = 2}^{N-2} \Delta_+(\mathbb{H}(i-1)) \rho_{i} V_i D_+^z(k_{i-1/2}). \label{TV_rho_D_+V_ineq}
+ 	\end{align}
+ 	\eqref{TV_rho_D_+V_ineq} follows from the fact that 
+ 	\begin{equation}
+ 		\Delta_+(\mathbb{H}(i-1)) = - \sgn(D_+^z(V_{i})), \label{TV_rho_D_+V_ineq_sign}
+ 	\end{equation}
+ 	where $\sgn(0) = 0$. \eqref{TV_rho_D_+V_ineq_sign} implies that 
+ 	\begin{equation}
+ 		\Delta_+(\mathbb{H}(i-1)) \rho_{i}k_{i+1/2}D_+^z(V_{i}) \leq 0, 
+ 	\end{equation}
+ 	which gives \eqref{TV_rho_D_+V_ineq}. An index shift is performed on the right hand side of \eqref{TV_rho_D_+V_ineq}, similarly to \eqref{TV_rho_split_sum}. 
+ 	
+ 	\begin{align}
+ 		\sum_{i = 2}^{N-2} \Delta_+(\mathbb{H}(i-1)) \rho_{i} V_i D_+^z(k_{i-1/2}) &= \sum_{i = 2}^{N-2} \mathbb{H}(i) \Delta_+(\rho_{i} V_i D_+^z(k_{i-1/2})) \\
+ 		&+ \mathbb{H}(N-2) \rho_{N-2} V_{N-2} D_+^z(k_{N-3/2}) - \mathbb{H}(1) \rho_{1} V_{1} D_+^z(k_{1/2}). \label{TV_rho_split_sum_2}
+ 	\end{align}
+ 
+ 	The first three factors of each boundary term is bounded by one, and both fourth factors are bounded by $\norm{\dkdx}_\infty$. Therefore 
+ 	\begin{equation}
+ 		\mathbb{H}(N-2) \rho_{N-2} V_{N-2} D_+^z(k_{N-3/2}) - \mathbb{H}(1) \rho_{1} V_{1} D_+^z(k_{1/2}) \leq 2\norm{\dkdx}_\infty. \label{TV_rho_bdry_ineq3}
+ 	\end{equation}
+ 	Proceeding from \eqref{TV_rho_split_sum_2}, we expand the forward difference with respect to each term. This results in two sums. 
+ 	\begin{align}
+ 		\sum_{i = 2}^{N-2} \mathbb{H}(i) \Delta_+(\rho_{i} V_i D_+^z(k_{i-1/2}) &=  \sum_{i = 2}^{N-2} \rho_{i+1} V_{i+1} \Delta_+(D_+^z(k_{i-1/2})) \mathbb{H}(i) \label{TV_rho_TV_dkdx_1}\\&+ \sum_{i = 2}^{N-2} D_+^z(k_{i-1/2}) \left(V_i \Delta_+(\rho_i)\mathbb{H}(i) + V_{i+1} \Delta_+(V_i)\mathbb{H}(i)\right)  
+ 	\end{align}
+ 	The first sum \eqref{TV_rho_TV_dkdx_1}can be bounded immediately: 
+ 	\begin{equation}
+ 		\sum_{i = 2}^{N-2} \rho_{i+1} V_{i+1} \Delta_+(D_+^z(k_{i-1/2})) \mathbb{H}(i) \leq \sum_{i = 2}^{N-2} \left|\Delta_+(D_+^z(k_{i-1/2}))\right| \leq \text{T.V.}(\dkdx). \label{TV_rho_TV(dk)_ineq}
+ 	\end{equation}
+ 	%Refer to rho, V < 1. 
+ 	For the second sum, notice that 
+ 	\begin{equation}
+ 		\Delta_+(\rho_i)\mathbb{H}(i) = (\rho_{i+1} - \rho_i)_+ \text{ and } \left|\Delta_+(V_i)\mathbb{H}(i)\right| \leq L (\rho_{i+1} - \rho_i)_+. \label{TV_rho_delta_rho_iverson}
+ 	\end{equation}
+ 	$L$ is the Lipschitz constant of $v$, which exists by \eqref{assump_v_lipschitz}. Both equations hold by \eqref{Iverson}. Using \eqref{assump_v_image} to bound $V_{i} \leq 1$, $D_+^z(k_{i-1/2}) \leq \norm{\dkdx}_\infty$ and \eqref{TV_rho_delta_rho_iverson}, the following bound can be established. 
+ 	\begin{align}
+ 		\sum_{i = 2}^{N-2} D_+^z(k_{i-1/2}) \left(V_i \Delta_+(\rho_i)\mathbb{H}(i) + V_{i+1} \Delta_+(V_i)\mathbb{H}(i)\right) \leq \norm{\dkdx}_\infty \sum_{i = 2}^{N-2} (1 + L) (\rho_{i+1} - \rho_i)_+ \label{TV_rho_exp_ineq}
+ 	\end{align}
+ 	It is time to collect all terms involved in the upper bound of \eqref{TV_rho_left-hand_side}. These are \eqref{TV_rho_bdry_ineq1}, \eqref{TV_rho_bdry_ineq2} and \eqref{TV_rho_bdry_ineq3} for the boundary terms. The two remaining terms are the right-hand sides of \eqref{TV_rho_TV(dk)_ineq} and \eqref{TV_rho_exp_ineq}.  
+ 	\begin{equation}
+ 		\text{T.V.}_x^+(\rho^l)} := \rho_1 + \rho_{N-1} + \sum_{i = 1}^{N-2} (\rho_{i+1} - \rho_i)_+\right).
+ 	\end{equation}
+ 	The proceeding calculations express that 
+ 	\begin{equation}
+ 		\frac{d}{dt}\text{T.V.}_x^+(\rho^l)} \leq 5 \norm{\dkdx}_\infty + \text{T.V.}(\dkdx) + (1+L) \norm{\dkdx}_\infty\text{T.V.}_x^+(\rho^l)}, \label{TV_rho_diff_ineq_exp}
+ 	\end{equation}
+ 	holds outside of $\Theta$, by the discussion that lead up to the statement of the theorem. The transition from the right-hand side of \eqref{TV_rho_left-hand_side} to \eqref{TV_rho_diff_ineq_exp} are algebraic manipulations and pointwise bounds, so \eqref{TV_rho_diff_ineq_exp} still holds over $\R \backslash \Theta$. Define 
+ 	\begin{align}
+ 		B_1 &:= \text{T.V.}\left(\dkdx\right) + 5 \norm{\dkdx}_\infty, \\
+ 		B_2 &:= \left(1 + L\right)\norm{\dkdx}_\infty.
+ 	\end{align}
+ 	Introduce an integrating factor and differentiate
+ 	\begin{align}
+ 		\frac{d}{dt}\left(e^{-B_2 t} \text{T.V.}_x^+(\rho^l)\right) = e^{-B_2 t} \left(\frac{d}{dt}\text{T.V.}_x^+(\rho^l) - B_2 \text{T.V.}_x^+(\rho^l)\right) \leq e^{-B_2 t} B_1, \label{TV_rho_integrating_factor}
+ 	\end{align}
+ 	which follows from inserting \eqref{TV_rho_diff_ineq_exp}. To justify plugging in the formula, note first that $e^{-B_2 t}$ is Lipschitz continuous on $\R^+_0$. Since the product of two Lipschitz functions is Lipschitz, $e^{-B_2 t} \text{T.V.}_x^+(\rho^l)$ is indeed Lipschitz. Furthermore, the product rule also holds for the almost everywhere derivative, so
+ 	%product rule for Lipschitz differentiable functions
+ 	\eqref{TV_rho_integrating_factor} holds outside of $\Theta$. By the second theorem of calculus for Lipschitz functions in Terence Tao, we can integrate both sides.
+ 	\begin{align}
+ 		e^{-B_2 t} \text{T.V.}_x^+(\rho^l)(t) - \text{T.V.}_x^+(\rho^l)(0) \leq \frac{B_1}{B_2}(1 - e^{-B_2 t}).
+ 	\end{align}
+ 	Rearranging the terms, we get 
+ 	\begin{equation}
+ 		\text{T.V.}^+_x(\rho_l)(t) \leq \left(\text{T.V.}^+_x(\rho_l)(0) + \frac{B_1}{B_2}\right) e^{B_2 t} - \frac{B_1}{B_2}.
+ 	\end{equation}
+ 	The calculations for $\text{T.V.}^-_x(\rho_l)(t)$ are similar and included in the appendix. The bound is 
+ 	\begin{equation}
+ 		\text{T.V.}^-_x(\rho_l)(t) \leq .....
+ 	\end{equation}
+ 	
+ 	
+
+\end{proof}
+
+Forskjeller: 
+	- Jeg gjør beviset uten å bruke en forglatning. Mandig. 
+	- Bounden min er annerledes 
+	- Jeg bruker ()+
+	- Jeg bruker Lemma 2, som sier at rho < 1. 
+	- Han bruker taylor-expansjoner, og får en Linf bound på k''. Jeg sier at k'' er i L1. 
+	- Han må bruke Gronwall, jeg trenger bare å bruke en integrerende faktor. 
+	- 
+
+Likheter: 
+	- Summesjongleringen er det mye likt. 
+
+
+\begin{Remark}
+	The use of \eqref{lemma:boundY} was only used to establish the upper bound 
+	\begin{equation}
+		\rho^l_i \leq 1 \forall i \, \in \, \{1,...,N\} \text{ for } N \in \N,
+	\end{equation} 
+	which is an easy consequence of the assumption $v(1) = 0$
+	
+\end{Remark}
+ is true that 
+
+are differentiable,  
+
+
+Since $\rho_i$ are differentiable functions with a bounded derivative, they are also Lipschitz continuous.  Since the difference of two Lipschitz continuous functions are also Lipschitz continuous, and the composition of two Lipschitz continuous functions are Lipschitz continuous, the chain rule must hold almost everywhere (one problem is if the image of the first function attains the value where a)
+%show both
+
+
+
+
+
+
 \section{Establishing the weak solution} \label{section:weak_sol}
 
 A weak solution of a scalar conservatino law is a function $u \in L_1^{loc}(\R^+_0 \times \R) \cup L^\infty(\R^+_0 \times \R)$. In other words, a regular distribution such that the non-linear map $x \rightarrow x_t + f(x)_x$ is a the zero distribution. In short, it means that is satisfies the following equation:
@@ -408,17 +612,17 @@ A weak solution of a scalar conservatino law is a function $u \in L_1^{loc}(\R^+
     \int_{\R_0^+}\int_{\R} \rho \phi_t + k(x) f(u) \phi_x dx dt = 0 \quad \forall \phi \in \C^\infty_0(\R^+_0 \times \R).
 \end{equation}
 
-generalisation that uses test functions. Let $\phi \in \C^\infty_0(\R^+_0 \times \R)$, the space of smooth test functions with compact support in  $\R^+_0\times\R$. $\R_0^+$ denotes the positive half-line including the origin. The goal of this section is to establish that the limit of the sequence $\{\rho_l\}_l$ is a weak solution. The way to proceed is to partition the $x$-coordinate using the car-train $\{z_{i-1/2}\}_{i \in \{1,..,N\}}$ and exploit the fact that the jumps of the approximating densities, velocities and so on,  are demarcated by differentiable car paths in space time. This allows for application of continuous, in addition to discrete differentiation identities. One example is an application of \eqref{LeibRule} over such a partition: 
+generalisation that uses test functions. Let $\phi \in \C^\infty_0(\R^+_0 \times \R)$, the space of smooth test functions with compact support in  $\R^+_0\times\R$. $\R_0^+$ denotes the positive half-line including the origin. The goal of this section is to establish that the limit of the sequence $\{\rho_l\}_l$ is a weak solution. The way to proceed is to partition the $x$-coordinate using the car-train $\{z_{i-1/2}\}_{i \in \{1,..,N\}}$ and exploit the fact that the jumps of the approximating densities, velocities and so on,  are demarcated by differentiable car paths in space time. This allows for application of continuous of continuous differentiation identities. One example is an application of \eqref{LeibRule} over such a partition: 
 
 \begin{align}
     \frac{d}{dt} \int_{z_{i-1/2}(t)}^{z_{i+1/2}(t)} (\phi(x,t) \rho^l_i(t))  dx &= \int_{z_{i-1/2}(t)}^{z_{i+1/2}(t)} \Big(\rho^l_i(t) \frac{\partial \phi(x,t) }{\partial t} + \phi(x,t) \frac{d \rho^l_i(t) }{dt} \Big) dx \nonumber \\
     + \rho^l_i(t) \phi(z_{i+1/2}(t),t) &\frac{dz_{i+1/2}}{dt} - \rho^l_i(t) \phi(z_{i-1/2}(t), t) \frac{dz_{i-1/2}}{dt} \label{WeakSolLeib} \, \, \, \forall i \in \{1,...,N-1\}
 \end{align}
-All involving quantities are differentiable, and therefore sufficient regularity is present. Let $\supp \phi \subset [t_1, t_2]$ for $0 \leq t_1 < t_2 < \infty$, and $T > t_2$.  The integral of  \eqref{WeakSolLeib} over $[0,T]$ in time leaves $-\int_{z_{i-1/2}}^{z_{i+1/2}} \phi(x,0) \rho^l_i(0)$ dx on the lefthand side, and is $0$ if $t_1>0$. Add all terms on the left and what results is 
+All involving quantities are differentiable, and therefore sufficient regularity is present for \eqref{LeibRule} to hold. Let $\supp \phi \subset [t_1, t_2]$ for $0 \leq t_1 < t_2 < \infty$, and $T > t_2$.  The integral of  \eqref{WeakSolLeib} over $[0,T]$ in time leaves $-\int_{z_{i-1/2}}^{z_{i+1/2}} \phi(x,0) \rho^l_i(0)$ dx on the left-hand side, and is $0$ if $t_1>0$. Add all terms on the left and what results is 
 \begin{equation}
     \int_{\R} \phi(x,0) \rho^l(x,0) dx. \label{DiscreteInitCond},
 \end{equation}
-or the approximate intitial condition. This term will not be manipulated, and is omitted in the proceeding calculations. 
+or the approximate intitial condition. This term will not be manipulated further, and is omitted in the proceeding calculations. 
 
 This is assumed in the following calculations, and the other case is discussed in REF TO SUBSECTION.
 
@@ -486,6 +690,9 @@ Finally,
     \left|\int_{\R_0^+}\int_{\R} \rho^l \phi_t + k^l(x,t) f(\rho^l) \phi_x dx dt \right| &=  \left| \int_0^{\infty} \sum_{i = 1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} D_+^z(k^l_{i-1/2} V^l_i) (\phi - \phi_{i+1/2}) dzdt \right| \nonumber\\
     &\leq  \max_{i \in \{1,..., N-1\}} \left| ly_i \right| \int_0^\infty \norm{\frac{\partial \phi}{\partial x}(\cdot,t)}_\infty \sum_{i = 1}^{N-1} \left| k^l_{i+1/2}V_{i+1}  - k^l_{i-1/2}V_i\right|(t) dt, \label{weak_sol_int_bound}
 \end{align}
+
+%include intermediary step above, not so clear. 
+
 where the bound is found by using $\phi(z,t) - \phi(z_{i-1/2},t) = \frac{d\phi}{dz}(c(z))(z - z_{i-1/2})$, for $c \in (z_{i-1/2}, z)$. This is the mean value theorem.  The derivative is bounded with $\norm{\frac{\partial \phi}{\partial x}(\cdot,t)}_\infty$, defined as the maximal partial derivative in the $x$-direction as a function of $t$. Let this function be bounded by $M > 0$. The integrals leads to a quadratic of $z_{i+1/2} - z_{i-1/2}$, one exponent of which is canceled by the $z$ difference appearing in the denominator of $D_+^z$. The integration domain can be written as a compact interval, since $\supp \phi \subset [t_1,t_2]$. The sum term is $TV_x(k^lV^l)$, where $TV_x(\cdot)$ is the total variation in the $x$-direction. By \eqref{bound_TV_kv}, this is bounded on any finite interval. Let  $C > 0$ be such a bound. All terms accounted for, we have that 
 
 \begin{equation} \label{}
@@ -631,9 +838,9 @@ The $B$ terms are of interest for the entropy solutions. Decompose the $B1$ term
     % &= \int_0^{\infty} \sum_{i = 1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} D_+^z(k_{i-1/2}) sgn(\rho_i - k) \left( k V(y_i) - k (V(y_i) - V\left(\frac{1}{k})\right)dz dt \nonumber \\
     &= \int_0^{\infty} \sum_{i = 1}^{N-1} \int_{z_{i-1/2}}^{z_{i+1/2}} D_+^z(k^l_{i-1/2})\left(sgn(\rho^l_i -c) k V\left(\frac{1}{k}\right)\right) \phi_{i+1/2}dz dt, \label{discrete_entropy_space_dep_int}
 \end{align}
-on the righthand side. This is essentially the righthand side of \eqref{entropy_sol}.
+on the right-hand side. This is essentially the right-hand side of \eqref{entropy_sol}.
 
-In the further analysis, $\sgn(\rho^l_i - c)$ is the dangerous term. For example, if the pre-image $\rho^{-1}(\{c\})$ has positive measure. A sequence of functions can in principle converge uniformly to $\rho$ from below, all the while the signs differ by 1. In this example we have defined $\sgn(0) = 0$. The difference of the integrals will therefore differ by $\gamma(\rho^{-1}(\{c\})) \, \forall n \in \N.$ Examining the other terms of \eqref{discrete_entropy_space_dep_int}, a term that prohibits this behavior is $D_+^z(k_{i-1/2})$. Since $\rho$ is a weak solution, it cannot be constant in an open set $O$ of space-time where $\frac{dk}{dz} \neq 0$. This can be seen by choosing a positive test function in a small rectangle contained in $0$, and using that the constant solution is indeed classical in this region. This again would force $\frac{dk}{dz} = 0$, which is a contradiction. We have shown informally that $\rho^{-1}(\{c\})$ cannot contain any open set. While this gives an intuiton of convergence to the righthand side of \eqref{entropy_sol}, it is not sufficient. $\rho^{-1}(\{c\})$ need not be open, but simply measurable. So there may exist some complicated set such that the above still occurs. Instead, a detour will be made that that closely follows the proof of Theorem 8.21 in HOLDENRISEBORO BOOK, under slightly different assumptions. 
+In the further analysis, $\sgn(\rho^l_i - c)$ is the dangerous term. For example, if the pre-image $\rho^{-1}(\{c\})$ has positive measure. A sequence of functions can in principle converge uniformly to $\rho$ from below, all the while the signs differ by 1. In this example we have defined $\sgn(0) = 0$. The difference of the integrals will therefore differ by $\gamma(\rho^{-1}(\{c\})) \, \forall n \in \N.$ Examining the other terms of \eqref{discrete_entropy_space_dep_int}, a term that prohibits this behavior is $D_+^z(k_{i-1/2})$. Since $\rho$ is a weak solution, it cannot be constant in an open set $O$ of space-time where $\frac{dk}{dz} \neq 0$. This can be seen by choosing a positive test function in a small rectangle contained in $0$, and using that the constant solution is indeed classical in this region. This again would force $\frac{dk}{dz} = 0$, which is a contradiction. We have shown informally that $\rho^{-1}(\{c\})$ cannot contain any open set. While this gives an intuiton of convergence to the right-hand side of \eqref{entropy_sol}, it is not sufficient. $\rho^{-1}(\{c\})$ need not be open, but simply measurable. So there may exist some complicated set such that the above still occurs. Instead, a detour will be made that that closely follows the proof of Theorem 8.21 in HOLDENRISEBORO BOOK, under slightly different assumptions. 
 
 Since $\rho, \rho^l$ can be embedded into $L^1(\Omega)$ with $\Omega = \interior{\supp \phi}$. It is clear that $\rho_l \rightarrow \rho$ in $L^1(\Omega)$. Using theorems we can take a subsequence of $\rho_l$ such that the convergence is pointwise $\amma$- almost everywhere.  Let $\Omega$ be some open set containing $\supp \phi$ and apply Lemma 8.20 gives that possibly outside of a countable set $\Gamma = \{c \in \R \,\vert \,  \gamma\{\rho(x,t) = c\} > 0\}$, 
 \begin{equation}
@@ -643,7 +850,7 @@ In addition, since $k \in \C^{(2)}(\R)$ and $\phi \in \C^{(1)}(\R)$,
 \begin{equation}
     \right)\sum_{i=0}^{N}D_+^z(k^l_{i-1/2}) (t) \phi(z_{i-1/2}, t)  \mathbb{1}_{[z_{i-1/2}(t), z_{i+1/2}(t))} \rightrightarrows \frac{dk}{dz}(x) \phi, 
 \end{equation}
-where $\rightrightarrows$ denotes uniform convergence.  For $c \in \R$ \textbackslash $\Gamma$, $\norm{k}_\infty \norm{\phi}_\infty k V\left(\frac{1}{\rho}\right) \mathbb{1}_{\supp \phi}$ can be used as a dominating function for the integrand of  \eqref{discrete_entropy_space_dep_int}. The dominating convergence theorem gives that \eqref{entropy_sol} is satisfied. Now, we follow the approach by HOLDEN, and denote the left- and righthand side of \eqref{entropy_sol} by $L(c), R(c) : \R \mapsto \R$, respectively. Notice that $L$ is continuous, since 
+where $\rightrightarrows$ denotes uniform convergence.  For $c \in \R$ \textbackslash $\Gamma$, $\norm{k}_\infty \norm{\phi}_\infty k V\left(\frac{1}{\rho}\right) \mathbb{1}_{\supp \phi}$ can be used as a dominating function for the integrand of  \eqref{discrete_entropy_space_dep_int}. The dominating convergence theorem gives that \eqref{entropy_sol} is satisfied. Now, we follow the approach by HOLDEN, and denote the left- and right-hand side of \eqref{entropy_sol} by $L(c), R(c) : \R \mapsto \R$, respectively. Notice that $L$ is continuous, since 
 
 \begin{align}
     &\left|\rho - c_m\right| \phi_t + k(x) \sgn( \rho - c_m ) \left(\rho v(\rho) - c_m v(c_m)\right)  \phi_x \nonumber \\
@@ -675,7 +882,7 @@ dominating convergence theorem yields that the  and the each term involving $c$ 
 
 
 
-Define the $R(c)$ as the righthand side of rightThe entropy condition is reduced to 
+Define the $R(c)$ as the right-hand side of rightThe entropy condition is reduced to 
 
 \begin{align}
 
