@@ -11,8 +11,22 @@
 \subsection{Vessel voyage definition}
 
 \subsection{Geographical trajectory abstraction and MSTD}
+\begin{itemize}
+    \item Is MSTD an appropriate abstraction of trajectories.
+    \item Are there other ways to combine trajectory predictions with additional voyage and vessel data?
+    \begin{itemize}
+        \item MSTD with more filters?
+        \item Different trajectory similarity measurements?
+        \item ML-based trajectory similarity normalized with port frequency considering segments?
+    \end{itemize}
+\end{itemize}
 
 \subsection{Data preparation and dataset imbalance}
+\begin{itemize}
+    \item How was encoding appropriate?
+    \item Was sampling appropriate, how did it affect results?
+    \item Are there different sampling methods that could have been more appropriate?
+\end{itemize}
 
 \subsection{Data storage and architecture}
 \begin{itemize}
@@ -24,6 +38,23 @@
     \item Why did we get the described performance.
     \item Weaknesses/limitations
     \item Dataset vs real life
+\end{itemize}
+
+\section{Research questions and hypothesis}
+
+\begin{itemize}
+    \item How did I answer the research questions?
+    \item Any additional hypothesis?
+    \item How was what I did different from related works?
+\end{itemize}
+
+\subsection{Feature importances}
+
+\subsection{Segment predictability}
+
+\begin{itemize}
+    \item Why are some segments easier to predict
+    \item Why are some sub-segments easier to predict
 \end{itemize}
 
 \section{Real-life applications}
@@ -53,4 +84,10 @@
     \item Pass all vessel data to ML model which, very quickly, predicts destination ports.
     \item Use a routing concept to get ETA (mesh-based routing, ais-based routing)
 \end{itemize}
+\end{itemize}
+
+\subsection{Vessel availability}
+\begin{itemize}
+    \item Further implementation with MO's infrastructure.
+    \item Give me all vessels that will be in port A at X time.
 \end{itemize}

@@ -1,24 +1,44 @@
 \chapter{Results}
 \label{chap:results}
 
-\section{Processed dataset}
+In this section, the results from the proposed solution is described in detail. It describes different results from the different stages throughout the develop process and presents the final results and metrics from the trained \acrfull{ml} model.
+
+\section{Constructed dataset and ML problem formulation}
+
+The initial dataset was copied and validated from \acrfull{mo}'s \acrshort{ais} database. The database table \textit{``vessel\_positions\_history''} was last updated in March 2021 and consists of \textbf{1.2} billion positional \acrshort{ais} records.Each vessel that transmitted positions belonged to a given segment and sub-segment available in the \textit{``vessel\_segment''} table which contains \textbf{eight} different segment values, and \textbf{107} different combinations of segment and sub-segment. The provided \textit{``ports''} table contains \textbf{5200} ports world-wide all following the \gls{locode} naming standard. In total, as of March 2021, there were \textbf{6.4} million vessel transitions in the \textit{``vessel\_transitions''} table which is used to construct voyages. This data formed the initial data foundation for the final processed \acrfull{ml} training dataset. All the data copied and process from \acrshort{mo}'s database systems was processed in batches. Ports, segments, and transitions where quickly copied and processed, however, the \textbf{1.2} billion positional records took several days to migrate and validate in batches of 6000 records at the time. This was mostly because of the time required to validate coordinates and correctly map \acrshort{mmsi} and \acrshort{imo} values. Throughout this process, the latest identifiers and timestamps were fetched from the dedicated project database to only update data that occurred after the latest records already processed. In this way, this process is idempotent so running the process multiple times does not affect existing data, but only handles new data. This made the system simple to update throughout the development process so as many records as possible were used in the final approach.
+
+\subsection{Voyage definition and construction}
+
+Based on the initial \textbf{6.4} million vessel transitions, \textbf{1.7} million voyages where initially constructed by finding positional records transmitted from a vessel between subsequent departure and arrival transitions.
 
 \begin{itemize}
-    \item Initial dataset processing and validaton
     \item Constructed trajectories, quality
+\end{itemize}
+
+The \textbf{1.7} million voyages were sampled based on 6 hour intervals and collected in ``sampled\_transition\_voyages'' that formed the foundation for trajectory similarity measurements. The final training dataset collected in the table ``ml\_training\_data'' consisted of \textbf{4.3} million voyages after the sampled voyages were split into incomplete voyages to mimic ongoing voyages.
+
+\subsection{Trajectory similarity and MSTD}
+
+\begin{itemize}
+    \item effectiveness of SSPD
     \item MSTD performance (how accurate is MSTD out-of-the-box)
-    \item Scalability
+\end{itemize}
+
+\subsection{ML data preparation}
+
+\begin{itemize}
     \item Over/under sampling
     \item Dataset imbalance
 \end{itemize}
 
-\subsection{ML training process}
+\section{Model training and prediction performance}
 
+\subsection{Training process}
 \begin{itemize}
     \item different training approaches
 \end{itemize}
 
-\section{Prediction performance}
+\subsection{Performance}
 
 \begin{itemize}
     \item evaluation
@@ -27,11 +47,21 @@
     \item How fast is it to compute the next destination of every vessel in the world
 \end{itemize}
 
+\section{Prediction results}
+
 \subsection{Feature importances}
 
 \begin{itemize}
     \item Feature importances
+    \item Impact of segment + sub-segment
     \item Impact of MSTD
+\end{itemize}
+
+\subsection{Segment predictability}
+
+\begin{itemize}
+    \item What segments were easy to predict
+    \item What sub-segments were easy to predict
 \end{itemize}
 
 \section{Real-life applications}

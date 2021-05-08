@@ -528,7 +528,8 @@ At this stage, the final data is fully processed and prepared for model training
             XGBoost & Extreme gradient boosting. Ensemble tree-based algorithm where trees are constructed building on mistakes from previous trees.. & 89.9 \\ \midrule
             One vs. Rest XGBoost & Train a binary XGBoost classifier for every possible arrival port.  & 89.5 \\ \midrule
             k-Nearest Neighboor & kNN - samples look at their n neighbors to classify themselves. & 77.4 \\ \midrule
-            One vs. Rest Multi-layered perceptron & Deep neural network -based binary classifier for every possible arrival port. Nodes in sequential hidden layers are fitted based on an activation function. & 10 \\ \bottomrule
+            Tensorflow + keras DNN & Deep neural network for multiclass classification. Nodes in sequential hidden layers are fitted based on an activation function. & 50 \\ \midrule
+            One vs. Rest Multi-layered perceptron & Deep neural network -based binary classifier for every possible arrival port. & 10 \\ \bottomrule
     \end{tabularx}}
 \caption{Classifiers tested out in the model selection phase. Every classifier was trained using 50 thousand samples from the training data.}\label{tab:model_selection}
 \end{table}
