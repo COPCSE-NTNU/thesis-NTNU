@@ -506,14 +506,7 @@ Because of the severe imbalance in the training set (\cref{fig:data_imbalance}),
     \label{fig:all_samplers}
 \end{figure}
 
-Because of the significant outliers in the data, an ensemble of both under and oversampling was used to balance the dataset without generating a massive amount of synthetic data while also not removing too much information. \cref{fig:ensemble_sampler} shows the results from the ensemble sampling method that first undersamples classes that occur more than \textit{20\%} of the most frequent class to remove the most severe spikes, applies \textit{``\acrshort{smote} + ENN''} over and undersampling method to balance the dataset while still keeping important patterns in the dataset, then finally an undersampling step is added to flatten out frequency spikes to arrive at a final dataset size that is similar to the original. As \cref{fig:ensemble_sampler} shows, the final result is 0.6\% smaller than the original dataset, is more balanced, and still has differences in frequencies.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/imbalance/ensemble}
-    \caption{Final ensemble sampling method (right) compared to original dataset (left) where the final ensemble produces a dataset similar in size to that of the original.}
-    \label{fig:ensemble_sampler}
-\end{figure}
+Because of the significant outliers in the data, an ensemble of both under and oversampling was used to balance the dataset without generating a massive amount of synthetic data while also not removing too much information. The ensemble approach first undersamples classes that occur more than \textit{20\%} of the most frequent class to remove the most severe spikes, applies \textit{``\acrshort{smote} + ENN''} over and undersampling method to balance the dataset while still keeping important patterns in the dataset, then finally an undersampling step is added to flatten out frequency spikes to arrive at a final dataset size that is similar to the original. However, since \acrshort{smote} is used during this process, there are synthetic samples in the new dataset. These generated values are based on similar samples in the dataset, however, in the case of segment and sub-segment, specific sub-segments belong to certain segments, so when these are structured as separate values, SMOTE can synthetically generate invalid combinations of segments and sub-segments. To ensure the model doesn't waste time training on impossible segment and sub-segment combinations, the segment and sub-segment values were combined into one segmentation value before encoding and balancing. They are concatenated using a delimiter, so they are easily divided again after training to further evaluate the results based on these values.
 
 \subsection{Model selection}
 
@@ -593,16 +586,123 @@ def random_search_cv(self, X, y, param_grid, folds=3):
 
 
 \subsection{The training process}
+\label{sec:training_process}
 
 After finding appropriate parameters for the model, the next step was to conduct the training process. The process is straightforward, however, the size of the training set resulted in high computing requirements, especially in terms of available RAM on the running computer. \acrshort{xgb} supports both iterative and external memory training routines, therefore, these alternatives were also evaluated to see what method works best. In total, the three alternatives available for the training process were: training the model iteratively by dividing the training data into multiple batches, using the computer's hard drive as memory using \acrshort{xgb}'s external memory mode, or simply training the model normally using a computer with sufficient hardware requirements. The training process was conducted using the full dataset containing \textbf{4.3} million voyages which were encoded and balanced beforehand. The training set was divided into \textit{80\%} training data and \textit{20\%} testing data which was used to estimate the performance of the model.
 
 Moreover, the aforementioned approaches were initially tested using a computer with an \textit{AMD Ryzen 7 2700} processor with 8 physical CPU cores and 8 additional virtual ones, an \textit{NVIDIA GeForce GTX 1080} GPU, and 48GB of available RAM\@.
 
-First, the full training set was used in the standard training process. However, this process demanded more memory than available on the machine. By trial and error, it was established that 48GB of memory was only sufficient to train on a subset of around 1 000 000 samples. Thus, the iterative training approach was tested using a limited subset of the available data in different batches. In this process, the full dataset was fetched, encoded, and balanced before it was split into batches. As the entire dataset was kept in memory during the batch process, the batch size was set to 600 000 for the iterative training process. For this process, the additional parameters \textit{updater} and \textit{process\_type} were set to ``refresh'' and ``update'' respectively in order to ensure that the model correctly adapts to exposure to new samples.
+First, the full training set was used in the standard training process. However, this process demanded more memory than available on the machine. By trial and error, it was established that 48GB of memory was only sufficient to train on a subset of around 1 000 000 samples. Thus, the iterative training approach was tested using a limited subset of the available data in different batches. In this process, the full dataset was fetched, encoded, and balanced before it was split into batches. As the entire dataset was kept in memory during the batch process, the batch size was set to 600 000 for the iterative training process. For this process, the additional parameters \textit{updater} and \textit{process\_type} were set to ``refresh'' and ``update'' respectively in order to ensure that the model correctly adapts to exposure to new samples. \cref{lst:batch_train} shows the code used to prepare data into batches and iteratively train the model.
 
-Next, the external memory version of \acrshort{xgb} was tested in an attempt to run the training process in one training round using the machine's hard drive as additional memory. In this process, the full dataset was fetched, sampled, and balanced before it was written to a \textit{libsvm} file as recommended by the library's documentation. The algorithm then produces a memory-optimized cache file on the computer's disc which is then used in the training process.
+\begin{lstlisting}[
+    caption={Python functions used to batch train the XGBoost model.},
+    label=lst:batch_train,
+    language=Python,
+    showstringspaces=false,
+]
+def prepare_training_data(config):
+    df = get_all_data()
+    df = df.groupby(config["t_column"]).filter(lambda x: len(x) >= 20)
 
-Finally, in order to establish the differences and to find the most optimal training process, a standard training process was tested on the full dataset on a more powerful computer. In this process, a virtual machine hosted on the collaborative company \acrfull{mo}'s cloud computing environment was used in the training process. This machine has 256GB of available memory and 32 virtual CPU cores. This was sufficient to train the full dataset and was the preferred method as it also allowed testing other \acrshort{ml} models that do not support incremental or external memory training processes.
+    X, y = encode(df, config)
+
+    if config["sample"] == True:
+        X, y = ensemble_sampler(X, y)
+        inc = (len(X)-len(df))/len(df)*100
+        print("[main] sampled data: {:.2f}% increase".format(inc))
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.20, random_state=42)
+    batches = []
+    for x in batch(range(0, len(X_train)), config["batch_size"]):
+        batches.append(x)
+
+    return batches, X_train, X_test, y_train, y_test
+
+def batch_train_model(batches, X_train, X_test, y_train, y_test):
+    params = {
+        # ... other params
+        "updater": "refresh",
+        "process_type": "update",
+        "num_class": len(np.unique(pd.concat([y_train, y_test]))),
+    }
+
+    # XGBoostClassifier is a custom wrapper around the XGBClassifier class.
+    classifier = XGBoostClassifier(target_column="arrival_port", params=params)
+    trained_model = None
+    for t_indices in batches:
+        # subset training data
+        X = X_train.iloc[t_indices]
+        y = y_train.iloc[t_indices]
+
+        # eval set using the total training data
+        dtrain = xgb.DMatrix(data=X_train, label=y_train)
+        dtest = xgb.DMatrix(data=X_test, label=y_test)
+        watchlist = [(dtest, 'eval'), (dtrain, 'train')]
+
+        # train the model
+        trained_model = classifier.train_model(
+            X, y, model=trained_model, num_boost_round=100, watchlist=watchlist)
+        classifier.print_evaluate_summary(X_test, y_test, matrix=True)
+
+    return classifier, X_train, X_test, y_train, y_test
+\end{lstlisting}
+
+
+Next, the external memory version of \acrshort{xgb} was tested in an attempt to run the training process in one training round using the machine's hard drive as additional memory. In this process, the full dataset was fetched, sampled, and balanced before it was written to a \textit{libsvm} file as recommended by the library's documentation. The algorithm then produces a memory-optimized cache file on the computer's disc which is then used in the training process. \cref{lst:ext_mem_train} shows how \acrshort{xgb}'s ``train'' API can be modified to use external memory where the file name specifies ``train.txt'' as the input file using ``dtrain.cache'' as a temporary cache file.
+
+\begin{lstlisting}[
+    caption={Python code showing how a \acrshort{xgb} model can be trained using external memory.},
+    label=lst:ext_mem_train,
+    language=Python,
+    showstringspaces=false,
+]
+# internal memory version
+# dtrain = xgb.DMatrix(data=X, label=y)
+
+# external memory version
+train_file = "train.txt#dtrain.cache"
+dtrain = xgb.DMatrix("{:s}/{:s}".format(data_folder, train_file))
+
+clf = xgb.train(self.params,
+                dtrain,
+                #... other parameters
+            )
+\end{lstlisting}
+
+Finally, in order to establish the differences and to find the most optimal training process, a standard training process was tested on the full dataset on a more powerful computer. In this process, a virtual machine hosted on the collaborative company \acrfull{mo}'s cloud computing environment was used in the training process. This machine has 256GB of available memory and 32 virtual CPU cores. This was sufficient to train the full dataset and was the preferred method as it also allowed testing other \acrshort{ml} models that do not support incremental or external memory training processes. \cref{lst:final_training_process} shows the code used to train the final model. An evaluation set was provided to the model to continuously evaluate it after each decision tree has been built in the model. It also allows for plotting performance metrics over each ``boosting round'' which can be helpful to detect when in the training process the model can become overfitted.
+
+\begin{lstlisting}[
+    caption={Python code showing how the \acrshort{xgb} model was trained in one iteration},
+    label=lst:final_training_process,
+    language=Python,
+    showstringspaces=false,
+]
+def train_xgb_classifier(df, target_column):
+    params = {
+        "use_label_encoder": False,
+        "objective": "multi:softmax",
+        "learning_rate": 0.1,
+        "n_estimators": 100,
+        "max_depth": 4,
+        "subsample": 0.8,
+        "gamma": 0.2,
+        "eta": 0.2,
+    }
+
+    classifier = XGBoostClassifier(target_column=target_column, params=params)
+
+    X_train, X_test, y_train, y_test = classifier.train_test_split(df, balance=True)
+
+    # eval_set allows continuous evaluation during the training process
+    eval_set = [(X_train, y_train), (X_test, y_test)]
+
+    # fit the model (esr = early_stopping_rounds)
+    classifier.fit_model(X_train, y_train, eval_set=eval_set,
+                        esr=5, plot_results=True)
+
+    return classifier, X_train, X_test, y_train, y_test
+\end{lstlisting}
 
 The results from the training processes are later discussed in \cref{chap:results}.
 
