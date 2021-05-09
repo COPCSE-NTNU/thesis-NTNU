@@ -16,7 +16,7 @@ As an example, \cref{fig:transition_voyage} shows a voyage from China to Argenti
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.0\textwidth]{figures/results/voyage_quality}
-    \caption{Transition voyage from China to Argentina.}
+    \caption{Transition voyage from China to Argentina that visits the port of Singapore exemplifying the properties of the chosen voyage definition.}
     \label{fig:transition_voyage}
 \end{figure}
 
@@ -41,6 +41,8 @@ After the final training dataset was built, it was discovered that in terms of a
 
 \section{Model training and prediction performance}
 
+After the training dataset was constructed, encoded, and balanced, the model was trained using different approaches as described in \cref{sec:training_process}. This section describes the results from the training processes, the final approach used, and the resulting model's performance and predictions resulting from the evaluation process described in \cref{sec:evaluation_process}.
+
 \subsection{Training process}
 
 As described in \cref{sec:training_process}, multiple training processes were evaluated in order to find the most appropriate method of training a larger model on an extensive dataset. For the \acrfull{xgb} model, three different training processes were evaluated in this process.
@@ -53,6 +55,8 @@ Finally, the entire dataset was used to train the final model in one iteration o
 
 \subsection{Performance}
 
+During the training process, the performance of the model was continuously evaluated to measure logarithmic loss and multi-class classification error. \cref{fig:eval_set} shows these metrics plotted over each boosting round in the training process. Both graphs starts converging at 100 decision trees have been constructed at around \textbf{1} log loss, and around \textbf{0.2} classification error. This corresponds to around \textbf{80\%} accuracy. Since the graphs have not completely converged, it is possible to either increase the learning rate parameter or increase the number of estimators in the tree, although it seems as if the graphs are very close to converging, so it might not increase performance noticeably and increases risk of overfitting. As there is very little difference between the performance on the training set and evaluation set, it indicates that the model is not overfitting, however, it might indicate that the model is over optimistic. This could occur when there are several similar samples in the training and the test datasets and could be a consequence of the sampling techniques used to balance the dataset. \todo{perhaps move this to discussion}
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.0\textwidth]{figures/results/eval_set}
@@ -60,10 +64,11 @@ Finally, the entire dataset was used to train the final model in one iteration o
     \label{fig:eval_set}
 \end{figure}
 
+After the training process finished, the test dataset was used to make predictions to further evaluate the results. From the resulting predictions, a class report was generated that shows more metrics for each possible class, or encoded arrival port, that might provide more insight into the model's performance than accuracy. \cref{lst:class_report} shows a summarized output from this class report showing the metrics precision, recall, f1-score, and support for each class as well as the aggregated mean values from all of the classes. As mentioned in \cref{sec:model_evaluation}, f1-score is based on precision and recall and is particularly appropriate for measuring performance on imbalanced datasets, and as \cref{lst:class_report} shows, the f1-score does not deviate much from the estimated accuracy of \textbf{80\%}, or \textbf{0.8}. This indicates that the accuracy value is reliable and is not biased by dataset imbalance.
 
 \begin{lstlisting}[
-    caption={Class report based on prediction results from the test dataset. The performance of the classifier is evaluated per class by using precition, recall, f1-score, support, and pred. \todo{update numbers}},
-    label=lst:cv_result,
+    caption={Class report based on prediction results from the test dataset. The performance of the classifier is evaluated per class by using precition, recall, f1-score, and support.. \todo{update numbers}},
+    label=lst:class_report,
     showstringspaces=false,
     basicstyle=\ttfamily,
 ]
@@ -79,6 +84,7 @@ Class         precision    recall  f1-score  support    pred
 avg / total   0.657815  0.619792  0.621349   3072.0  3072.0
 \end{lstlisting}
 
+Lastly, in order to ensure the model is not overfitted, a three-fold cross validation process was employed. \cref{lst:cv_result} shows the results from the three folds that the model was trained on. It is recommended, or common to use more folds ranging from five to 10, however, because of the long training time and time limitations, only three folds were used. As described in \cref{sec:model_evaluation}, since the standard deviation (noted as ``std. dev.'' in \cref{lst:cv_result}) is low, the model is likely to not be overfitted.
 
 \begin{lstlisting}[
     caption={Output from 3-fold cross validation. \todo{update numbers}},
@@ -92,6 +98,8 @@ avg / total   0.657815  0.619792  0.621349   3072.0  3072.0
 \end{lstlisting}
 
 \section{Prediction results}
+
+After the model was trained and evaluated, \textit{20\%} of the total training dataset was used to evaluate the model. This evaluation process resulted in around \textit{880 000} example predictions. These predictions were further analyzed to discuss the impact and meaning of the different features used in the dataset. These results are presented in this section.
 
 \subsection{Feature importances}
 
@@ -107,7 +115,6 @@ avg / total   0.657815  0.619792  0.621349   3072.0  3072.0
     \end{tabularx}
     \caption{Feature importances based on the \acrshort{xgb} decision tree ensemble process. \todo{update numbers}}\label{tab:feature_importances}
 \end{table}
-
 
 \begin{itemize}
     \item Feature importances
