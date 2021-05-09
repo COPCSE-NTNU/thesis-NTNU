@@ -30,7 +30,7 @@ Using the foundation of the sampled trajectories, each trajectory was compared t
 
 \subsection{ML data preparation}
 
-After the final training dataset was built, it was discovered that in terms of arrival port frequencies, the dataset was imbalanced thus making it harder for \acrshort{ml} models to learn. Although some models can better handle dataset imbalance, a sampling approach was used to balance the dataset before training to support different ML models. Several different sampling approaches were evaluated, however, the traditional over and under -sampling methods either produced massive amounts of synthetic data, or removed almost all the original data which was shown in \cref{fig:all_samplers} in \cref{chap:method}. Thus, an ensemble sampling method of majority undersampling and ``SMOTE+ENN'' was employed to balance the dataset before training. \cref{fig:ensemble_sampler} shows the results from the ensemble sampling method that uses a combination of under and over -sampling techniques. As \cref{fig:ensemble_sampler} shows, the final result is 8\% smaller than the original dataset, is a lot more balanced, but still has differences in class frequencies which persisted from the original dataset.
+After the final training dataset was built, it was discovered that in terms of arrival port frequencies, the dataset was imbalanced thus making it harder for \acrshort{ml} models to learn. Although some models can better handle dataset imbalance, a sampling approach was used to balance the dataset before training to support different ML models. Several different sampling approaches were evaluated, however, the traditional over and under -sampling methods either produced massive amounts of synthetic data, or removed almost all the original data which was shown in \cref{fig:all_samplers} in \cref{chap:method}. Thus, an ensemble sampling method of majority undersampling and ``SMOTE+ENN'' was employed to balance the dataset before training. \cref{fig:ensemble_sampler} shows the results from the ensemble sampling method that uses a combination of under and over -sampling techniques. As \cref{fig:ensemble_sampler} shows, using a subset of the full dataset, the final result is 8\% smaller than the original dataset, is a lot more balanced, but still has differences in class frequencies which persisted from the original dataset.
 
 \begin{figure}[htbp]
     \centering
@@ -53,16 +53,61 @@ Finally, the entire dataset was used to train the final model in one iteration o
 
 \subsection{Performance}
 
-\begin{itemize}
-    \item evaluation
-    \item F1, precission, recall, AUC, accuracy
-    \item Computing performance?
-    \item How fast is it to compute the next destination of every vessel in the world
-\end{itemize}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/results/eval_set}
+    \caption{Logarithmic loss and classification error metrics tracked per boosting round in the training process.}
+    \label{fig:eval_set}
+\end{figure}
+
+
+\begin{lstlisting}[
+    caption={Class report based on prediction results from the test dataset. The performance of the classifier is evaluated per class by using precition, recall, f1-score, support, and pred. \todo{update numbers}},
+    label=lst:cv_result,
+    showstringspaces=false,
+    basicstyle=\ttfamily\medium,
+]
+[XGBoostClassifier] Class Report:
+Class         precision    recall  f1-score  support    pred
+1             0.545455  0.315789  0.400000     19.0    11.0
+2             0.800000  1.000000  0.888889      4.0     5.0
+3             0.666667  0.666667  0.666667      6.0     6.0
+...           ...       ...       ...         ...     ...
+253           0.333333  0.500000  0.400000      2.0     3.0
+254           0.142857  0.500000  0.222222      2.0     7.0
+255           0.833333  0.833333  0.833333      6.0     6.0
+avg / total   0.657815  0.619792  0.621349   3072.0  3072.0
+\end{lstlisting}
+
+
+\begin{lstlisting}[
+    caption={Output from 3-fold cross validation. \todo{update numbers}},
+    label=lst:cv_result,
+    showstringspaces=false,
+    basicstyle=\ttfamily\medium,
+]
+ Folds:      [0.60569399 0.61297481 0.62244745]
+ Mean:       0.6137054183485277
+ Std. dev.:  0.006859056778768982
+\end{lstlisting}
 
 \section{Prediction results}
 
 \subsection{Feature importances}
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabularx}{0.6\textwidth}{X X}
+        \bfseries{Feature}  & \bfseries{Importance} \\ \toprule
+        segmentation        & 0.314838 \\ \midrule
+        sspd\_mstd          & 0.275234 \\ \midrule
+        departure\_port     & 0.229567 \\ \midrule
+        trajectory\_length  & 0.094224 \\ \midrule
+        sspd\_dist          & 0.086137 \\ \bottomrule
+    \end{tabularx}
+    \caption{Feature importances based on the \acrshort{xgb} decision tree ensemble process. \todo{update numbers}}\label{tab:feature_importances}
+\end{table}
+
 
 \begin{itemize}
     \item Feature importances
@@ -70,7 +115,28 @@ Finally, the entire dataset was used to train the final model in one iteration o
     \item Impact of MSTD
 \end{itemize}
 
+\begin{lstlisting}[
+    caption={Mean values of similarity value and trajectory length for correct and incorrect predictions.},
+    label=lst:dist_length_impact,
+    showstringspaces=false,
+    tabsize=1,
+    basicstyle=\ttfamily\medium,
+]
+mean sspd_dist for correct predictions:           100516.78046218488
+mean trajectory_length for correct predictions:   14.785189075630251
+
+mean sspd_dist for erroneous predictions:         108496.74400684932
+mean trajectory_length for erroneous predictions: 15.434931506849315
+\end{lstlisting}
+
 \subsection{Segment predictability}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/results/segment_accuracy}
+    \caption{Accuracy of predictions from test set per segment.}
+    \label{fig:segment_accuracy}
+\end{figure}
 
 \begin{itemize}
     \item What segments were easy to predict
