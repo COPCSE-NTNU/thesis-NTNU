@@ -102,8 +102,215 @@ USE DEFINITIONS
 
 Total variation is a measure of how much a function changes. For a function that takes pointwise values, we have the following definition
 
-\begin{definition}[Total variation]
-For a function $f : \R \rightarrow \R$. $\mathscr{P} = \{\{x_0, ..., x_N\} \subset \R$ for $N \in \mathscr{N}$ | $x_0 < x_1 < ... < x_N \}$ is the set of ordered partition of $\R$. For $p \in \mathscr{P}$, define
+\subsection{Functions of bounded variation and Lipschitz continuous functions}
+Some results and definition concerning functions of bounded variation and Lipschitz continuous functions. Functions of bounded variation permeate the theory of hyperbolic conservation laws, and is often a vital assumption to make for the solutions to obtain existence and uniqueness theory. As we will see in the main part of the thesis, they serve a vital role. 
+
+Lipschitz continuous funtions are an important subclass of functions of bounded variation. In many cases, as good as differentiable. Many important results in differentiable calculus extend to Lipschitz continuous functions. 
+
+\begin{definition}(Bounded variation in one dimension)
+Let $f : \R \rightarrow \R$ be a function. The \emph{total variation} T.V.($f$) of $f$ is defined to be the supremum
+\begin{equation} \label{TV_1d}
+	\text{T.V.}(f) = \sup_{x_0 < ... < x_n} \sum_{i = 0}^{n-1} \left| f(x_{i+1}) - f(x_i)\right|
+\end{equation} 
+where the supremm ranges over all finite increasing sequences $x_0, ..., x_n$ of real numbers with $n \geq 0$; this is a quantity in $[0, \infty]$. We say that $f$ has \emph{bounded variation} on $\R$ if T.V.($f$) is finite. If T.V.($f$) is finite when $x_0, ..., x_n$ are restricted to a compact set $K$, we say that $f$ is of \emph{locally bounded variation}. Other ways to write T.V.($f$) include $\left|f\right|_{\text{BV}}$ to emphasise the semi-norm property. %Book that proves that BV norm is a banach space
+%BV functions are bounded 
+%
+
+A result from the theory of bounded variations concerns the decomposition of B.V-functions. 
+
+\begin{proposition} \label{TV_monotone_decomp}
+	A function $f : \R \mapsto \R$ is of bounded variation if and only if it is the difference of two bounded monotone functions. A monotone function is a function that is either increasing or decreasing.
+\end{proposition}
+For proof, \cite[see][p.166]{tao2011introduction}.
+This allows the following corollary
+\begin{corollary}
+	Any function $f : \R \mapsto \R$ of bounded variation has a left- continuous version $\tilde{f}}$ such that 
+	\begin{equation}
+		\text{T.V.}(f) = \text{T.V.}(\tilde{f})
+	\end{equation}
+\end{corollary}
+\begin{proof}
+	By \eqref{TV_monotone_decomp}, $f$ can be decomposed into a sum of two bounded monotone functions. For a monotone function $g$, the existence of left continuous limit is equivalent to the statement
+	\begin{align}
+		\lim_{y \rightarrow x^-} g(y) \text{ exists } \forall x \in \R.  \label{montone_left_right_lim1} 
+	\end{align}
+	 To see \eqref{montone_left_right_lim1}, assume without loss of generality that $g$ is monotone and increasing. Let $\{x_n^+\}_{n \in \N}$ be a sequence approaching $x$ from below. $g(x_n^+)$ is is a bounded increasing sequence, by assumption, and  convergent to some left limit $g^+(x)$ which is independent of  $\{x_n^+\}_{n \in \N}$. If it was not independent, one could define two sequences $\{x_n\}_{n \in \N}, \{y_n\}_{n \in \N}$ such that $\lim_{n \in \N} x_n = \lim_{n \in \N} y_n = x$ from below,  such that $\lim_{n \in \N} g(x_n) < \lim_{n \in \N} g(y_n)$. Then, $\exists N$ such that $ g(x_n) < g(y_n) \forall n \geq \N$. Fix $N_1 \geq N$ and pick $N_2$ such that $x_{N_2} > y_{N_1}$. This violates the assumption that $g$ is increasing.
+	 
+	 \begin{equation}
+	 	\lim_{y \rightarrow x^-} g(y) \leq g(x) \leq \lim_{y \rightarrow x^+} g(y) \label{montone_left_right_lim2}
+	 \end{equation}
+ 	Implies that the total variation of $\lim_{y \rightarrow x^-} g(y)$ is that of $g$. $\lim_{y \rightarrow x^+} g(y)$ exist by the same argument as given above. For both monotone functions that compose $f$, one can therefore pick left continuous versions for both.
+ 	
+\end{proof}
+The notion of T.V.$(\cdot)$ can be extended to functions $f:\R^n \mapsto \R$ for $n \geq 2$. One way of doing this is by taking the one dimensional total variation with respect to each component, as follows
+
+\begin{definition}(One dimensional bounded variation in two dimensions)
+	Let $f : \R\times\R \rightarrow \R$ be a function where $x_1, x_2$ are the variables of $f$. Define the function 
+	
+	\begin{align} \label{TV_slice}
+		\text{T.V.}_{x_1}(f) : \R &\mapsto \R^+_0 \cup \infty \\ 	
+		x &\mapsto \text{T.V.}(f(\cdot, x)) \nonumber
+	\end{align}
+	 For each $x \in \R$, $\text{T.V.}_{x_1}(f)$ returns the one dimensional total variation of $f$ restricted to the line $\{x_2 = x\} \subset \R^2$.  $\text{T.V.}_{x_2}(f)$ can be define similarly. 
+\end{definition} 
+
+\begin{remark}
+	From here, T.V.($f$) can be extended to $\R^2$ by
+	\begin{equation} \label{TV_2d}
+		\text{T.V.}(f) = \int_\R \text{T.V.}_{x_1}(f) + \text{T.V.}_{x_2}(f) \diff x
+	\end{equation}
+	   If $f$ is differentiable, \eqref{TV_2d} is proportional to $\norm{\nabla g}_{L_1}$. In this thesis, \eqref{TV_slice} will mainly be used. 
+\end{remark}
+	%Hva med locally of bounded variation?
+	
+	
+	The \emph{total variation} T.V.($f$) of $f$ is defined to be the supremum
+	\begin{equation}
+		\text{T.V.}(f) = \sup_{x_0 < ... < x_n} \sum_{i = 0}^{n-1} \left| f(x_{i+1}) - f(x_i)\right|
+	\end{equation} 
+	where the supremm ranges over all finite increasing sequences $x_0, ..., x_n$ of real number with $n \geq 0$; this is a quantity in $[0, \infty]$. We say that $f$ has \emph{bounded variation} on $\R$ if T.V.($f$) is finite. Other ways to write T.V.($f$) include $\left|f\right|_{\text{BV}}$ to emphasise the semi-norm property.
+
+In this thesis, we will denote 
+
+An important subclass of locally B.V. functions are the Lipschitz continuous functions. 
+
+\begin{definition}(Lipschitz continuous functions over $\R$)
+	A function $f : \R \mapsto \R$ is Lipschitz continuous if $ \exists C \in \R^+_0$ such that $\forall x,y \in \R$
+	
+	\begin{equation} \label{def:Lipschitz_R}
+		\left|f(x) - f(y)\right| \leq C\left|x - y\right|
+	\end{equation} 
+	A function is said to be locally Lipschitz if given $K \subset \R$ closed and bounded, then $\exists C_K$ such that $\forall x,y \in K$
+	\begin{equation} \label{def:Lipschitz_K}
+		\left|f(x) - f(y)\right| \leq C_K\left|x - y\right|
+	\end{equation} 
+	The smallest $C$ (resp. $C_K$)such the the above properties is known as the Lipschitz constant $L$ (resp. $L_K$) of $f$. 
+\end{definition} 
+
+To see that Lipschitz continuous functions are of locally bounded variation, observe that for any partition 
+
+\begin{equation}
+	\sum_{i = 0}^{n-1} \left| f(x_{i+1}) - f(x_i)\right| \leq L\left| x_0 - x_n \right| \leq L \cdot \text{diam}(K)
+\end{equation}
+So if $K$ is bounded, then T.V.($f$) $< \infty$. In particular, if $f$ is defined on a compact set, then it is of bounded variation. 
+
+\begin{proposition}(Lipschitz differentiation theorem) \label{prop:Lip_diff_prop}
+	A Lipschitz continuous function is differentiable almost everywhere, in the sense of Lebesgue measure. Where the derivative exists, it is bounded by the Lipschitz constant $L$. 
+\end{proposition}
+\begin{proof}
+	For a statement of the theorem, see \cite[p.167]{tao2011introduction}. This follows from the fact that Lipschitz functions are locally of bounded variation. 
+\end{proof}
+
+\eqref{prop:Lip_diff_prop} states that Lipschitz functions are almost differentiable. 
+
+Two properties of Lipschitz continuous functions that will be useful are 
+\begin{proposition}(Lipschitz properties) \label{prop: Lipschitz_props}
+	Let f,g : $\R \mapsto \R$ be Lipschitz continous. Then the composition
+	\begin{equation}
+		f \circ g : \R \mapsto \R
+	\end{equation}
+	is Lipschitz continuous. 
+	
+	If f,g are also bounded, then the product
+	\begin{equation}
+		f g : \R \mapsto \R
+	\end{equation}
+	is Lipschitz continuous. Furthermore, let $f', g'$ be the almost everywhere derivatives of $f, g$. Then the product rule for differentiation  
+	\begin{equation}
+		(fg)' = f'g + fg'
+	\end{equation}
+	holds almost everywhere.
+\end{proposition}
+
+Even for continuous B.V. functions, it is not true that the difference in function values can found by integrating the almost everywhere derivative. If the variation of the function is concentrated on a set of lebegue measure zero, the second fundamental theorem of calculus will fail to hold \cite[see The Devil's staircase function][p. 186]{tao2011introduction}}. The following theorem shows that this does not occur for Lipschitz continuous functions. 
+
+\begin{theorem}(Second fundamental theorem of calculus for Lipschitz functions)
+	
+	Let f : $\R \mapsto \R$ be Lipschitz continuous and $a,b \in \R$. Then, 
+	\begin{equation}
+		\int_a^b f(x) dx = f(b) - f(a).
+	\end{equation}
+\end{theorem}
+\begin{proof}
+	Exercise 1.6.44 in \cite[p.169]{tao2011introduction}
+\end{proof}
+
+\subsection{Results from differentiable calculus and discrete difference rules}
+We will however need some results that require the full regularity of continous differentiability. A fundamental result in differentiable calculus is the mean value theorem
+
+\begin{theorem}(The mean value theorem for $\C^{(1)}(\R)$-functions)
+	For any $f \in \mathscr{C}([a,b]) \cap \mathscr{C}^{(1)}((a,b))$ we have that 
+	
+	\begin{equation} \label{MVT}
+		\frac{f(b) - f(a)}{b-a} = \frac{df}{dx}(c)
+	\end{equation}
+	for some $c \in (a,b)$. As a function of the endpoints, $c$ is continuous. 
+\end{theorem}
+\begin{proof}
+	Found in \cite[p.142]{finney2000calculus}, using Rolle's theorem. 
+\end{proof}
+
+
+The following result concern functions  differentiation under the integral sign. 
+
+\begin{theorem}(Leibniz rule for differentiation under the integral)
+	Let  $f:\mathscr{R} x \mathscr{R} \rightarrow \mathscr{R}$ be a differentiable function such that $\frac{\partial f}{\partial t}(x,t)$
+	is continuous on $\R\times\R$. Suppose that $a, b \in \C^{(1)}(\R)$. Then
+	\begin{equation} \label{LeibRule}
+		\frac{d}{dt}\int_{a(t)}^{b(t)} f(x,t) dx = - f(a(t),t) \frac{da}{dt}(t) + f(b(t),t) \frac{db}{dt}(t) + \int_{a(t)}^{b(t)}\frac{\partial f}{\partial t}(x,t) dx. 
+	\end{equation}
+\end{theorem}
+Formula is taken from 
+\begin{proof}
+	See \cite[p.255]{kaplan1912advanced}. 
+\end{proof}
+
+
+A generalisation of the mean-value formula for a closed interval $[a,b]$ reads:
+\begin{equation}\label{genMVT}
+	\int_a^bf(x)g(x)dx = f(c) \int_a^b g(x) dx, c \in (a,b), 
+\end{equation}
+where $f \in \mathscr{C}([a,b])$ and $g \in L_1([a,b])$, in the sense of lebesgue measure. 
+
+A Grönwall type estimate.
+\newtheorem{theorem}[T
+heorem]
+
+\begin{theorem}[Da theorem]
+	This statement is true, I guess.
+\end{theorem}
+
+\begin{lemma}{A simple Grönwall type estimate}
+	\begin{equation}
+		\frac{df}{dt} \leq A + B f \Rightarrow f(t) \leq \left( f(0) + \frac{A}{B}\right)e^{B t} - \frac{A}{B}.
+	\end{equation}
+\end{Lemma}
+This can be proved using integrating factors and integrating on both sides. 
+\begin{align}
+	\frac{df}{dt} &\leq A + B f  \nonumber \\
+	\Rightarrow \frac{d \left(f e^{-Bt}\right)}{dt} &\leq A e^{-Bt}\nonumber \\
+	\Rightarrow e^{-Bt}f(t) - f(0) &\leq \frac{A}{B}\left(1 - e^{-Bt}\right)\nonumber \\
+	\Rightarrow f(t) &\leq \left( f(0) + \frac{A}{B}\right)e^{B t} - \frac{A}{B}. \qed
+\end{align}
+The preceding theorem holds for any absolutely continuous function, in particular it will hold for a Lipshchitz continuous functions. 
+
+The following formula is very simple, but will be used extensively. It is the formula for splitting the terms of a difference 
+
+\begin{formula}(Difference by parts)
+	
+	For $x_0, x_1,y_0, y_1 \in \R$, 
+	\begin{equation} \label{disc_diff_part}
+		x_1y_1 - x_0 y_0 = x_1 \left(y_1 - y_0\right) + y_0 \left(x_1 - x_0\right).
+	\end{equation}
+	This can be generalised to hold over finite sums over $\R$. Let $x_i, y_i$ for $i \in \{1,...,N\}$, and let $\Delta_+(x_i) = x_{i+1} - x_i$. Then 
+	
+	\begin{equation} \label{discreteDiffPart}
+		x_{N}y_{N} - x_{1}y_{1} = \sum_{i = 1}^{N-1} x_i \Delta_+(y_i) + \sum_{i = 1}^{N-1} y_{i+1}\Delta_+(x_i).
+	\end{equation}
+	The last formula can be seen from expanding the terms on the right, which yields a telescoping sum. 
+\end{formula}
+
+$\mathscr{P} = \{\{x_0, ..., x_N\} \subset \R$ for $N \in \mathscr{N}$ | $x_0 < x_1 < ... < x_N \}$ is the set of ordered partition of $\R$. For $p \in \mathscr{P}$, define
 \begin{equation}
     p(f) = \sum_{i=0}^{\vert p\vert -1} |f(x_{i+1}) - f(x_i)|,
 \end{equation}
@@ -141,51 +348,12 @@ This can be generalised to hold over arbitrary sums. Let $x_i, y_i$ for $i \in \
 \end{equation}
 Expanding the terms on the right yields a telescoping sum. 
 
-For a function differentiable function $f:\mathscr{R} x \mathscr{R} \rightarrow \mathscr{R}$, differentiation is under the integral sign is permitted if $f$ is differentiable with respect to the differentitation variable and integrable with respect to the integration variable,
+ CITE RUDIN.  The integral can be understood in Lebesgue sense. 
 
-Leibniz rule is a result for differentiation under the integral sign, for functions $a, b$ and $f$ we have
-
-\begin{equation} \label{LeibRule}
-    \frac{d}{dx}\int_{a(x)}^{b(x)} f(x,t) dt = - f(x,a(x)) \frac{da}{dx} + f(x,b(x)) \frac{db}{dx} + \int_{a(x)}^{b(x)}\frac{\partial f}{\partial x}(x,t) dt. 
-\end{equation}
-Sufficient conditions for \eqref{LeibRule} to hold is that $a, b \in \mathscr{C}^{(1)}(\mathscr{R})}$ and $f \in \mathscr{C}^{(1)}(\mathscr{R}^2)$. CITE RUDIN.  The integral can be understood in Lebesgue sense. 
-
-The Mean-Value formula is a fundamental result in Calculus, and goes as follows. For any $f \in \mathscr{C}([a,b]) \cap \mathscr{C}^{(1)}((a,b))$ we have that 
-
-\begin{equation} \label{MVT}
-    \frac{f(b) - f(a)}{b-a} = \frac{df}{dx}(c)
-\end{equation}
-for some $c \in (a,b)$. 
+The Mean-Value formula is a fundamental result in Calculus, and goes as follows. 
 
 \begin{}
 
-A generalisation of the mean-value formula for a closed interval $[a,b]$ reads:
-\begin{equation}\label{genMVT}
-    \int_a^bf(x)g(x)dx = f(c) \int_a^b g(x) dx, c \in (a,b), 
-\end{equation}
-where $f \in \mathscr{C}([a,b])$ and $g \in L_1([a,b])$, in the sense of lebesgue measure. 
-
-A Grönwall type estimate.
-\newtheorem{theorem}[T
-heorem]
-
-\begin{theorem}[Da theorem]
-This statement is true, I guess.
-\end{theorem}
-
-\begin{lemma}{A simple Grönwall type estimate}
-\begin{equation}
-\frac{df}{dt} \leq A + B f \Rightarrow f(t) \leq \left( f(0) + \frac{A}{B}\right)e^{B t} - \frac{A}{B}.
-\end{equation}
-\end{Lemma}
-This can be proved using integrating factors and integrating on both sides. 
-\begin{align}
-\frac{df}{dt} &\leq A + B f  \nonumber \\
-\Rightarrow \frac{d \left(f e^{-Bt}\right)}{dt} &\leq A e^{-Bt}\nonumber \\
-\Rightarrow e^{-Bt}f(t) - f(0) &\leq \frac{A}{B}\left(1 - e^{-Bt}\right)\nonumber \\
-\Rightarrow f(t) &\leq \left( f(0) + \frac{A}{B}\right)e^{B t} - \frac{A}{B}. \qed
-\end{align}
-The preceding theorem holds for any absolutely continuous function, in particular it will hold for a Lipshchitz continuous functions. 
 
 Definition of a metric
 
