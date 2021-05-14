@@ -235,6 +235,7 @@ It is worth noting that the trajectories are stored as 3D PostGIS linestring geo
 After the initial data set has been collected and vessel voyages have been defined and constructed, the next step is to build the final training dataset to be used for analysis and \acrfull{ml}. This section describes every step in the process used to construct this dataset based on data described up to this point in this chapter.
 
 \subsection{Trajectory sampling}
+\label{sec:trajectory_sampling}
 
 Vessels transmit \acrshort{ais} records at different frequencies and messages collected via satellite are collected at different frequencies as the satellites have different orbits. Therefore the frequency, or density, or records in trajectories can not be expected to be standardized. Furthermore, as vessels travel at different speeds, two trajectories with similar start and end positions might have different shapes and contain a different number of points. In addition, as discussed in \cref{sec:vessel_voyage_definition}, one disadvantage of relying on \acrshort{ais} navigational statuses is that vessels can stop during a voyage for different reasons before arriving at their final destinations. Whenever a vessel stops moving or moves slowly, many \acrshort{ais} records are transmitted in clusters which cause noise and redundant data in the constructed trajectories.
 
@@ -735,6 +736,7 @@ def column_accuracy(correct, incorrect, columns=["segment", "sub_segment"]):
 \end{lstlisting}
 
 \section{Vessel destination prediction method summary}
+\label{sec:pred_summary}
 
 After the training process, the final trained model is saved and can then be used to predict the outcome of new samples of traveling voyages. To predict a traveling vessel's next destination, the steps described throughout this chapter must be replicated for that single vessel. Given the trained model, the overall prediction process for a single traveling vessel can be conceptualized using the following steps:
 

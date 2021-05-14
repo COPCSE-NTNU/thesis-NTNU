@@ -194,17 +194,22 @@ Another interesting segment to analyze is the combo segment. These combination v
     \label{fig:combo_accuracy}
 \end{figure}
 
-In conclusion, there seems to be some correlation between vessel size, capacity and predictability. However, this only seems to be the case for some segments while for others, the specific sub-segment value is the more important factor than the implied size and capacity.
+In regards to \texttt{RQ2} (\cref{sec:research_questions}), vessel segments and sub-segments seem to have a substantial impact on the predictability of vessels. As shown in \cref{tab:feature_importances}, the vessel segmentation had a feature importance close to that of the vessel's departure port. Furthermore, as discussed throughout this section, there are differences in accuracies for different segments and sub-segments, therefore, the vessel segmentation, with sub-segments in particular, had a significant impact on the predictions in the test dataset used during the evaluation process.
+
+In regards to \texttt{RQ2a} the most predictable segment overall was the ``other'' segment (\cref{fig:segment_accuracy}). This was not entirely surprising as the sub-segments including passenger vessels are very predictable (\cref{fig:other_accuracy}). Moreover, the tanker, chemical, and combo vessels were similar in their accuracy levels, while \acrshort{lpg}, dry bulk, and \acrshort{lng} vessels were slightly less predictable. The sub-segment ``chemical product tanker'' drove the accuracy of the combo segment up to a similar level to that of the tanker and chemical vessels. This can be explained by the fact the this specific sub-segment has overlap into the two other segments. In other words, several tanker and chemical vessels are also present in the ``chemical product tanker'' combo sub-segment, so the accuracies is expected to be similar between the specific sub-segment and the tanker and chemical segments.
+
+In response to \texttt{RQ2b}, and as mentioned earlier in this section, there seems to be some correlation between vessel size, capacity, and predictability, however, this only seems to be the case for some segments while for others, the uniqueness of the sub-segment value was the more important factor than the implied size or capacity. Thus, in regards to \texttt{RQ2b}, the prediction results does not conclusively indicate that larger vessels are more predictable than others.
+
 
 \section{Applications and validity}
 
-\begin{itemize}
-    \item How to use? (read model from file and predict)
-    \item How to train?
-    \item Stand-alone usability
-\end{itemize}
+After the final training process, the resulting model is capable of predicting the future destination ports of traveling vessels. This section describes the intended usage and applications of the developed model as well as validation from experts in the industry.
 
-% \subsection{Integration with \acrfull{mo}}
+\subsection{Usability}
+
+As summarized in \cref{sec:pred_summary}, the process of predicting a single vessel's future destination port consists of first collecting the current traveling trajectory by fetching the positional \acrshort{ais} records from the last detected ``moored'' navigational status was transmitted to the last transmitted position. This trajectory must then be simplified as described in \cref{sec:trajectory_sampling}, then the \acrfull{mstd} of the must be calculated using the \acrshort{sspd} method with the traveling trajectory and every other historical trajectory departing the same port. The vessel's \acrshort{mstd}, segmentation, the distance returned from the \acrshort{sspd} method, and the length of the trajectory can be used to predict the vessel's next destination. The final trained model is saved to a file so it can quickly be loaded when making predictions. Thus, a program can be written that reads the trained model, receives an outgoing voyage, and predicts its next destination port.
+
+In regards to re-training the model with new data, two approaches can be used. The simplest but more time consuming approach is to completely retrain the model after a substantial amount of new data is available. The training process takes around two days to complete using all of the historical dataset using a capable computer. Another approach could be to use \acrfull{xgb}'s support for iterative, or continuous learning as described in \cref{sec:training_process}. After the training process has completed, the \acrshort{xgb} model can be saved to file for future evaluation and predictions.
 
 \subsection{Expert validation}
 
