@@ -11,7 +11,7 @@ The initial dataset was copied and validated from \acrfull{mo}'s \acrshort{ais} 
 
 Based on the initial \textbf{6.4} million vessel transitions, \textbf{1.7} million voyages where initially constructed by finding positional records transmitted from a vessel between subsequent departure and arrival transitions. The resulting voyages were, therefore, defined based on transitioning \acrshort{ais} statuses that indicate the vessel is moored or moving. As a consequence of this definition, the quality of the resulting trajectories are very much affected by how well the \gls{aivdm} protocol is followed by the traveling vessels. Since the navigational status attribute is manually inputted by the vessel's captain or crew, the resulting trajectories are prone to human error but results in more complete voyages disregarding intermediate stops for purposes such as bunkering.
 
-As an example, \cref{fig:transition_voyage} shows a voyage from China to Argentina where the vessel stopped at Singapore, most likely to bunker. In the choses voyage definition, the beginning and end of the voyage is defined based on input from the vessel's captain which results in a voyage starting from China, and ending in Argentina. Using an alternative method based on clustering (\cref{sec:vessel_voyage_definition}), this voyage would have been divided into two voyages; one from China to Singapore, and one from Singapore to Argentina. Further advantages and disadvantages is later discussed in \cref{chap:discussion}.
+As an example, \cref{fig:transition_voyage} shows a voyage from China to Argentina where the vessel stopped at Singapore, most likely to bunker. In the chosen voyage definition, the beginning and end of the voyage is defined based on input from the vessel's captain which results in a voyage starting from China, and ending in Argentina. Further implications and consequences of the chosen definition is later discussed in \cref{chap:discussion}.
 
 \begin{figure}[htbp]
     \centering
@@ -55,7 +55,7 @@ Finally, the entire dataset was used to train the final model in one iteration o
 
 \subsection{Performance}
 
-During the training process, the performance of the model was continuously evaluated to measure logarithmic loss and multi-class classification error. \cref{fig:eval_set} shows these metrics plotted over each boosting round in the training process. Both graphs starts converging at 100 decision trees have been constructed at around \textbf{1.5} log loss, and around \textbf{0.3} classification error. This corresponds to around \textbf{70\%} accuracy. Since the graphs have not completely converged, it is possible to either increase the learning rate parameter or increase the number of estimators in the tree, although it seems as if the graphs are very close to converging, so it might not increase performance noticeably and increases risk of overfitting. As there is very little difference between the performance on the training set and evaluation set, it indicates that the model is not overfitting, however, it might indicate that the model is over optimistic. This could occur when there are several similar samples in the training and the test datasets and could be a consequence of the sampling techniques used to balance the dataset. \todo{perhaps move this to discussion}
+During the training process, the performance of the model was continuously evaluated to measure logarithmic loss and multi-class classification error. \cref{fig:eval_set} shows these metrics plotted over each boosting round in the training process. Both graphs starts converging at 100 decision trees have been constructed at around \textbf{1.5} log loss, and around \textbf{0.3} classification error. This corresponds to around \textbf{70\%} accuracy. Since the graphs have not completely converged, it is possible to either increase the learning rate parameter or increase the number of estimators in the tree, although it seems as if the graphs are very close to converging, so it might not increase performance noticeably and increases risk of overfitting. As there is very little difference between the performance on the training set and evaluation set, it indicates that the model is not overfitting, however, it might indicate that the model is over optimistic. This could occur when there are several similar samples in the training and the test datasets and could be a consequence of the sampling techniques used to balance the dataset.
 
 \begin{figure}[htbp]
     \centering
@@ -67,7 +67,7 @@ During the training process, the performance of the model was continuously evalu
 After the training process finished, the test dataset was used to make predictions to further evaluate the results. From the resulting predictions, accuracy was calculated to be \textbf{72\%}, and a class report was generated that shows more metrics for each possible class, or encoded arrival port, that might provide more insight into the model's performance than accuracy. \cref{lst:class_report} shows a summarized output from this class report showing the metrics precision, recall, f1-score, and support for each class as well as the aggregated mean values from all of the classes. As mentioned in \cref{sec:model_evaluation}, f1-score is based on precision and recall and is particularly appropriate for measuring performance on imbalanced datasets, and as \cref{lst:class_report} shows, the f1-score does not deviate much from the estimated accuracy of \textbf{72\%}, or \textbf{0.72}. This indicates that the accuracy value is reliable and is not biased by dataset imbalance.
 
 \begin{lstlisting}[
-    caption={Class report based on prediction results from the test dataset. The performance of the classifier is evaluated per class by using precition, recall, f1-score, and support.. \todo{update numbers}},
+    caption={Class report based on prediction results from the test dataset. The performance of the classifier is evaluated per class by using precition, recall, f1-score, and support.},
     label=lst:class_report,
     showstringspaces=false,
     basicstyle=\ttfamily,
@@ -124,7 +124,7 @@ An added benefit of using a tree based model such as the \acrfull{xgb} or \acrfu
 
 \cref{tab:feature_importances} shows an overview of the produced feature importances after the \acrshort{xgb} training process. As it shows, the most important feature was the \acrshort{mstd} value at a ranking of 0.44 out of 1.0, followed by the vessel's departure port, segmentation value, and then the similarity value and voyage length. This analysis can further help decide if features are worth dropping from the dataset, and insight into what attributes are good indicators during voyage predictions. As mentioned in \cref{sec:dataset_imbalance}, the attributes ``segment'', and ``sub-segment'' were combined into one segmentation value in order to ensure that no invalid segment and sub-segment combinations could be generated by sampling methods. A disadvantage of this is that the feature importances of the two attributes are lost in favor of the combined value. However, from test runs made during the development process with and without sampling, the importance of segment and sub-segment were usually ranked where segmentation is in \cref{tab:feature_importances} with sub-segment being more important than segment.
 
-Furthermore, the results from test dataset predictions were analyzed to find the impact of the attributes that mostly served as weights for the \acrshort{mstd} value, namely, the similarity value (\textit{sspd\_dist}) and trajectory length. \cref{lst:dist_length_impact} shows an output from the evaluation process which shows that the distance value was smaller, on average, for correct predictions while trajectory length did not considerably differ from correct and incorrect predictions. It makes sense that the distance, or similarity, value is lower for correct predictions as the more similar the most similar historical trajectory is, the more valuable the \acrshort{mstd} value is. For instance, if a voyage's most similar historical trajectory has a \textit{sspd\_dist} of 0, it is following an exact path of a previous voyage. In this case, the similarity value for correct predictions was on average around \textit{43\%} lower than for incorrect predictions. For the trajectory length, it would make sense that the longer the voyage had traveled, the easier it would be to predict its destination, thus, the length should be longer for correct predictions. However, this is not the case for these predictions. This could be explained by the fact that shorter voyages might be easier to predict than long voyages. This should be reflected in the accuracies per sub-segment which are based on size and capacity.
+Furthermore, the results from test dataset predictions were analyzed to find the impact of the attributes that mostly served as weights for the \acrshort{mstd} value, namely, the similarity value (\textit{sspd\_dist}) and trajectory length. \cref{lst:dist_length_impact} shows an output from the evaluation process which shows that the distance value was smaller, on average, for correct predictions while trajectory length did not considerably differ from correct and incorrect predictions. It makes sense that the distance, or similarity, value is lower for correct predictions as the more similar the most similar historical trajectory is, the more valuable the \acrshort{mstd} value is. For instance, if a voyage's most similar historical trajectory has a \textit{sspd\_dist} of 0, it is following an exact path of a previous voyage. In this case, the similarity value for correct predictions was on average around \textit{43\%} lower than for incorrect predictions. For the trajectory length, it would make sense that the longer the voyage had traveled, the easier it would be to predict its destination, thus, the length should be longer for correct predictions. However, this is not the case for these predictions. This could be explained by the fact that shorter voyages might be easier to predict than long voyages for small vessels. For instance, it is presumable that, passenger vessels with very short but frequent trajectories are very easy to predict thus bringing the average length down for correct predictions. To confirm this hypothesis, further investigation into the specific segments and sub-segments is required.
 
 \begin{lstlisting}[
     caption={Mean values of similarity value and trajectory length for correct and incorrect predictions.},
@@ -142,7 +142,7 @@ mean trajectory_length for erroneus predictions:  18.841843522761508
 
 \subsection{Segment predictability}
 
-In order to further gain insight into the prediction results and the value of the performance metrics, the predictions were further investigated per segment and sub-segment. \cref{fig:segment_accuracy} shows a bar chart of the accuracy of predictions per segment, and it shows that there are not huge differences per segment, however, some vessels of some segments were easier to predict than others.
+As it relates to research question 2 (\cref{sec:research_questions}), the \textit{880 000} predictions from the test dataset were further analyzed in search of patterns in predictability of different types of vessels. These results also serves to gain further insight into the value of the performance metrics. \cref{fig:segment_accuracy} shows a bar chart of the initial accuracy of predictions per segment, and it shows that there are some differences in accuracy per segment overall, but the most of the segments have a similar level of predictability. For example, vessels of the segment ``other'' were the easiest to predict and had the highest accuracy of \textit{76\%}. This is likely to be caused by different types of passenger vessels that lie within this segment. These vessels produce many predictable voyages as they travel between a few number of ports with a high frequency. Furthermore, the ``other'' segment also include very specialized vessels that are limited in terms of possible destination ports.
 
 \begin{figure}[htbp]
     \centering
@@ -151,7 +151,7 @@ In order to further gain insight into the prediction results and the value of th
     \label{fig:segment_accuracy}
 \end{figure}
 
-For example, vessels of the segment ``other'' were the easiest to predict and had the highest accuracy of \textit{76\%}. This is likely to be caused by different types of passenger vessels that lie within this segment. These vessels produce many predictable voyages as they travel between a few number of ports with a high frequency. Furthermore, the ``other'' segment also include very specialized vessels that are limited in terms of possible destination ports.
+As \cref{fig:other_accuracy} shows, and as expected, the accuracy of the passenger related sub-segments were very high. Since these are so high in frequency and has shorter trajectories, they may be the main cause that the average trajectory length was lower for correct predictions than incorrect ones. On the other hand, container and car ``roll on/roll off'' (roro) vessels travel longer distances less frequently but were also quite predictable. Another segment that could affect the average trajectory length and similarity values for correct predictions is the oil service segment. The oil service vessels should be easy to predict as these vessels travel to oil platforms and often back to the same or another nearby port. However, for these vessels, their trajectories would have been harder to consider as they often do not use the ``moored'' AIS navigational status when arriving at oil platforms. This can lead to very long trajectories that are hard to compare to others, therefore, these vessels should rely more on the departure port rather than the \acrshort{mstd} related values. In general, the ``other'' and ``oil service'' segments are not very relevant for \acrfull{mo}'s customers or for bigger actors in the industry, however, some sub-segments such as container and other general cargo ships can be quite relevant.
 
 \begin{figure}[htbp]
     \centering
@@ -159,11 +159,6 @@ For example, vessels of the segment ``other'' were the easiest to predict and ha
     \caption{Accuracy of predictions per sub-segment within the ``other'' segment.}
     \label{fig:other_accuracy}
 \end{figure}
-
-As \cref{fig:other_accuracy} shows, and as expected, the accuracy of the passenger related sub-segments were very high. Since these are so high in frequency and has shorter trajectories, they may be the main cause that the average trajectory length was lower for correct predictions than incorrect ones. On the other hand, container and car ``roll on/roll off'' (roro) vessels travel longer distances less frequently but were also quite predictable. Another segment that could affect the average trajectory length and similarity values for correct predictions is the oil service segment. The oil service vessels should be easy to predict as these vessels travel to oil platforms and often back to the same or another nearby port. However, for these vessels, their trajectories would have been harder to consider as they often do not use the ``moored'' AIS navigational status when arriving at oil platforms. This can lead to very long trajectories that are hard to compare to others, therefore, these vessels should rely more on the departure port rather than the \acrshort{mstd} related values. In general, the ``other'' and ``oil service'' segments are not very relevant for \acrfull{mo}'s customers or for bigger actors in the industry, however, some sub-segments such as container and other general cargo ships can be quite relevant.
-
-The dry bulk cargo industry, on the other hand, has more commercial interest. \cref{fig:dry_bulk_accuracy} shows the accuracy per sub-segment for the dry bulk cargo segment. The dry bulk sub-segments are based on the vessels' cargo capacities and sizes, however, as \cref{fig:dry_bulk_accuracy} shows, there seems to be little correlation between vessel size and accuracy. The two most accurately predicted sub-segments are large vessels, however, they are followed closely by the smaller sub-segments, and the two least predictable types are some of the largest. Thus, the sub-segment value itself had more impact on predictions than the implied size and capacity of the vessels.
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/results/seg_dry_bulk_acc}
@@ -171,23 +166,47 @@ The dry bulk cargo industry, on the other hand, has more commercial interest. \c
     \label{fig:dry_bulk_accuracy}
 \end{figure}
 
-The prediction results for tanker sub-segments show similar results as to the dry bulk ones, however, some other segments does seem to show that size and capacity indeed might be correlated to predictability in different ways. For instance, in the chemical segment this is somewhat the case. The two largest sub-segments have the highest accuracies of \textit{90\%} and \textit{85\%}, yet the remaining sub-segments does not show much difference correlated to size. For the LNG vessels
+
+The dry bulk cargo industry, on the other hand, has more commercial interest. \cref{fig:dry_bulk_accuracy} shows the accuracy per sub-segment for the dry bulk cargo segment. The dry bulk sub-segments are based on the vessels' cargo capacities and sizes, however, as \cref{fig:dry_bulk_accuracy} shows, there seems to be little correlation between vessel size and accuracy. The two most accurately predicted sub-segments are large vessels, however, they are followed closely by the smaller sub-segments, and the two least predictable types are some of the largest. Thus, the uniqueness of the sub-segment value itself had more impact on predictions than the implied size and capacity of the vessels.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/results/seg_chemical_acc}
-    \caption{Accuracy of predictions per sub-segment within the ``chemical'' segment.}
-    \label{fig:dry_bulk_accuracy}
+    \includegraphics[width=0.9\textwidth]{figures/results/seg_lpg_acc}
+    \caption{Accuracy of predictions per sub-segment within the ``LPG'' segment.}
+    \label{fig:lpg_accuracy}
 \end{figure}
 
+The prediction results for tanker sub-segments show similar results as to the dry bulk ones, however, some other segments does seem to show that size and capacity indeed might be correlated to predictability in different ways. For instance, in the chemical segment the two largest sub-segments have the highest accuracies of \textit{90\%} and \textit{85\%}, however, the remaining sub-segments does not show much difference correlated to size. There seem to be a slight correlation in chemical vessels that show that larger vessels are easier to predict than smaller ones, however, for other segments the opposite correlation seems to occur. The \acrfull{lng} and \acrfull{lpg} vessels have the highest correlation between size and accuracy, but in the opposite direction compared to the chemical vessels. \cref{fig:lpg_accuracy} shows that the three smallest \acrshort{lpg} sub-segments \textit{coaster}, \textit{handy}, and \textit{MGC} have the highest accuracy, while the two largest sub-segments \textit{VLGC} and \textit{LGC}  have lower accuracies. This is similar to that of the \acrshort{lng} vessels (\cref{fig:lng_accuracy}) where the largest sub-segments \textit{QMax}, and \textit{QFlex} are harder to predict than the smaller sub-segments.
 
-\section{Real-life applications}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/results/seg_lng_acc}
+    \caption{Accuracy of predictions per sub-segment within the ``LNG'' segment.}
+    \label{fig:lng_accuracy}
+\end{figure}
 
-\subsection{Stand-alone usability}
+Another interesting segment to analyze is the combo segment. These combination vessels can serve multiple functions in that they can carry different types of cargoes. In \cref{fig:segment_accuracy}, the combo segment showed a mid-range general accuracy level, however, when looking into the sub-segments, there are substantial differences in accuracies across the different types of combo vessels (\cref{fig:combo_accuracy}). The ``Klaveness Combination Carriers'' (CABU) and ``Oil-Bulk-Ore'' (OBO) vessels have the highest accuracies. However, there are only 12 CABU vessels and 5 OBO vessels in the world, or in \acrfull{mo}'s vessel database. On the other hand, there are 4700 chemical product tankers in the world that were also quite predictable. These vessels drive the general accuracy of the combo vessels up in \cref{fig:segment_accuracy} as the remaining sub-segments have substantially lower accuracies. It does, however, make sense that combo vessels are generally difficult to predict as they serve multiple functions which results in them having more possible destination ports they can load and unload at.
 
-\subsection{Integration with \acrfull{mo}}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/results/seg_combo_acc}
+    \caption{Accuracy of predictions per sub-segment within the ``combo'' segment.}
+    \label{fig:combo_accuracy}
+\end{figure}
 
-\subsection{External evaluation from real shipping actors}
+In conclusion, there seems to be some correlation between vessel size, capacity and predictability. However, this only seems to be the case for some segments while for others, the specific sub-segment value is the more important factor than the implied size and capacity.
+
+\section{Applications and validity}
+
+\begin{itemize}
+    \item How to use? (read model from file and predict)
+    \item How to train?
+    \item Stand-alone usability
+\end{itemize}
+
+% \subsection{Integration with \acrfull{mo}}
+
+\subsection{Expert validation}
 
 \begin{itemize}
     \item Caveats/use-cases and value
