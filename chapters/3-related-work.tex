@@ -14,15 +14,16 @@ As indicated in Chapter/Section x, based on initial research into the thesis' to
     \item The paper's motivation includes vessel predictions, but on a smaller time or geographical scale making it irrelevant for comparison.
     \item The paper's motivation includes destination predictions making it relevant for further analysis.
 \end{enumerate}
+\todo{Argue why non-maritime topics should be ex- or included. Just be clear why or why not, so ppl know you thought about it.}
 
 \textit{Category 0} is defined to filter out papers that were irrelevant but could not be excluded by narrowing the search query. \textit{Category 1} includes papers that relate to the established trend mentioned earlier where the proposed method seems relevant on a small scale but is ultimately not applicable to the thesis' problem area. It also includes papers that consider relevant topics but not relevant solutions. Finally, the papers labeled with relevancy \texttt{2} falls within \textit{Category 2} and includes papers that fall within the same topic area and are relevant in terms of insight into the proposed research questions. In order to determine what papers fitted \textit{category 1} and \textit{2}, papers with a relevance higher than zero were further analyzed in order to determine the following attributes:
 
 \begin{itemize}
     \item \textbf{Motivation} - what was the problem the paper aimed to solve.
     \item \textbf{Objective} - what was the proposed prediction method's objective (e.g. classification, prediction, clustering).
-    \item \textbf{Data source} - what data source was used in the proposed solution.
+    \item \textbf{Data source} - what data source was used in the proposed solution.\todo{If possible, exemplify for each of those (as you did for the first).}
     \item \textbf{Prediction method} - what prediction method was applied to solve the problem.
-    \item \textbf{Geographical extent} - to what geographical extent was the solution applicable.
+    \item \textbf{Geographical extent} - to what geographical scopes was the solution applicable.
     \item \textbf{Time interval} - what were the limitations on prediction methods in terms of time or trajectory duration.
     \item \textbf{Validation method} - what methods were applied to validate the resulting prediction method.
     \item \textbf{Validation metrics} - what metrics were used when establishing the validity of the solution.
@@ -36,7 +37,7 @@ In this literature review, the following search engines/libraries where used to 
     \item \textit{ACM Digital Library}\footnote{\url{https://dl.acm.org/}}
 \end{itemize}
 
-These were chosen based on running test queries and evaluating the relevancy and range of the resulting papers. Furthermore, the proposed query had too many boolean operators for search engines like \textit{ScienceDirect}\footnote{\url{https://sciencedirect.com}}.
+These were chosen based on running test queries and evaluating the relevancy and range of the resulting papers. Furthermore, the proposed query had too many Boolean operators for search engines like \textit{ScienceDirect}\footnote{\url{https://sciencedirect.com}}.\todo{Perhaps you can also indicate that there was substantive overlap in the test results for other, non-used databases - if that was indeed the case.}
 
 \subsection{Search query and filters}
 
@@ -82,7 +83,7 @@ ais AND (
 Moreover, the following filters were used to limit the search result:
 
 \begin{itemize}
-    \item The paper must be published in the last five years.
+    \item The paper must be published in the last five years. \todo{How sensitive would your filter be to older work. In short: would there be other mechanisms than age that could filter older papers by default (it looks good not dismiss papers purely based on age - similar to not dismiss examiners based on age :) - pun intended)}
     \item The paper must be available in English.
     \item The paper must be available with the publisher subscriptions provided by \acrshort{ntnu}.
 \end{itemize}
@@ -139,7 +140,7 @@ The remaining \textbf{}5 papers (listed in \cref{tab:most_relevant_papers}) were
 
 \paragraphheader{RQ 1a: What prediction methods can be used to predict vessel destinations?}
 
-Firstly, there was a large number of prediction methods that fell within \textit{category 1} that were not directly applicable for destination predictions on a global scale but were applied to smaller-scale positional predictions. These papers usually proposed some manner of clustering algorithm like \acrshort{dbscan} to classify trajectories and patterns with some form of point-to-point search along trajectories using either a form of \acrfull{rnn}, \acrfull{svm}, or \acrfull{knn} search.
+Firstly, there was a large number of prediction methods that fell within \textit{category 1} that were not directly applicable for destination predictions on a global scale but were applied to smaller-scale positional predictions. These papers usually proposed some manner of clustering algorithm like \acrshort{dbscan}\todo{Ensure that this is referenced somewhere (I forgot whether it was already).} to classify trajectories and patterns with some form of point-to-point search along trajectories using either a form of \acrfull{rnn}, \acrfull{svm}, or \acrfull{knn} search.
 
 A more relevant approach was proposed in~\cite{Zhang2020AISApproach} that used a \acrfull{rf} -based trajectory similarity measurement combined with frequencies of port visits to predict traveling vessels' next destination port. The \acrshort{dbscan} algorithm was used to define trajectories by identifying clusters of vessels around port coordinates. These positions were classified as ``port-stay-points'' so that every position between two stay points was part of a vessel trajectory. In the paper, the proposed \acrshort{rf}-based approach was compared with several other \acrshort{ml} and non-\acrshort{ml} methods of predicting destination ports in a similar fashion based on trajectory similarity. Using the proposed \acrshort{rf}-based approach, they achieved a ``port accuracy'' of \textit{66.57\%}, and a ``city accuracy'' of \textit{81.65\%}.
 
