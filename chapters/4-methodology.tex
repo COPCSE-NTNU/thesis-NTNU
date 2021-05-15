@@ -84,9 +84,73 @@ After the initial data foundation is constructed as described in the previous se
 \subsection{Cluster-based voyages}
 \label{sec:clustering}
 
-\todo{Should I bother explaining work I did with clustering if I didn't use it in the final approach?}
+As discussed in \cref{sec:vessel_voyage_definition} and as shown in the literature study conducted in \cref{sec:lit_review}, one alternative vessel definition is based on detecting stopping motions close to ports in \acrshort{ais} messages. This approach to voyage definitions only considers geographical, or navigational, information in the \gls{aivdm} protocol to look for recurring patterns that identifies a vessel as stopped close to ports. An existing example using this approach for voyage destination prediction was used in the study presented in \cite{Zhang2020AISApproach}. They used the \acrfull{dbscan} clustering algorithm to find clusters of \acrshort{ais} positions close to ports and defined a voyage as positions transmitted between two clusters for a vessel. In order to investigate the ramifications of using such an approach, a similar method was developed in this thesis as well.
+
+First, positional \acrshort{ais} records were fetched per vessel as well as the positions of every port in the database. Next, the vessel positions were parsed and passed to the \acrshort{dbscan} algorithm which detects clusters of positions based on the parameters \textit{epsilon}, and \textit{minimum samples}. The minimum samples parameter defines the minimum amount of positions required for a cluster to form while the epsilon defines the minimum distance between two points required for points to be added to a cluster. Since the algorithm is unsupervised, there is no real automatic method of finding the best parameters, therefore, the parameters must be chosen by using manual inspection. In this approach, the parameters used in \cite{Zhang2020AISApproach} were used as a starting point and then changed until fitting parameters were found. The epsilon parameter used in the aforementioned paper was appropriate, however, the minimum samples parameter required a higher value. Thus, the parameters \textit{epsilon} and \textit{minimum samples} were set to $1.095 \times 10^{-5}$ and $5$ respectively. After \acrshort{dbscan} was used to cluster records, each resulting cluster was mapped to its closest port by measuring the distance between the cluster's center-most point to each port. If the closest port was further away than a given threshold set to 1km, the cluster was disregarded. \cref{lst:dbscan_clustering} shows an extract of Python code used to cluster vessel positions and map them to their closest port.
+
+\begin{lstlisting}[
+    caption={Python code used to cluster \acrshort{ais} records using \acrshort{dbscan} and map the clusters to their closest ports.},
+    label=lst:dbscan_clustering,
+    language=Python,
+    showstringspaces=false,
+]
+def dbscan_reduce_vessels(df, port_df,
+                          epsilon=0.00001095,
+                          min_samples=5,
+                          algorithm="ball_tree", metric="haversine"):
+    """ reduce vessel positions to clusters using DBSCAN
+
+    returns clusters and each clusters closest port in df
+    """
+
+    # dbscan_reduce wraps sklearn.cluster.DBSCAN and returns df with clusters
+    clusters = dbscan_reduce(df, epsilon, min_samples, algorithm, metric)
+
+    data = []
+    for cluster in clusters:
+        (lat, lon) = get_centermost_point(cluster)
+        # find closest port.
+        # skip if closest is further away than threshold = 1000m
+        closest_port = get_closest_port(port_df, [lat, lon], 1000)
+        if closest_port is None:
+            continue
+
+        timestamp = get_latest_cluster_timestamp(df, cluster)
+        (imo, mmsi) = get_properties_at(df, lat, lon, ["imo", "mmsi"])
+        data.append({
+            "lat": lat,
+            "lon": lon,
+            "closest_port": closest_port,
+            "timestamp": timestamp,
+            "imo": imo,
+            "mmsi": mmsi,
+        })
+
+    return pd.DataFrame(data)
+\end{lstlisting}
+
+\cref{fig:dbscan_clustering} shows an example of positional records being clustered and mapped to ports. In this example, the vessel called \textit{Jonas Oldendorff} travels from Mauritania, stops in Morocco, and finally stops in France. The detected clusters in the vessel's positions closely relates to the three ports, however, in other cases, vessels were found to stop further away from ports. In these cases, the vessel most likely anchored outside of an area while waiting to arrive at multiple ports. In these cases it is correct to not consider those clusters as arrivals, however, it is impossible to know the vessel's intent when it is stopping without considering additional information such as the port's capabilities, restrictions, or the vessel's navigational statuses.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/dbscan/clustering}
+    \caption{Example of \acrshort{dbscan} clustering of \acrshort{ais} records where clusters are mapped to the closest available port.}
+    \label{fig:dbscan_clustering}
+\end{figure}
+
+Finally, given a number of clusters that were close enough to map to ports, each position transmitted by the vessel between two clusters were stored as the vessel's trajectories. \cref{fig:clustered_trajectories} shows the same example from \cref{fig:dbscan_clustering} but with the resulting trajectories constructed using the clusters.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/dbscan/cluster_voyage}
+    \caption{Two subsequent voyages derived from \acrshort{dbscan} clustering and mapping to existing ports. The blue dots are detected clusters, red ones are the closest mapped port, and the line represents the trajectory of connected \acrshort{ais} records.}
+    \label{fig:clustered_trajectories}
+\end{figure}
+
+The resulting voyages shown in \cref{fig:clustered_trajectories} seemed promising, however, for other vessels the quality of the extracted voyages were not consistent. For example, for small vessel traveling very short distance such as passenger vessels transmitted positional records at a much higher density than larger vessels traveling further, thus, the chosen parameters did not perfectly fit these vessels. Moreover, for larger vessels, clusters were often detected mid-voyage whenever the vessel stopped for longer periods of time such as when bunkering (refueling) during a voyage. Although this was expected, it is assumed that ignoring shorter stops along voyages in order to predict the vessels' final destinations has higher commercial value when compared to often predicting the next bunkering port as the next destination for many vessels. Lastly, although the \acrshort{dbscan} method's processing performance was quite efficient, additional processing such as mapping each detected cluster to the closest port was less so. The aforementioned factors made the final cluster-based voyage solution impractical when compared to the alternative described in \cref{sec:vessel_voyage_definition} and subsequently in \cref{sec:transition_voyages} which considers the vessels' navigational statuses. Therefore, the cluster-based approach was abandoned in favor of the alternative approach which proved to be more practical in implementation and potentially more valuable for commercial actors.
 
 \subsection{Transition voyages}
+\label{sec:transition_voyages}
 
 As vessel transitions provide a historical record per vessel of arrivals and departures based on \acrshort{ais} statuses it can be used to derive vessel voyages. Given two entries in the vessel transitions table for a single vessel, sorted by time, where the first is a departure from a port, and the second is arrival at another port, a voyage can be defined as starting at the timestamp of the first departure transition and ending at the subsequent arrival transition. For example, in \cref{tab:vessel_transitions_example}, there are six transition events for a single vessel ordered by time. Based on these events, two different voyages can be defined:
 
