@@ -1,7 +1,7 @@
 \chapter{Results}
 \label{chap:results}
 
-In this section, the results from the proposed solution is described in detail. It describes different results from the different stages throughout the develop process and presents the final results and metrics from the trained \acrfull{ml} model.
+In this chapter, the results from the proposed solution is described in detail. It describes different results from the different stages throughout the develop process and presents the final results and metrics from the trained \acrfull{ml} model. Furthermore, insights and interpretation into the results are gathered from real actors in the shipping industry and described in order to determine the validity of the proposed solution.
 
 \section{Constructed dataset and ML problem formulation}
 
@@ -89,17 +89,17 @@ avg / total   0.718698  0.715150  0.712737  878049.0  878049.0
 
 \end{lstlisting}
 
-Lastly, in order to ensure the model is not overfitted, a three-fold cross validation process was employed. \cref{lst:cv_result} shows the results from the three folds that the model was trained on. It is recommended, or common to use more folds ranging from five to 10, however, because of the long training time and time limitations, only three folds were used. As described in \cref{sec:model_evaluation}, since the standard deviation (noted as ``std. dev.'' in \cref{lst:cv_result}) is low, the model is likely to not be overfitted.
+Lastly, in order to ensure the model is not overfitted, a three-fold cross validation process was employed. \cref{lst:cv_result} shows the results from the three folds that the model was trained on which used a weighted F1-score as the performance metric. It is recommended, or common to use more folds ranging from five to 10, however, because of the long training time and time limitations, only three folds were used. As shown in \cref{lst:cv_result}, the mean F1-score across each fold was \textbf{73\%} which is slightly higher than the initial training round, and as described in \cref{sec:model_evaluation} since the standard deviation (noted as ``std. dev.'' in \cref{lst:cv_result}) is very low ($9.025 \times 10^{-5}$), the model is likely to not be overfitted.
 
 \begin{lstlisting}[
-    caption={Output from 3-fold cross validation. \todo{update numbers}},
+    caption={Output from 3-fold cross validation.},
     label=lst:cv_result,
     showstringspaces=false,
     basicstyle=\ttfamily,
 ]
- Folds:      [0.70569399 0.71297481 0.72244745]
- Mean:       0.7137054183485277
- Std. dev.:  0.006859056778768982
+ Folds:      [0.73393717, 0.73398, 0.73414641]
+ Mean:       0.7340211926682213
+ Std. dev.:  9.025433684824043e-05
 \end{lstlisting}
 
 \section{Prediction results}
