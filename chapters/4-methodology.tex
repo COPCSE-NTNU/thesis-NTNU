@@ -129,7 +129,7 @@ def dbscan_reduce_vessels(df, port_df,
     return pd.DataFrame(data)
 \end{lstlisting}
 
-\cref{fig:dbscan_clustering} shows an example of positional records being clustered and mapped to ports. In this example, the vessel called \textit{Jonas Oldendorff} travels from Mauritania, stops in Morocco, and finally stops in France. The detected clusters in the vessel's positions closely relates to the three ports, however, in other cases, vessels were found to stop further away from ports. In these cases, the vessel most likely anchored outside of an area while waiting to arrive at multiple ports. In these cases it is correct to not consider those clusters as arrivals, however, it is impossible to know the vessel's intent when it is stopping without considering additional information such as the port's capabilities, restrictions, or the vessel's navigational statuses.
+\cref{fig:dbscan_clustering} shows an example of positional records being clustered and mapped to ports. In this example, the vessel called \textit{Jonas Oldendorff} travels from Mauritania, stops in Morocco, and finally stops in France. The detected clusters in the vessel's positions closely relate to the three ports, however, in other cases, vessels were found to stop further away from ports. In these cases, the vessel most likely anchored outside of an area while waiting to arrive at multiple ports. In these cases it is correct to not consider those clusters as arrivals, however, it is impossible to know the vessel's intent when it is stopping without considering additional information such as the port's capabilities, restrictions, or the vessel's navigational statuses.
 
 \begin{figure}[htbp]
     \centering
@@ -138,7 +138,7 @@ def dbscan_reduce_vessels(df, port_df,
     \label{fig:dbscan_clustering}
 \end{figure}
 
-Finally, given a number of clusters that were close enough to map to ports, each position transmitted by the vessel between two clusters were stored as the vessel's trajectories. \cref{fig:clustered_trajectories} shows the same example from \cref{fig:dbscan_clustering} but with the resulting trajectories constructed using the clusters.
+Finally, given a number of clusters that were close enough to map to ports, each position transmitted by the vessel between two clusters was stored as the vessel's trajectories. \cref{fig:clustered_trajectories} shows the same example from \cref{fig:dbscan_clustering} but with the resulting trajectories constructed using the clusters.
 
 \begin{figure}[htbp]
     \centering
@@ -147,7 +147,7 @@ Finally, given a number of clusters that were close enough to map to ports, each
     \label{fig:clustered_trajectories}
 \end{figure}
 
-The resulting voyages shown in \cref{fig:clustered_trajectories} seemed promising, however, for other vessels the quality of the extracted voyages were not consistent. For example, for small vessel traveling very short distance such as passenger vessels transmitted positional records at a much higher density than larger vessels traveling further, thus, the chosen parameters did not perfectly fit these vessels. Moreover, for larger vessels, clusters were often detected mid-voyage whenever the vessel stopped for longer periods of time such as when bunkering (refueling) during a voyage. Although this was expected, it is assumed that ignoring shorter stops along voyages in order to predict the vessels' final destinations has higher commercial value when compared to often predicting the next bunkering port as the next destination for many vessels. Lastly, although the \acrshort{dbscan} method's processing performance was quite efficient, additional processing such as mapping each detected cluster to the closest port was less so. The aforementioned factors made the final cluster-based voyage solution impractical when compared to the alternative described in \cref{sec:vessel_voyage_definition} and subsequently in \cref{sec:transition_voyages} which considers the vessels' navigational statuses. Therefore, the cluster-based approach was abandoned in favor of the alternative approach which proved to be more practical in implementation and potentially more valuable for commercial actors.
+The resulting voyages shown in \cref{fig:clustered_trajectories} seemed promising, however, for other vessels the quality of the extracted voyages were not consistent. For example, for small vessels traveling very short distance such as passenger vessels transmitted positional records at a much higher density than larger vessels traveling further, thus, the chosen parameters did not perfectly fit these vessels. Moreover, for larger vessels, clusters were often detected mid-voyage whenever the vessel stopped for longer periods of time such as when bunkering (refueling) during a voyage. Although this was expected, it is assumed that ignoring shorter stops along voyages in order to predict the vessels' final destinations has higher commercial value when compared to often predicting the next bunkering port as the next destination for many vessels. Lastly, although the \acrshort{dbscan} method's processing performance was quite efficient, additional processing such as mapping each detected cluster to the closest port was less so. The aforementioned factors made the final cluster-based voyage solution impractical when compared to the alternative described in \cref{sec:vessel_voyage_definition} and subsequently in \cref{sec:transition_voyages} which considers the vessels' navigational statuses. Therefore, the cluster-based approach was abandoned in favor of the alternative approach which proved to be more practical in implementation and potentially more valuable for commercial actors.
 
 \subsection{Transition voyages}
 \label{sec:transition_voyages}
@@ -170,7 +170,7 @@ Constructing voyages based on vessel transitions and positional records can be s
     \item Define voyages based on subsequent departures and arrivals from the vessel transition data (\cref{lst:voyage_times}).
     \item For each voyage, extract every positional record between vessels' departure and arrival timestamps sorted by time.
     \item Validate the geographical trajectory including applying a ``noise filter'' (\cref{fig:noise_filter}).
-    \item Store voyages with validated trajectories in transition voyages table.
+    \item Store voyages with validated trajectories in the transition voyages table.
 \end{enumerate}
 
 The first step including defining trajectories based on vessel transitions is a relatively straightforward process of looking for transitions following the pattern of departures immediately followed by arrival at a different port. The algorithm used to compute voyages based on a vessel's transition events is shown in \cref{lst:voyage_times}.
@@ -220,7 +220,7 @@ Next, the voyage times computed are used to construct geographical trajectories.
 
 \subsubsection{Trajectory validation}
 
-During the process of building trajectories, several trajectories were discovered that showed peculiar shapes. For instance, there could be large gaps in certain parts of the trajectory or fluctuations when the vessel was stationary. Therefore, a validation step was added to the voyage construction process, for instance, if the distance between two points is sufficiently large, there is most likely missing coverage in the \acrshort{ais} data and the trajectory should probably be skipped. Furthermore, another issue was detected were some vessels showed a seemingly coherent trajectory except for a section of it where the longitude or latitude value fluctuated with extreme distances. This often happened when a vessel was stationary or moving slowly and it transmitted many positions closer together.
+During the process of building trajectories, several trajectories were discovered that showed peculiar shapes. For instance, there could be large gaps in certain parts of the trajectory or fluctuations when the vessel was stationary. Therefore, a validation step was added to the voyage construction process, for instance, if the distance between two points is sufficiently large, there is most likely missing coverage in the \acrshort{ais} data and the trajectory should probably be skipped. Furthermore, another issue was detected where some vessels showed a seemingly coherent trajectory except for a section of it where the longitude or latitude value fluctuated with extreme distances. This often happened when a vessel was stationary or moving slowly and it transmitted many positions in close proximity.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
@@ -391,7 +391,7 @@ The function listed in \cref{lst:trajectory_sampler} is used in a batch process 
 
 In order for the proposed solution to take into account both geographical trajectories as well as additional vessel information for predictions, in the training set, the trajectories have been abstracted into the categorical and numeric values \acrfull{mstd}, the similarity value for the \acrshort{mstd}, and then the length of the trajectory. The \acrshort{mstd} value is essentially an initial prediction of the vessel's final destination purely based on geographical, or spatial, trajectories. This is similar to other approaches found in other studies such as \cite{Zhang2020AISApproach}. Purely spatial trajectory predictions works quite well when the trajectories are complete, or close to the vessels' final destination, however, when a vessel has just recently departed a port for a long voyage, there are many possible destination ports and routes the vessel might take. The closer the vessel is to its final destination, the fewer possible candidate ports are there. When considering short trajectories of recently departed vessels, the most similar historical trajectory is not likely to be a good estimation of where the vessel is traveling to. In these cases, relying on more general traveling patterns seem more appropriate. For example, the vessel's departure port, segment, and sub-segment are likely to be much better indicators as to the vessel's final destination. Therefore, the \acrshort{mstd} is only part of the final dataset used for predictions.
 
-The \acrshort{mstd} for a given voyage is found by measuring the similarity between the given voyage's trajectory and every historical trajectory in the sampled transition voyages table. The most similar trajectory is found using a given trajectory similarity measurement, and its destination and similarity value is added to the final dataset. As described in \cref{sec:trajectory_similarity}, there are several different trajectory similarity measurements available, however, for this thesis the \acrfull{sspd} is used to calculate the \acrshort{mstd} values. However, the process and the dataset are structured in such a way that it is possible to use different similarity measurement methods in this process. For instance, the \acrshort{ml}-based method proposed \cite{Zhang2020AISApproach} achieved good performance for similarity-based predictions, thus it could be replicated and used to calculate the \acrshort{mstd} values for this approach.
+The \acrshort{mstd} for a given voyage is found by measuring the similarity between the given voyage's trajectory and every historical trajectory in the sampled transition voyages table. The most similar trajectory is found using a given trajectory similarity measurement, and its destination and similarity value is added to the final dataset. As described in \cref{sec:trajectory_similarity}, there are several different trajectory similarity measurements available, however, for this thesis the \acrfull{sspd} is used to calculate the \acrshort{mstd} values. However, the process and the dataset are structured in such a way that it is possible to use different similarity measurement methods in this process. For instance, the \acrshort{ml}-based method proposed by  \cite{Zhang2020AISApproach} achieved good performance for similarity-based predictions, and was thus replicated and used as a basis to calculate the \acrshort{mstd} values for the proposed approach.
 
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
@@ -487,10 +487,10 @@ The similarity value derived from the \acrshort{mstd} calculation and the length
         3305 & BRRIG & ARSLO & 111 & 454581 \\ \midrule
         3305 & ARSLO & ARSLO & 148 & 148770 \\ \bottomrule
     \end{tabularx}}
-\caption{Extract from ml training data showing a voyage divided into four shorter voyages.}\label{tab:incomplete_voyage}
+\caption{Extract from ML training data exemplifying a voyage divided into four shorter voyages.}\label{tab:incomplete_voyage}
 \end{table}
 
-\subsection{The final dataset - summary}
+\subsection{The final dataset -- Summary}
 
 The final process of creating the dataset used in the analysis can be summarized in the following steps:
 
@@ -512,7 +512,7 @@ An overview of the process described in this chapter thus far is shown in \cref{
 \begin{figure}[htbp]  % order of priority: h here, t top, b bottom, p page
     \centering
     \includegraphics[width=1.0\textwidth]{figures/dataset_overview}
-    \caption{Overview of the process used to construct the dataset used in further analysis and \acrshort{ml}.}
+    \caption{Overview of the process used to construct the dataset used in further analysis and \acrshort{ml}}
     \label{fig:dataset_overview}
 \end{figure}
 
