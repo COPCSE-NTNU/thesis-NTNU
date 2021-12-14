@@ -42,7 +42,7 @@
                 {\large Co-advisor}\\[2ex]
                 {\large Name of Co-Advisor}\\[16ex] % Fill in the name of your co-advisor here
                 {\large {\printdate{ \@date } }}\\[4ex]
-                \includegraphics[scale=0.14]{figures/hpc-lab-logo-black.png}
+                \includegraphics[scale=0.13]{figures/hpc-lab-logo-black.png}
             \end{center}
         \end{titlepage}
     }
