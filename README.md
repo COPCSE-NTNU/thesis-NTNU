@@ -1,4 +1,12 @@
-# thesis-NTNU
+# HPC Lab Specialization Report Template
+This repository is a fork of [COPCSE-NTNU/thesis-NTNU]{https://github.com/COPCSE-NTNU/thesis-NTNU}.
+The repository contains a template for reports written for TDT4501 - Computer Science, Specialization Project.
+
+Below is the original README from the original repository.
+
+To alter the details of the front page, edit `ntnuthesis.cls` and change the definitions at the top of the `thesis.tex` file.
+
+## thesis-NTNU
 
 CoPCSE@NTNU – Community of Practice for Computer Science Education at the Norwegian University of Science and Technology – is an informal forum for lecturers in computer science and related fields across campuses and departments.
 
@@ -10,7 +18,7 @@ The template does not have any official status, and it is not a general NTNU-lev
 
 You can use the template with [Overleaf](http://overleaf.com), and you are strongly encouraged to do so. The alternative is to install local copy of LaTeX on your laptop (not adviced, huge, difficult).
 
-You should **fork** the CoPCSE repo so that you have your own files to edit and you can always merge with the upstream changes to the template, in case the template is updated. 
+You should **fork** the CoPCSE repo so that you have your own files to edit and you can always merge with the upstream changes to the template, in case the template is updated.
 
 ### Setup using Overleaf
 
