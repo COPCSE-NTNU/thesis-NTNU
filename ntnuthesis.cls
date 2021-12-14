@@ -8,7 +8,7 @@
 
 %% IDENTIFICATION
 
-\xdef\ntnuthesisdate{2019/07/18}
+\xdef\ntnuthesisdate{2021-12-15}
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{ntnuthesis}
  [\ntnuthesisdate\space
@@ -20,6 +20,8 @@
 % Package for some reason needed before the options
 \RequirePackage{pdfpages}                   % including pdf files
 
+\usepackage{isodate}
+
 % One or twosided paging
 \newcommand{\paging}{twoside}
 \DeclareOption{oneside}{
@@ -30,7 +32,18 @@
 \DeclareOption{titlepage}{
     \AtBeginDocument{
         \begin{titlepage}
-            \maketitle
+            \begin{center}
+                \includegraphics[width=\linewidth]{figures/ntnu_bredde_eng.png}\\[10ex]
+                {\large TDT4501 - Computer Science, Specialization Project}\\[8ex]
+                {\huge \bfseries \@title }\\[4ex]
+                {\Large \@author }\\[8ex]
+                {\large Advisor}\\[2ex]
+                {\large Name of Advisor}\\[4ex] % Fill in the name of your advisor here
+                {\large Co-advisor}\\[2ex]
+                {\large Name of Co-Advisor}\\[16ex] % Fill in the name of your co-advisor here
+                {\large {\printdate{ \@date } }}\\[4ex]
+                \includegraphics[scale=0.14]{figures/hpc-lab-logo-black.png}
+            \end{center}
         \end{titlepage}
     }
 }
