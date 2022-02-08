@@ -109,22 +109,24 @@ For figures compsed of several sub-figures, the \texttt{caption} and \texttt{sub
     \label{fig:subfig}
 \end{figure}
 
-You can make nice graphs directly from data files using \texttt{gnuplot}, for an example, see \cref{fig:examplegnuplot}.
-
-\begin{figure}[htbp]
-  \centering
-    \begin{gnuplot}[terminal=epslatex,terminaloptions={size 8cm,6cm color}]
-        set xlabel "age"
-        set ylabel "IQ"
-        set key autotitle columnhead
-        set title "age vs IQ"
-        set yrange [0:160]
-        set datafile separator ","
-        plot "csvtables/ageiq.csv" using 1:2 with boxes
-    \end{gnuplot}
-  \caption[An example of Integrated Graph]{This is a gnuplot graph read from a file. Also this figure has a long caption in order to demonstrate how that is typeset.}
-  \label{fig:examplegnuplot}
-\end{figure}
+You can make nice graphs directly from data files using \texttt{gnuplot}, but it is expensive on every compilation.  The code is included in the
+raw latex as a comment so you can uncomment that code to see how it works.
+% , for an example, see \cref{fig:examplegnuplot}.
+%
+%\begin{figure}[htbp]
+%  \centering
+%    \begin{gnuplot}[terminal=epslatex,terminaloptions={size 8cm,6cm color}]
+%        set xlabel "age"
+%        set ylabel "IQ"
+%        set key autotitle columnhead
+%        set title "age vs IQ"
+%        set yrange [0:160]
+%        set datafile separator ","
+%        plot "csvtables/ageiq.csv" using 1:2 with boxes
+%    \end{gnuplot}
+%  \caption[An example of Integrated Graph]{This is a gnuplot graph read from a file. Also this figure has a long caption in order to demonstrate how that is typeset.}
+%  \label{fig:examplegnuplot}
+%\end{figure}
 
 \section{Tables}
 
