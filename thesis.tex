@@ -1,9 +1,9 @@
 \documentclass[british,titlepage]{ntnuthesis}
 
-\title{An NTNU Thesis \LaTeX{} Document Class}
-\shorttitle{An NTNU Thesis Document Class}
-\author{Community of Practice in Computer Science Education at NTNU}
-\shortauthor{CoPCSE$@$NTNU}
+\title{Automated Analysis of the Cost of Security Incidents}
+%\shorttitle{An NTNU Thesis Document Class}
+\author{Johan Selnes}
+\shortauthor{Johan Selnes}
 \date{CC-BY \ntnuthesisdate}
 
 \addbibresource{thesis.bib}
@@ -24,16 +24,19 @@
 \printglossary                    % Print glossary
 
 \input{chapters/1-introduction}
-\input{chapters/2-usage.tex}
-\input{chapters/3-structure.tex}
-\input{chapters/4-conclusion.tex}
+\input{chapters/2-relatedwork.tex}
+\input{chapters/3-method.tex}
+\input{chapters/4-results.tex}
+\input{chapters/5-discussion.tex}
+\input{chapters/6-futurework}
+\input{chapters/7-conclusion.tex}
 
 \chapter*{\bibname}
 \printbibliography[heading=none]
 
-\input{chapters/papers.tex}
+%\input{chapters/papers.tex}
 
-\appendix
-\input{appendices/a-appendix.tex}
+%\appendix
+%\input{appendices/a-appendix.tex}
 
 \end{document}
