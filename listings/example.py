@@ -1,9 +1,18 @@
-import numpy as np
-import matplotlib.pyplot as plt
+# exerpt from GenData.ipnb
 
-# Comment
-x = np.linspace(0, 1)
-y = np.sin(2 * np.pi * x)
+import ftplib
+import os
 
-plt.plot(x, y)
-plt.show()
+def downloadFTPData(ftp_url, file_name):
+    ftp = ftplib.FTP(ftp_url)
+    ftp.login()
+    ftp.cwd("symboldirectory")
+    ftp.retrbinary("RETR " + file_name, open(file_name, "wb").write)
+    ftp.quit()
+
+
+if not os.path.exists("nasdaqlisted.txt"):
+    downloadFTPData("ftp.nasdaqtrader.com", "nasdaqlisted.txt")
+
+if not os.path.exists("otherlisted.txt"):
+    downloadFTPData("ftp.nasdaqtrader.com", "otherlisted.txt")
