@@ -1,9 +1,133 @@
 \chapter{Method}
 \label{chap:method}
 
-\section{Data collection}
-Due to the noverlt
+\section{Data Collection}
+\subsection{News Articles}
+\label{sec:news}
+
+Due to the topic's novelty, there is no good dataset or a standard approach to data collection for classifying security incidents from news articles. Therefore, data collection must be done from scratch and due to the volume, this data collection must be done programmatically. At a high level, this can be described with the following steps:
+\begin{itemize}
+    \item Download a list of all NYSE and NASDAQ tickers.
+    \item Query Reuters for the company's page based on the ticker.
+    \item Iterate through the news articles on the ticker's page and extract the URL.
+    \item Download the news articles using the URL and the Newspaper Library.\footnote{\url{https://github.com/codelucas/newspaper}}
+    \item Save the article as a JSON file containing the article's title, URL, publish date, stock ticker, and text.
+\end{itemize}
+Reuters removes news articles that are older than 2-3 years. Therefore, the resulting dataset is limited to this time frame.
+
+\subsection{Labeling News Articles}
+Due to the expected volume of the dataset, manual labelling of the news articles is unfeasible. Therefore, all news articles will be labelled as "not a security incident". A keyword search combined with a manual review will be used to determine which articles are security incidents. This approach means that there is the possibility of false negatives, but all positives should be true positives. Given the imbalance of the dataset, this approach, while not perfect, is still a good approach given the constraints of the situation, especially since we are most interested in the positives. Furthermore, the true positives are expected to have quite distinct keywords. The actual negatives are expected to outnumber the false negatives massively; thus, the false negatives will only represent a tiny fraction of the negative class.
+
+\subsubsection{Defining Security Incident}
+When doing this manual labelling, the definition used will be the definition used by NIST: 
+\begin{displayquote}
+\textit{An occurrence that actually or potentially jeopardizes the confidentiality, integrity, or availability of an information system or the information the system processes, stores, or transmits or that constitutes a violation or imminent threat of violation of security policies, security procedures, or acceptable use policies.}\footnote{\url{https://csrc.nist.gov/glossary/term/security_incident}}
+\end{displayquote}
+This means that security incidents include data breaches, data leaks, DDoS attacks, ransomware attacks, insider breaches, espionage, and more. Note that there will not be an attempt to determine the relationship between the companies mentioned in the security incident. As a result, victims of security incidents will represent a subset of the identified security incidents. For example, an article might mention a company assisting with the security incident or mention it for an unrelated reason. As a result, a "security incident" label will not imply that the companies mentioned in the article are victims of the security incident. Instead, the victims will be a subset of the identified articles containing security incidents. The intention behind this is to simplify the machine learning task.
+Furthermore, no distinction is made with the labelling of articles concerning the same security incident. For example, one data breach might have multiple articles written about it as new information becomes available, but it only represents one security incident. This lack of granularity in the labelling has the effect of weakening the result from the event study, as there will be events that do not negatively impact the associated company. However, in aggregate, the negative signal should still exist as the unrelated events will be a random walk around the market return and effectively cancel each other out. Thus the only expected effect is reducing the magnitude of the negative signal when all events are aggregated.
+\subsection{Stock Prices}
+Stock prices will be downloaded from the alpha vantage API from the TIME\_SERIES\_DAILY dataset\footnote{\url{https://www.alphavantage.co/documentation/##daily}}, in which the daily closing price is extracted and used as the stock price for a given date.
+
 \section{Data Classification}
-bla
+\subsection{Creating the Classification Model}
+\subsubsection{Pre-processing the Data}
+The text used for classification will be retrieved from the downloaded articles and will be a combination of the title + the text of the article. Typically in NLP tasks, the input text undergoes extensive pre-processing. Due to BERT usage, pre-processing techniques such as removal of stop words, stemming and lemmatization are not used. This is because BERT is a contextual model; thus, stop words and stems can provide information about the context of the text. In the paper "Understanding the Behaviors of BERT in Ranking"\cite{qiao2019understanding}, the authors looked at what kind of "words" BERT gives attention to. The authors found that stop words receive just as much attention as non-stop words suggesting that BERT finds them important. On the other hand, the authors also found that the removal of stop words did not affect the model's performance in some tasks. Thus, pre-processing is limited to loading the text and tokenizing it using the BERT tokenizer. 
+
+The BERT tokenizer contains several options on how to tokenize the text. The tokenizer can be set to lowercase, remove punctuation, remove stop words, remove digits, remove special characters, etc. Ultimately the task of the tokenizer is to convert "human" text into a sequence of tokens which is understandable by the BERT model. Here there is the possibility to do a sweep of different tokenization options and find the best set of options. But due to time constraints, this will not be done. The tokenizer will be configured to use the uncased version meaning that all capitalization information will be removed. Furthermore, the BERT model is trained to handle 512 input tokens. This means that it can not look at more than 512 tokens at a time. This will be solved by truncating the text to the first 512 tokens and discarding the rest of the text from a given article. This means that the model will not be able to look at the text after the 512 first tokens, but hopefully, this will not affect performance much. Another option would be to split the text into multiple 512 token chunks and feed them to the model. Then perform averaging or a combination with the subsequent 512 tokens for each article. This would be a more complex task and would require more time, and will therefore not be explored. 
+
+Note that a character is not equivalent to a token. A token is a numerical representation of "something" that can be understood by the BERT model. This "something" can be a complete word or a part of a word. BERT uses WordPiece embeddings which were presented by Wu et al. in the paper "Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation"\cite{wu2016google}. The total vocabulary size is about 30000 tokens. This means that all the characters are converted into tokens either so that a token represents one or more characters. Therefore it is a bit difficult to quantify the average percentage of an article that will be passed on to the model. At the very least, some news articles will be truncated when encoded. It is also worth noting that if no mapping of characters to token exists, the encoded characters will be encoded using a UNK or unknown token. 
+
+\subsubsection{Building the Model}
+When fine-tuning BERT on a new task, it is normal to start with a model trained on another task. In this case, we will use the DestilBERT model. The DestilBERT model was created by Sanh et al. \cite{sanh2019distilbert} in an effort to improve the performance and reduce the size of the traditional BERT model. All the pre-trained layers are locked, and a new layer is added to the end of the model. This is done to allow the model to learn the new task without having to rewrite the existing neurons. The model is configured with a dropout of 0.2. This dropout is used to prevent overfitting. This is accomplished by randomly dropping out a certain percentage of the neurons. This means that the model is forced to send the signals which represent the desired information on multiple neurons which should make the signal more robust and ensure that it looks at more of the input. The final layer contains a single neuron which is the output layer. The output layer is a sigmoid function. Usually, the output layer is a softmax function, but the softmax function is, in effect, an extension of sigmoid for multiclass logistic regression. However, since we are doing two-class logistic regression, the sigmoid function is sufficient. Sigmoid gives an output between 0 and 1, which in this case represents the probability that the text is about a security incident according to the model.
+
+
+\subsubsection{Training the Model}
+Once the pre-trained model has been combined with blank layers and configured for our needs, the next step is to start training the model. The goal of this training is to influence the new layers to learn to represent the new task better. This is done by running the one sample of the training set forwards through the model. Then the correct output is backpropagated through the model. There are several methods and algorithms that need to be selected when training the model. One such parameter is the optimization algorithm; examples include Adam, stochastic gradient descent (SGD), Ftrl, and RMSprop. For this model, Adam was used. Adam is a recent optimization algorithm and has shown promising results when compared to other alternatives. According to Kingma et al.\cite{kingma2014adam}, Adam is \textit{"computationally efficient, has little memory requirement, invariant to diagonal rescaling of gradients, and is well suited for problems that are large in terms of data/parameters"}. This matches the model's requirements quite well. 
+
+Another parameter is the loss function. This function represents the quantity that the model should seek to minimize during training. In this case, the loss function used is the binary cross-entropy loss function. This function is intended for binary classification applications, which is what we are doing. The binary cross-entropy loss function is given by the following equation:
+
+$$
+\text{Binary Cross-Entropy Loss}=-(y \log (p)+(1-y) \log (1-p))
+$$
+
+Some of the other parameters that are used in training the model are the learning rate, the number of epochs, and the batch size. The learning rate is the amount of change that is applied to the model during training. The learning rate will be set to 0.00002. This learning rate is relatively low compared to what is standard for untrained models. This is because we want to fine-tune the last layers, not re-train the model. The number of epochs is the number of times the training set is used to train the model. For this project number of epochs used will be 10. The optimal number of epochs is reached by when the validation performance starts to diverge from the performance on the training data. The batch size is the number of samples that are used to train the model at a time. The batch size used during the training of this model was 32. The effect of adjusting the batch can vary depending on the model and dataset. Some papers looking into this are; \textit{Don't decay the learning rate, increase the batch size} by Smith et al.\cite{smith2017don}, and \textit{Train longer, generalize better: closing the generalization gap in large batch training of neural networks} by Hoffer et al.\cite{hoffer2017train}. Generally, there is some optimal batch size between 1 and the number of samples in the training set. There are several forces impacting what might be optimal. Larger batch sizes allow for greater computational efficiency(parallelism in hardware), and in convex optimization problems, larger batch sizes can lead to better solutions and a batch size of the entire dataset guarantees convergence to the global optima. However, this also dramatically increases the chance of overfitting, and this is especially true for non-convex optimization (neural networks), which are more prone to overfitting. Therefore the selection of batch size has many comparisons to training with regards to underfitting and overfitting, but it is not precisely the same. For this model, the batch size used that will be used is 32. This still represents a relatively small batch size when compared to the total number of samples in the training set. This batch size is standard, and if it is much larger, one quickly runs into hardware constraints due to GPU memory usage. The GPU will be an Nvidia GTX 1070 with 8GB of memory.
+
+\subsection{Evaluating the Trained Model}
+
+Evaluation of the trained model is a key step in analyzing the viability of the proposed method. Traditionally classification models are evaluated using the following metrics:
+
+\begin{itemize}
+  \item Accuracy
+  \item F1-score
+  \item Precision
+  \item Recall
+  \item ROC AUC
+\end{itemize}
+
+
+This will also be displayed in a confusion matrix. Furthermore, a comparison of the performance of the model with other techniques will be made. The different metrics are the result of the True-Positive (TP), False-Positive (FP), True-Negative (TN) and False-Negative (FN) predictions in the following equations:
+$$
+\text { Accuracy }=\frac{T P+T N}{T P+T N+F P+F N}
+$$
+
+$$
+F 1=\frac{2 * \text { Recall } * \text { Precision }}{\text { Recall }+\text { Precision }}
+$$
+
+$$
+\text { Precision }=\frac{T P}{T P+F P}
+$$
+
+$$
+\text { Recall }=\frac{T P}{T P+F N}
+$$
+
+Furthermore, an analysis with regards to overfitting and underfitting will be done. Overfitting is the result of the model being too specific to the training data and causing a resulting drop in performance on validation and testing data. Underfitting is the result of the model being trained enough on the data mining that there is still performance to be extracted if more training is done. This will be done by graphing the model performance on the training data and the performance on the validation data over the training epochs. Additionally, the model performance will be compared to a Naive Bayes classifier and a logistic regression classifier. Given the likely imbalance of the dataset, a more discretionary assessment will also be performed as it is highly relevant with regard to the practical viability of the model.
+
 \section{Event Study}
-bla
+To understand the impact of security incidents on stock prices and thus to discover if there are any significant changes in the stock price due to the security incident, an event study is performed. The list of security incidents generated in the previous section is used as the event list for this study, and it will be assumed that the classifier is able to classify all security incidents identified in the news articles correctly. This is due to the limited amount of data and the fact that the classifier is trained on the majority of the data. Furthermore allows for an analysis of the viability of the classification and event study parts separately.
+
+An event study is, in essence, based on the efficient market hypothesis, which states that publicly available information will be incorporated into the price of a stock as it becomes available \cite{fama1969adjustment}. When performing the impact analysis, traders have to effectively make a best-effort estimate of the total impact of the event, including intangibles such as reputation and so on. Therefore, the daily changes in the price of a particular stock should reflect the perceived total impact of daily events and information on the stock's expected current and future performance. Hopefully, this analysis will remove random movements and impact from unrelated events and isolate the studied event when performed on multiple events across multiple stocks.
+
+Fama, Fisher, Jensen, and Roll defined the traditional event study methodology in the 1969 paper \textit{The Adjustment of Stock Prices to New Information} \cite{fama1969adjustment}. This methodology is essentially the same as today(with some minor modifications). This event study will follow the method described by Mackinlay, A in the paper \textit{Event Studies in Economics and Finance} in 1997 \cite{mackinlay1997event}:
+
+\begin{enumerate}
+
+    \item Calculate the daily abnormal returns (ARs) for each stock in the days surrounding the event. There are multiple models for calculating the ARs:
+    
+    \begin{itemize}
+        \item The Market Model, which looks at what the market return is over the same period.
+        \item The Constant Mean Return Model, which looks at what the market return is on average over a more extended period than the event itself.
+        \item The net-of-characteristic matched portfolio return adjusts the comparison portfolio such that the characteristics of the included companies are similar to the ones that make up the events.
+        \item An equilibrium asset pricing model which does not use stock price; instead, it uses an asset pricing model and then looks at the price changes; an example of such a model is the capital asset pricing model(CAPM).
+        
+    \end{itemize}
+    The model's point is to estimate the stock's expected return over the studied time horizon. Thus one can compare the actual return with the expected return to get the abnormal return. \\ This study will use the market model to estimate the market return. The market model is simply the market's return, also called the market portfolio. The market model is the most common and also fits well with our data as the events can occur in a wide range of businesses with different characteristics.
+    
+    The market model calculates the return of stock i at time t relative to the market return at time t. This can be expressed in the following equation: 
+    $$
+E\left(R_{i, t}\right)=b_{0}+b_{1} \cdot E\left(R_{M, t}\right)
+$$
+$b_{0}$ and $b_{1}$ represents the estimation window, which is usually from -225 days to -25 days before the studied event. Their value can be found by performing a least-squares regression on the stock returns. This allows us to estimate how the stock typically moves. This, in turn, allows for plugging in the return of the market in the event window to get the predicted return of the stock using the market model.
+    
+    The market model gives the expected return of the stock; when comparing this to the actual return of the stock, we can get the abnormal return(AR). This can be expressed in the following equation:
+    $$
+A R_{i, t}=R_{i, t}-E\left(R_{i, t}\right)
+$$
+
+    \item Calculate the average abnormal return (AAR) for each day in the event window. This aggregation is done by taking the average of the ARs for all stocks to find the average AR for a given time in the event window. This is given by the following equation:
+    $$
+    A A R_{t}=\frac{1}{N} \sum_{i=1}^{N} A R_{i, t}
+    $$
+    Where $N$ is all the stocks in the event window, this can help eliminate idiosyncratic differences in the stock returns due to individual stocks.
+
+    \item Sum the AAR for each day in the event window. This is the total abnormal return for the event. This can be expressed in the following equation:
+    $$
+    C A A R_{T}=\sum_{t=1}^{T} A A R_{t}
+    $$
+
+    The CAAR helps in understanding the aggregate effect of the stock returns. This is the total abnormal return for the event. This is particularly useful if the event window is not exclusively on the event date itself. This can be expected to be the case for security incidents in the news. This is because it is unlikely that the news agencies are the first to discover the incident. Furthermore, more information can become available without warranting a new news article.
+
+\end{enumerate}
+
+This CAAR, along with metrics such as the T-stat, P-value, and confidence intervals, will be analyzed in the days surrounding the event.
