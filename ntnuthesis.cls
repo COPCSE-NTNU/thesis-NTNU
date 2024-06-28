@@ -224,7 +224,7 @@
 % Support for included papers (for compiled PhD theses)
 \newcounter{paper}
 \setcounter{paper}{0}
-\def\thepaper{\Roman{paper}}
+\def\thepaper{\Alph{paper}}
 \newenvironment{paper}[2]
 {
     \refstepcounter{paper}
