@@ -322,3 +322,7 @@
        \@starttoc{lol}%
        \endgroup%
        }%
+
+% Renew \glossarysection command to avoid creating a section for the glossary.
+% Using unnumbered chapters for correct chapter name in headings.
+\renewcommand{\glossarysection}[2][]{}
